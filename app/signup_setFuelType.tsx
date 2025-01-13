@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
+import { View, Text, StyleSheet, Image, SafeAreaView } from 'react-native';
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
 import Button from '../components/button';
+
 const SignUpScreenSetFuelType = () => {
   const router = useRouter();
   const theme = useTheme();
@@ -12,13 +12,8 @@ const SignUpScreenSetFuelType = () => {
     container: {
       flex: 1,
       backgroundColor: theme.background,
-      alignContent: 'center',
       alignItems: 'center',
-    },
-    scrollContainer: {
-      flexGrow: 1,
-      alignItems: 'center',
-      paddingBottom: 100,
+      padding: 20,
     },
     text: {
       fontSize: 16,
@@ -29,24 +24,36 @@ const SignUpScreenSetFuelType = () => {
       marginBottom: -100,
       marginTop: -100,
     },
+    buttonContainer: {
+      marginTop: 20,
+      width: '100%',
+      alignItems: 'center',
+    },
   });
 
-
-
-  const handleContinueSignUp = () => {
-    console.log('Navigate to Login Screen');
-    router.push('./login');
+  const handleSetFuelType = (fuelType: string) => {
+    console.log({ fuelType });
+    router.push('./signup_setSearchRadius');
   };
+
   return (
     <SafeAreaView style={styles.container}>
-        <Image
-            source={require('../assets/images/FuelFinerIconTransparent.png')}
-            style={styles.logo}
-            resizeMode="contain"
-        />
-        <Heading level={1} style={{marginTop: 20, marginBottom: 20,}}>What is your preferred fuel type?</Heading> 
-        <Button level={1} onPress={undefined} color='green'>Petrol</Button>
-        <Button level={1} onPress={undefined} color='black'>Diesel</Button>
+      <Image
+        source={require('../assets/images/FuelFinerIconTransparent.png')}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <Heading level={1} style={{ marginTop: 20, marginBottom: 20 }}>
+        What is your preferred fuel type?
+      </Heading>
+      <View style={styles.buttonContainer}>
+        <Button level={1} onPress={() => handleSetFuelType('Petrol')} color="green">
+          Petrol
+        </Button>
+        <Button level={1} onPress={() => handleSetFuelType('Diesel')} color="black">
+          Diesel
+        </Button>
+      </View>
     </SafeAreaView>
   );
 };
