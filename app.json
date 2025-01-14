@@ -4,7 +4,7 @@
     "slug": "FuelFinder",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/FuelFinderIcon.png",
+    "icon": "./assets/images/FuelFinerIconTransparent.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/FuelFinderIcon.png",
+        "foregroundImage": "./assets/images/FuelFinerIconTransparent.png",
         "backgroundColor": "#ffffff"
       }
     },
