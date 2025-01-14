@@ -43,7 +43,7 @@ const SignUpScreenSetFuelType = () => {
 
   const handleSetSearchRadius = () => {
     console.log({ searchRadius });
-    router.push('./signup_complete');
+    router.replace('./signup_complete');
   };
 
   return (

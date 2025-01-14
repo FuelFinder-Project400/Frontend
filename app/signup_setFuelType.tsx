@@ -33,7 +33,7 @@ const SignUpScreenSetFuelType = () => {
 
   const handleSetFuelType = (fuelType: string) => {
     console.log({ fuelType });
-    router.push('./signup_setSearchRadius');
+    router.replace('./signup_setSearchRadius');
   };
 
   return (

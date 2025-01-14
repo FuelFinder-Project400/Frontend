@@ -3,10 +3,11 @@ import { View, Text, StyleSheet, Image, SafeAreaView } from 'react-native';
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
-import Slider from '@react-native-community/slider';
 import ContinueButton from '@/components/continueButton';
 const SignUpScreenSetFuelType = () => {
   const router = useRouter();
+
+
   const theme = useTheme();
 
   const [searchRadius, setSearchRadius] = useState(5); // Initialize state for the search radius
@@ -43,7 +44,7 @@ const SignUpScreenSetFuelType = () => {
 
   const handleSignUpComplete = () => {
     console.log("Navigating to Home Screen");
-    router.push('./homescreen');
+    router.replace('./homescreen');
   };
 
   return (

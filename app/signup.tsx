@@ -18,7 +18,7 @@ const SignUpScreen = () => {
   };
   const handleContinueSignUp = () => {
     console.log('Navigate to Set Fuel Type');
-    router.push('./signup_setFuelType');
+    router.replace('./signup_setFuelType');
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

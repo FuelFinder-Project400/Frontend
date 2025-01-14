@@ -9,12 +9,12 @@ const InitialScreen = () => {
 
   const handleLogin = () => {
     console.log('Navigate to Login Screen');
-    router.push('./login');
+    router.replace('./login');
   };
 
   const handleSignUp = () => {
     console.log('Navigate to Sign Up Screen');
-    router.push('./signup');
+    router.replace('./signup');
   };
 
   return (
