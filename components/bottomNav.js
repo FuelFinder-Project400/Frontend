@@ -1,10 +1,13 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-import {useTheme} from "../theme/ThemeContent";
-export default function BottomNav({ activeTab, setActiveTab }) {
+import { useTheme } from "../theme/ThemeContent";
+import { useRouter } from "expo-router";
 
-  const theme = useTheme(); 
+export default function BottomNav({ activeTab, setActiveTab }) {
+  const theme = useTheme();
+  const router = useRouter();
+
   const styles = StyleSheet.create({
     container: {
       flexDirection: "row",
@@ -31,12 +34,19 @@ export default function BottomNav({ activeTab, setActiveTab }) {
     },
   });
 
+  const handleNavigation = (tab, route) => {
+    if (activeTab !== tab) {
+      setActiveTab(tab);
+      router.replace(route);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Home Button */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => setActiveTab("Home")}
+        onPress={() => handleNavigation("Home", "/homescreen")}
       >
         <MaterialIcons
           name="home"
@@ -56,7 +66,7 @@ export default function BottomNav({ activeTab, setActiveTab }) {
       {/* Find Fuel Button */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => setActiveTab("FindFuel")}
+        onPress={() => handleNavigation("FindFuel", "/findfuel")}
       >
         <FontAwesome5
           name="gas-pump"
@@ -76,7 +86,7 @@ export default function BottomNav({ activeTab, setActiveTab }) {
       {/* Settings Button */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => setActiveTab("Settings")}
+        onPress={() => handleNavigation("Settings", "/settings")}
       >
         <MaterialIcons
           name="settings"

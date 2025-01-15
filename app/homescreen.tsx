@@ -7,8 +7,9 @@ import Button from "@/components/button";
 import BottomNav from "../components/bottomNav";
 import NotificationCard from '../components/notification';
 import Heading from "@/components/headings";
+import { router } from "expo-router";
 
-export default function Index() {
+export default function HomeScreen() {
   
   const [notifications, setNotifications] = useState([
     { id: 1, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.40 was €161.70' },
@@ -103,7 +104,8 @@ export default function Index() {
 
   const starValue = 0;
   const handleFindFuel = () => {
-      console.log("Navigate to find fuel")
+      console.log("Navigate to find fuel"),
+      router.replace('./findfuel')
   }
   return (
     <SafeAreaView style={styles.container}>
@@ -152,7 +154,7 @@ export default function Index() {
         <Button level={1} onPress={handleFindFuel} color="#0e87c4"> Find Fuel</Button>
       </View>
       <View style={{flex: 1, justifyContent: 'flex-end'}}>
-        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab}/>
       </View>
     </SafeAreaView>
   );
