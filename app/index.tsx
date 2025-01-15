@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTheme } from '../theme/ThemeContent'; // Adjust path as needed
+import { useTheme } from '../theme/ThemeContent';
 
 const InitialScreen = () => {
   const router = useRouter();
-  const theme = useTheme(); // Get the current theme
+  const theme = useTheme();
 
   const handleLogin = () => {
     console.log('Navigate to Login Screen');
@@ -21,7 +21,7 @@ const InitialScreen = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Logo */}
       <Image
-        source={require('../assets/images/FuelFinerIconTransparent.png')} // Replace with your logo path
+        source={require('../assets/images/FuelFinerIconTransparent.png')}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -71,8 +71,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 300, // Adjust based on your logo size
-    height: 300, // Adjust based on your logo size
+    width: 300,
+    height: 300,
   },
   buttonContainer: {
     width: '80%',

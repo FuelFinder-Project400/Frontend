@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
 import TextInput from '../components/textInput';
@@ -14,7 +14,7 @@ const SignUpScreen = () => {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = (newCheckedState: boolean) => {
-    setIsChecked(newCheckedState); // Update the state based on checkbox change
+    setIsChecked(newCheckedState);
   };
   const handleContinueSignUp = () => {
     console.log('Navigate to Set Fuel Type');
@@ -41,11 +41,10 @@ const SignUpScreen = () => {
             <Checkbox
               isTermsAndConditions={true}
               checked={isChecked}
-              onChange={handleCheckboxChange} // Pass the state change function to the checkbox
+              onChange={handleCheckboxChange}
             />
           </ScrollView>
 
-          {/* Conditionally render the continue button */}
           {isChecked && (
             <View style={styles.continueBtn}>
               <ContinueButton onPress={handleContinueSignUp} />
@@ -68,7 +67,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 100, // Add padding to the bottom to ensure button is visible
+    paddingBottom: 100,
   },
   text: {
     fontSize: 16,

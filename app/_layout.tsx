@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider } from '../theme/ThemeContent'; // Adjust path as needed
+import { ThemeProvider } from '../theme/ThemeContent';
 import { Stack } from 'expo-router';
 
 export default function RootLayout() {

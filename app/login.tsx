@@ -5,14 +5,15 @@ import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
 import TextInput from '../components/textInput';
 import ContinueButton from '../components/continueButton';
+import { router } from 'expo-router';
 
 const SignUpScreen = () => {
   const theme = useTheme();
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleCheckboxChange = (newCheckedState: boolean) => {
-    setIsChecked(newCheckedState); // Update the state based on checkbox change
-  };
+const handleLogin = () => {
+  router.replace('./homescreen')
+}
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -32,7 +33,7 @@ const SignUpScreen = () => {
             <TextInput inputTitle="Password" inputType="loginPassword" /> 
           </ScrollView>  
           <View style={styles.continueBtn}>
-              <ContinueButton onPress={() => { /* Navigate to the next screen */ }} />
+              <ContinueButton onPress={handleLogin} />
             </View>   
         </SafeAreaView>
       </KeyboardAvoidingView>

@@ -3,9 +3,8 @@ import { Text, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContent';
 
 const Heading = ({ level = 1, style = {}, children }) => {
-  const theme = useTheme(); // Directly access the theme
+  const theme = useTheme();
 
-  // Dynamically create heading styles
   const styles = StyleSheet.create({
     heading1: {
       fontSize: 32,
@@ -40,7 +39,6 @@ const Heading = ({ level = 1, style = {}, children }) => {
     },
   });
 
-  // Choose style based on level, fallback to heading1 if level is invalid
   const headingStyle = styles[`heading${level}`] || styles.heading1;
 
   return (

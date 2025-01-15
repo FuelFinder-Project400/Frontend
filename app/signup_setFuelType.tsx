@@ -29,6 +29,11 @@ const SignUpScreenSetFuelType = () => {
       width: '100%',
       alignItems: 'center',
     },
+    infoText: {
+      margin:20,
+      textAlign: 'center',
+      color: theme.primaryText + '66',
+    },
   });
 
   const handleSetFuelType = (fuelType: string) => {
@@ -54,6 +59,7 @@ const SignUpScreenSetFuelType = () => {
           Diesel
         </Button>
       </View>
+      <Heading level={5} style={styles.infoText}>Please Note That All Preferences Can Be Changed Later.</Heading>
     </SafeAreaView>
   );
 };

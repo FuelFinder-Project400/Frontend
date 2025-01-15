@@ -3,7 +3,7 @@ import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeContent';
 
 const Button = ({ level = 1, color = 'blue', style = {}, children, onPress }) => {
-  const theme = useTheme(); // Directly access the theme
+  const theme = useTheme();
   const textColor = color === 'black' ? '#fff' : theme.primaryText || '#000';
   // Define styles
   const styles = StyleSheet.create({

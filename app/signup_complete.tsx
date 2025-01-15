@@ -10,7 +10,6 @@ const SignUpScreenSetFuelType = () => {
 
   const theme = useTheme();
 
-  const [searchRadius, setSearchRadius] = useState(5); // Initialize state for the search radius
 
   const styles = StyleSheet.create({
     container: {

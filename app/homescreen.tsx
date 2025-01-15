@@ -5,16 +5,29 @@ import Svg, { Polygon } from "react-native-svg";
 import { useTheme } from "../theme/ThemeContent";
 import Button from "@/components/button";
 import BottomNav from "../components/bottomNav";
+import NotificationCard from '../components/notification';
+import Heading from "@/components/headings";
+
 export default function Index() {
+  
+  const [notifications, setNotifications] = useState([
+    { id: 1, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.40 was €161.70' },
+    { id: 2, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.20 was €161.30' },
+    { id: 3, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.10 was €161.20' },
+  ]);
+
+  const handleRemoveNotification = (id: number) => {
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  };
+
+
   const [activeTab, setActiveTab] = useState("Home");
   
   const theme = useTheme();
 
-  const notifications: any[] = []; // Replace with dynamic data as needed
-
   const styles = StyleSheet.create({
     container: {
-      flex: 1, // Ensures the container fills the screen
+      flex: 1,
       backgroundColor: theme.background,
     },
     logo: {
@@ -27,17 +40,17 @@ export default function Index() {
       alignItems: "center",
       justifyContent: "space-between",
       paddingHorizontal: 10,
-      marginTop: -150, // Adjust based on your layout
+      marginTop: -150,
     },
     profileContainer: {
-      position: "relative", // Needed for absolute positioning of the star
+      position: "relative",
     },
     profilePic: {
       width: 80,
       height: 80,
       borderColor: "#000",
       borderWidth: 4,
-      borderRadius: 10, // Square shape
+      borderRadius: 10,
     },
     starContainer: {
       position: "absolute",
@@ -47,7 +60,7 @@ export default function Index() {
       height: 30,
       alignItems: "center",
       justifyContent: "center",
-      zIndex: 1, // Ensure the star is above the profile picture
+      zIndex: 1,
     },
     starText: {
       position: "absolute",
@@ -56,15 +69,15 @@ export default function Index() {
       fontSize: 10,
       fontWeight: "bold",
       color: "black",
-      zIndex: 2, // Ensure the text is above the star
+      zIndex: 2,
     },
     notifications: {
-      backgroundColor: "#D3D3D3", // Light grey background
+      backgroundColor: "#D3D3D3",
       padding: 10,
       borderRadius: 10,
       marginHorizontal: 20,
       marginTop: -140,
-      height: "35%", // About 1/4 of the screen height
+      height: "35%",
     },
     notificationText: {
       fontSize: 14,
@@ -77,6 +90,10 @@ export default function Index() {
       textAlign: "center",
       marginTop: 20,
     },
+    notificationsHeading: {
+      margin: 5,
+      color: '000000'
+    },
     findFuelBtn: {
       marginTop: 30,
       alignContent: 'center',
@@ -84,7 +101,7 @@ export default function Index() {
     } 
   });
 
-  const starValue = 5; // Dynamic number for the star
+  const starValue = 0;
   const handleFindFuel = () => {
       console.log("Navigate to find fuel")
   }
@@ -114,12 +131,17 @@ export default function Index() {
         </View>
       </View>
       <View style={styles.notifications}>
+        <Heading level={6} style={styles.notificationsHeading}>Recent Notifications</Heading>
         <ScrollView>
           {notifications.length > 0 ? (
-            notifications.map((notification, index) => (
-              <Text key={index} style={styles.notificationText}>
-                {notification}
-              </Text>
+            notifications.map((notification) => (
+              <NotificationCard
+                key={notification.id}
+                type={notification.type}
+                title={notification.title}
+                description={notification.description}
+                onClose={() => handleRemoveNotification(notification.id)}
+              />
             ))
           ) : (
             <Text style={styles.noNotifications}>No Notifications</Text>

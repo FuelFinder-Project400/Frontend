@@ -9,7 +9,7 @@ const SignUpScreenSetFuelType = () => {
   const router = useRouter();
   const theme = useTheme();
 
-  const [searchRadius, setSearchRadius] = useState(5); // Initialize state for the search radius
+  const [searchRadius, setSearchRadius] = useState(5);
 
   const styles = StyleSheet.create({
     container: {
@@ -39,6 +39,11 @@ const SignUpScreenSetFuelType = () => {
         marginRight: 30,
         marginBottom: 20,
       },
+    infoText: {
+      margin:20,
+      textAlign: 'center',
+      color: theme.primaryText + '66',
+    },
   });
 
   const handleSetSearchRadius = () => {
@@ -64,15 +69,16 @@ const SignUpScreenSetFuelType = () => {
             maximumValue={100}
             minimumTrackTintColor="#2b93cf"
             maximumTrackTintColor="#c7c5c5"
-            step={1} // Optional: Ensures the value changes in whole numbers
-            value={searchRadius} // Set initial slider value
-            onValueChange={(value) => setSearchRadius(value)} // Update state dynamically
+            step={1}
+            value={searchRadius}
+            onValueChange={(value) => setSearchRadius(value)}
         />
         <Text style={styles.text}>Search Radius: {searchRadius} km</Text>
         </View>
         <View style={styles.continueBtn}>
         <ContinueButton onPress={handleSetSearchRadius} />
         </View>
+        <Heading level={5} style={styles.infoText}>Please Note That All Preferences Can Be Changed Later.</Heading>
     </SafeAreaView>
   );
 };
