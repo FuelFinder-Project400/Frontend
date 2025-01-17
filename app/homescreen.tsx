@@ -8,11 +8,13 @@ import BottomNav from "../components/bottomNav";
 import NotificationCard from '../components/notification';
 import Heading from "@/components/headings";
 import { router } from "expo-router";
+import Top from '@/components/top';
+
 
 export default function HomeScreen() {
   
   const [notifications, setNotifications] = useState([
-    { id: 1, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.40 was €161.70' },
+    { id: 1, type: 'info', title: 'Welcome to FuelFinder', description: 'We hope you enjoy using our app.' },
     { id: 2, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.20 was €161.30' },
     { id: 3, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.10 was €161.20' },
   ]);
@@ -77,7 +79,6 @@ export default function HomeScreen() {
       padding: 10,
       borderRadius: 10,
       marginHorizontal: 20,
-      marginTop: -140,
       height: "35%",
     },
     notificationText: {
@@ -102,36 +103,13 @@ export default function HomeScreen() {
     } 
   });
 
-  const starValue = 0;
   const handleFindFuel = () => {
       console.log("Navigate to find fuel"),
       router.replace('./findfuel')
   }
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.top}>
-        <Image
-          source={require("../assets/images/FuelFinerIconTransparent.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <View style={styles.profileContainer}>
-          <View style={styles.starContainer}>
-            <Svg height="30" width="30" viewBox="0 0 100 100">
-              <Polygon
-                points="50,0 79,90 2,35 98,35 21,90"
-                fill="yellow"
-                strokeWidth="0"
-              />
-            </Svg>
-            <Text style={styles.starText}>{starValue}</Text>
-          </View>
-          <Image
-            source={require("../assets/images/defaultProfilePic.jpg")}
-            style={styles.profilePic}
-          />
-        </View>
-      </View>
+      <Top></Top>
       <View style={styles.notifications}>
         <Heading level={6} style={styles.notificationsHeading}>Recent Notifications</Heading>
         <ScrollView>

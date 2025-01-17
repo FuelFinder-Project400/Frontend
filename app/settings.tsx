@@ -7,7 +7,7 @@ import Button from "@/components/button";
 import BottomNav from "../components/bottomNav";
 import NotificationCard from '../components/notification';
 import Heading from "@/components/headings";
-
+import Top from "@/components/top";
 export default function Settings() {
   
   const [activeTab, setActiveTab] = useState("Settings");
@@ -24,6 +24,7 @@ export default function Settings() {
 
   return (
     <SafeAreaView style={styles.container}>
+        <Top></Top>
         <Heading level={1}>Settings Screen</Heading>
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
             <BottomNav activeTab={activeTab} setActiveTab={setActiveTab}/>

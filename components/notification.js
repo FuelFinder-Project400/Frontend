@@ -23,7 +23,7 @@ const NotificationCard = ({ type, title, description, onClose }) => {
         <Text style={styles.description}>{description}</Text>
       </View>
       <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-        <Text style={styles.closeText}>X</Text>
+        <MaterialCommunityIcons name="trash-can" size={24} color={'#fc0317'}/>
       </TouchableOpacity>
     </View>
   );
@@ -63,12 +63,7 @@ const styles = StyleSheet.create({
   closeButton: {
     position: 'absolute',
     top: 5,
-    right: 5,
-  },
-  closeText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    right:10,
   },
 });
 
