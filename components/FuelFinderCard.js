@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 import Heading from './headings';
 
-const FuelFinderCard = ({petrol, diesel, distance, stars, lastUpdated}) => {
+const FuelFinderCard = ({name, address,petrol, diesel, distance, stars, lastUpdated}) => {
     function getLastUpdated(lastUpdated) {
         const now = new Date();
         const updatedDate = new Date(lastUpdated);
@@ -44,9 +44,9 @@ const FuelFinderCard = ({petrol, diesel, distance, stars, lastUpdated}) => {
                 </View>
                 <View style={styles.stationDetailsText}>
                     <Heading level={5} style={{ color: '#000' }}>
-                        Fuel Station
+                        {name}
                     </Heading>
-                    <Text>Over There</Text>
+                    <Text>{address}</Text>
                 </View>
             </View>
             <View style={styles.starsContainer}>
@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
   },
   stationDetailsText: {
     margin: 5,
+    maxWidth: 150,
   },
   priceHeadingContainer: {
     flexDirection: 'row',

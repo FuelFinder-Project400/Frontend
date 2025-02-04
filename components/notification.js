@@ -8,7 +8,7 @@ const NotificationCard = ({ type, title, description, onClose }) => {
     info: { name: 'information-outline', color: '#2196F3' },
     success: { name: 'check-circle-outline', color: '#4CAF50' },
     error: { name: 'alert-circle-outline', color: '#F44336' },
-    default: { name: 'fuel', color: '#1882d9' }, 
+    default: { name: 'fuel', color: '#18b51d' }, 
   };
 
   const { name, color } = iconDetails[type] || iconDetails.default;
