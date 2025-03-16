@@ -83,7 +83,7 @@ export default function Top() {
         marginTop: 10,
         padding: 10,
         backgroundColor: "#000",
-        borderRadius: 5,
+        borderRadius: 30,
         alignItems: "center",
       },
       closeButtonText: {
