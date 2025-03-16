@@ -16,7 +16,7 @@ const NotificationCard = ({ type, title, description, onClose }) => {
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <MaterialCommunityIcons name={name} size={40} color={color} />
+        <MaterialCommunityIcons name={name} size={48} color={color} />
       </View>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{title}</Text>

@@ -9,7 +9,7 @@ const Button = ({ level = 1, color = 'blue', style = {}, children, onPress }) =>
   const styles = StyleSheet.create({
         buttonContainer: {
         paddingVertical: 15,
-        borderRadius: 8,
+        borderRadius: 30,
         borderColor: 'black',
         borderWidth: 2,
         alignItems: 'center',
