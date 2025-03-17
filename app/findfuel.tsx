@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import { StyleSheet, View, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
 import { useTheme } from "../theme/ThemeContent";
 import BottomNav from "../components/bottomNav";
 import Top from "@/components/top";
@@ -178,7 +178,22 @@ export default function FindFuel() {
     }
   ];
   
+  const handleStationPress = (station: any) => {
+    router.push({
+      pathname: '/station',
+      params: {
+        name: station.station_name,
+        address: station.address,
+        petrol: station.petrol,
+        diesel: station.diesel,
+        distance: station.distance,
+        stars: station.stars,
+        lastUpdated: station.lastUpdated,
+        verifications: station.verifications,
+      },
+    });
 
+};
   // Function to sort stations based on the active filter
   const sortedStations = mockStations.sort((a, b) => {
     if (activeButton === "Closest") {
@@ -222,17 +237,19 @@ export default function FindFuel() {
       </View>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
         {sortedStations.map((station) => (
-          <FuelFinderCard
-            key={station.id}
-            name={station.station_name}
-            address={station.address}
-            petrol={station.petrol}
-            diesel={station.diesel}
-            distance={station.distance}
-            stars={station.stars}
-            lastUpdated={station.lastUpdated}
-            verifications={station.verifications}
-          />
+          <TouchableOpacity key={station.id} onPress={() => handleStationPress(station)}>
+              <FuelFinderCard
+                key={station.id}
+                name={station.station_name}
+                address={station.address}
+                petrol={station.petrol}
+                diesel={station.diesel}
+                distance={station.distance}
+                stars={station.stars}
+                lastUpdated={station.lastUpdated}
+                verifications={station.verifications}
+              />
+          </TouchableOpacity>
         ))}
       </ScrollView>
       <View style={styles.mapButtonContainer}>

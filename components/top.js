@@ -126,7 +126,7 @@ export default function Top() {
           style={styles.iconWrapper}
           onPress={() => setModalVisible(true)}
         >
-          <MaterialCommunityIcons name="bell" size={30} color={"#fff"} />
+          <MaterialCommunityIcons name="bell" size={30} color={theme.primaryText} />
           {notifications.length > 0 && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>
