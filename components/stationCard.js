@@ -85,6 +85,12 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                         <MaterialCommunityIcons name="star-outline" size={40} color="yellow" />
                     </TouchableOpacity>
                 </View>
+                <View style={styles.likeButtonContainer}>
+                    <TouchableOpacity style={styles.likeButton}>
+                        <MaterialCommunityIcons name="thumb-up-outline" size={40} color="#59B5DC" />
+                        <Text style={{marginLeft: 10}}>Is the price correct?</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
@@ -163,7 +169,21 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         backgroundColor: '#D9D9D9',
         margin: 10, 
-    }
+    },
+    likeButtonContainer: {
+        marginTop: 45,
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    likeButton:{
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        borderRadius: 40,
+        backgroundColor: '#D9D9E990',
+        margin: 10, 
+    },
 });
 
 export default StationCard;
