@@ -1,9 +1,15 @@
-import React from 'react';
-import { View, Text, StyleSheet,TouchableOpacity, Alert, Linking, Platform } from 'react-native';
-import { MaterialCommunityIcons} from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Modal } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
 
 const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdated, verifications }) => {
+    const [isFavorited, setIsFavorited] = useState(false);
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleFavorite = () => {
+        setIsFavorited(!isFavorited);
+    };
+
     function getLastUpdated(lastUpdated) {
         const now = new Date();
         const updatedDate = new Date(lastUpdated);
@@ -21,8 +27,8 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
     const isVerified = verifications >= 5;
 
     const openMaps = () => {
-        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${name},${address}`; //Change this to .env
-        const appleMapsUrl = `maps://?daddr=${name},${address}`; //Change this to .env
+        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${name},${address}`;
+        const appleMapsUrl = `maps://?daddr=${name},${address}`;
     
         const url = Platform.OS === "ios" ? appleMapsUrl : googleMapsUrl;
     
@@ -35,15 +41,15 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
             }
           })
           .catch((err) => console.error("An error occurred", err));
-      };
-
-
-
-
+    };
+    
+    const handleReport = (reason) => {
+        Alert.alert("Report Submitted", `You reported: ${reason}`);
+        setModalVisible(false);
+    };
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
             <View style={styles.container2}>
-
                 <View>
                     <View style={styles.stationDetails}>
                         <View style={styles.stationDetailsText}>
@@ -78,15 +84,13 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                     <View style={{ marginTop: 10 }}>
                         <Text style={{ color: '#878383', fontWeight: 'bold' }}>Last Updated: {getLastUpdated(lastUpdated)}</Text>
                     </View>
-                
-                    
-
                 </View>
 
                 <View style={styles.distanceContainer}>
                     <Heading level={3} style={styles.distanceText}>{distance}km</Heading>
                 </View>
             </View>
+
             <View>
                 <View style={styles.options}>
                     <TouchableOpacity style={styles.iconButton}>
@@ -97,21 +101,41 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                         <MaterialCommunityIcons name="compass-outline" size={40} color="#59B5DC" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => setModalVisible(true)}>
                         <MaterialCommunityIcons name="flag-outline" size={40} color="red" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.iconButton}>
-                        <MaterialCommunityIcons name="star-outline" size={40} color="yellow" />
+                    <TouchableOpacity style={styles.iconButton} onPress={toggleFavorite}>
+                        <MaterialCommunityIcons 
+                            name={isFavorited ? "star" : "star-outline"} 
+                            size={40} 
+                            color="yellow" 
+                        />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.likeButtonContainer}>
                     <TouchableOpacity style={styles.likeButton}>
                         <MaterialCommunityIcons name="thumb-up-outline" size={40} color="#59B5DC" />
-                        <Text style={{marginLeft: 10}}>Is the price correct?</Text>
+                        <Text style={{ marginLeft: 10 }}>Is the price correct?</Text>
                     </TouchableOpacity>
                 </View>
             </View>
+            <Modal visible={isModalVisible} transparent animationType="fade">
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Report an Issue</Text>
+                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Wrong Price")}>
+                            <Text style={styles.modalButtonText}>Wrong Price</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Station Closed")}>
+                            <Text style={styles.modalButtonText}>Station Closed</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalCancel} onPress={() => setModalVisible(false)}>
+                            <Text style={styles.modalCancelText}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -123,6 +147,11 @@ const styles = StyleSheet.create({
         padding: 15,
         marginVertical: 10,
         marginHorizontal: 10,
+        borderWidth: 2,
+        borderColor: 'transparent', // Default border color
+    },
+    favoritedContainer: {
+        borderColor: 'yellow', // Border color when favorited
     },
     container2: {
         flexDirection: 'row',
@@ -180,7 +209,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         width: '100%',
-        marginTop: 20, // Adjust to place the icons below everything
+        marginTop: 20, 
     },
     iconButton: {
         justifyContent: 'center',
@@ -195,7 +224,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
     },
-    likeButton:{
+    likeButton: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -204,6 +233,48 @@ const styles = StyleSheet.create({
         backgroundColor: '#D9D9E990',
         margin: 10, 
     },
+    modalContainer: { 
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: 'rgba(0,0,0,0.5)'
+    },
+    modalContent: { 
+        backgroundColor: 'white', 
+        padding: 20, 
+        borderRadius: 10, 
+        width: '80%', 
+        alignItems: 'center' 
+    },
+    modalTitle: { 
+        fontSize: 18, 
+        fontWeight: 'bold', 
+        marginBottom: 10 
+    },
+    modalButton: { 
+        padding: 10, 
+        marginVertical: 5, 
+        backgroundColor: '#f0f0f0', 
+        width: '100%', 
+        alignItems: 'center', 
+        borderRadius: 5 
+    },
+    modalButtonText: { 
+        fontSize: 16 
+    },
+    modalCancel: { 
+        marginTop: 10,
+        paddingHorizontal: '40%',
+        paddingVertical: 10,
+        backgroundColor: "#000",
+        borderRadius: 30,
+        alignItems: "center",
+    },
+    modalCancelText: { 
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "bold",
+    }
 });
 
 export default StationCard;
