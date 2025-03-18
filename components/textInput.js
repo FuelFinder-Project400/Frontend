@@ -21,14 +21,35 @@ const TextInput = ({ inputTitle = "blank", inputType = "default" }) => {
       textAlign: 'left',
       maxWidth: 250,
       width: 250,
+      zIndex: 1,
     },
     text: {
       margin: 5
     },
+    // errorText: {
+    //   color: '#B3261E',
+    //   fontSize: 12,
+    //   fontWeight: 'bold',
+    //   marginTop: 5,
+    //   backgroundColor: '#e6bebc',
+    //   borderRadius: 1,
+    //   padding: 3,
+    //   borderColor: '#B3261E',
+    //   borderWidth: 1,
+    // },
     errorText: {
-      color: 'red',
+      color: '#B3261E',
       fontSize: 12,
-      marginTop: 5,
+      fontWeight: 'bold',
+      marginTop: -20,
+      backgroundColor: '#e6bebc',
+      borderRadius: 3,
+      padding: 3,
+      paddingTop: 20,
+      borderColor: '#B3261E',
+      borderWidth: 1,
+      zIndex: 0,
+      transitionDelay: 0.5,
     },
   });
 
