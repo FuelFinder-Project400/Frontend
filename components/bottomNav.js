@@ -35,10 +35,8 @@ export default function BottomNav({ activeTab, setActiveTab }) {
   });
 
   const handleNavigation = (tab, route) => {
-    if (activeTab !== tab) {
       setActiveTab(tab);
       router.replace(route);
-    }
   };
 
   return (

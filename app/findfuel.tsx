@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import { StyleSheet, View, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
 import { useTheme } from "../theme/ThemeContent";
 import BottomNav from "../components/bottomNav";
 import Top from "@/components/top";
@@ -7,7 +7,6 @@ import FilterButton from "@/components/filterButton";
 import FuelFinderCard from "@/components/FuelFinderCard";
 import MapPinButton from "@/components/mapPinButton";
 import { router } from "expo-router";
-import { stat } from "fs";
 
 export default function FindFuel() {
   const theme = useTheme();
@@ -45,7 +44,7 @@ export default function FindFuel() {
 
   const [activeButton, setActiveButton] = useState(userPreference);
 
-  const filters = ["Closest", "Cheapest"];
+  const filters = ["Closest", "Cheapest", "Verified"];
 
   const handlePress = (filter: any) => {
     setActiveButton(filter);
@@ -67,6 +66,7 @@ export default function FindFuel() {
       "stars": 4,
       "distance": "2.5",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 5,
     },
     {
       "id": 2,
@@ -78,6 +78,7 @@ export default function FindFuel() {
       "stars": 3,
       "distance": "3.0",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 4,
     },
     {
       "id": 3,
@@ -89,6 +90,7 @@ export default function FindFuel() {
       "stars": 5,
       "distance": "2.8",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 4,
     },
     {
       "id": 4,
@@ -100,6 +102,7 @@ export default function FindFuel() {
       "stars": 4,
       "distance": "1.5",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 5,
     },
     {
       "id": 5,
@@ -111,6 +114,7 @@ export default function FindFuel() {
       "stars": 3,
       "distance": "4.0",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 4,
     },
     {
       "id": 6,
@@ -122,6 +126,7 @@ export default function FindFuel() {
       "stars": 4,
       "distance": "2.7",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 4,
     },
     {
       "id": 7,
@@ -133,6 +138,7 @@ export default function FindFuel() {
       "stars": 5,
       "distance": "2.3",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 5,
     },
     {
       "id": 8,
@@ -144,6 +150,7 @@ export default function FindFuel() {
       "stars": 4,
       "distance": "3.5",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 4,
     },
     {
       "id": 9,
@@ -155,6 +162,7 @@ export default function FindFuel() {
       "stars": 3,
       "distance": "2.4",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 4,
     },
     {
       "id": 10,
@@ -166,10 +174,26 @@ export default function FindFuel() {
       "stars": 4,
       "distance": "1.6",
       "lastUpdated" : "2025-01-14T15:30:00Z",
+      "verifications" : 5,
     }
   ];
   
+  const handleStationPress = (station: any) => {
+    router.push({
+      pathname: '/station',
+      params: {
+        name: station.station_name,
+        address: station.address,
+        petrol: station.petrol,
+        diesel: station.diesel,
+        distance: station.distance,
+        stars: station.stars,
+        lastUpdated: station.lastUpdated,
+        verifications: station.verifications,
+      },
+    });
 
+};
   // Function to sort stations based on the active filter
   const sortedStations = mockStations.sort((a, b) => {
     if (activeButton === "Closest") {
@@ -178,6 +202,22 @@ export default function FindFuel() {
       const aPrice = userFuelPreference === "petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
       const bPrice = userFuelPreference === "petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
       return aPrice - bPrice;
+    } else if (activeButton === "Verified") {
+      const aPrice = userFuelPreference === "petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
+      const bPrice = userFuelPreference === "petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
+  
+      // First, sort verified stations (5 or more verifications) by price
+      const aIsVerified = a.verifications >= 5;
+      const bIsVerified = b.verifications >= 5;
+  
+      if (aIsVerified && !bIsVerified) {
+        return -1; // a is verified, b is not (a comes first)
+      } else if (!aIsVerified && bIsVerified) {
+        return 1; // b is verified, a is not (b comes first)
+      } else {
+        // If both are verified or both are unverified, sort by the cheapest price
+        return aPrice - bPrice;  // Sort by cheapest price for both verified and unverified stations
+      }
     }
     return 0;
   });
@@ -197,16 +237,19 @@ export default function FindFuel() {
       </View>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
         {sortedStations.map((station) => (
-          <FuelFinderCard
-            key={station.id}
-            name={station.station_name}
-            address={station.address}
-            petrol={station.petrol}
-            diesel={station.diesel}
-            distance={station.distance}
-            stars={station.stars}
-            lastUpdated={station.lastUpdated}
-          />
+          <TouchableOpacity key={station.id} onPress={() => handleStationPress(station)}>
+              <FuelFinderCard
+                key={station.id}
+                name={station.station_name}
+                address={station.address}
+                petrol={station.petrol}
+                diesel={station.diesel}
+                distance={station.distance}
+                stars={station.stars}
+                lastUpdated={station.lastUpdated}
+                verifications={station.verifications}
+              />
+          </TouchableOpacity>
         ))}
       </ScrollView>
       <View style={styles.mapButtonContainer}>
