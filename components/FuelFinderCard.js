@@ -39,19 +39,19 @@ const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUp
                     ))}
                 </View>
 
-                <View>
-                    <View style={styles.priceHeadingContainer}>
+                <View style={{flexDirection: 'row', marginVertical: 10,}}>
+                    <View style={styles.priceContainer}>
                         <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
-                        <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
-                    </View>
-                    <View style={styles.pricePricesContainer}>
                         <Heading level={3} style={styles.priceText}>€{petrol}</Heading>
+                    </View>
+                    <View style={styles.priceContainer}>
+                        <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
                         <Heading level={3} style={styles.priceText}>€{diesel}</Heading>
                     </View>
                 </View>
 
                 <View style={styles.verificationContainer}>
-                    <MaterialCommunityIcons name="check-circle" size={20} color={isVerified ? "#007bff" : "#888"} />
+                    <MaterialCommunityIcons name="check-circle" size={20} color={isVerified ? "#6dcf69" : "#888"} />
                     <Text style={styles.verificationText}>{verifications} verifications</Text>
                 </View>
 
@@ -86,13 +86,13 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     verifiedContainer: {
-        borderColor: '#007bff',
+        borderColor: '#6dcf69',
     },
     verifiedLabel: {
         position: 'absolute',
         top: -10,
         left: 15,
-        backgroundColor: '#007bff',
+        backgroundColor: '#6dcf69',
         color: '#fff',
         paddingHorizontal: 10,
         paddingVertical: 3,
@@ -109,17 +109,6 @@ const styles = StyleSheet.create({
     },
     stationDetailsText: {
         maxWidth: 200,
-    },
-    priceHeadingContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        maxWidth: '55%',
-        marginTop: 15,
-    },
-    pricePricesContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        maxWidth: '55%',
     },
     priceHeading: {
         color: '#000',

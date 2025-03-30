@@ -42,7 +42,7 @@ export default function BottomNav({ activeTab, setActiveTab }) {
   return (
     <View style={styles.container}>
       {/* Home Button */}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.button}
         onPress={() => handleNavigation("Home", "/homescreen")}
       >
@@ -59,7 +59,7 @@ export default function BottomNav({ activeTab, setActiveTab }) {
         >
           Home
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Find Fuel Button */}
       <TouchableOpacity

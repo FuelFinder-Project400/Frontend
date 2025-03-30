@@ -14,8 +14,8 @@ const styles = StyleSheet.create({
   button: {
     width: 50,
     height: 50,
-    borderRadius: 40,
-    backgroundColor: "#7e3ac7", // Modern blue color
+    borderRadius: 30,
+    backgroundColor: "#2692eb", // Modern blue color
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,

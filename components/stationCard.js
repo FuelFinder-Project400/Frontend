@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Modal,TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
+import StarRating from "./starRating";
+
 
 const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdated, verifications }) => {
     const [isFavorited, setIsFavorited] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isAddPriceModalVisible, setAddPriceModalVisible] = useState(false);
+    const [pError, setPError] = useState("");
+    const [dError, setDError] = useState("");
+    const [rating, setRating] = useState(0);
+    let petrolPrice = 0;
+    let dieselPrice = 0;
     const toggleFavorite = () => {
         setIsFavorited(!isFavorited);
     };
@@ -29,7 +37,6 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
     const openMaps = () => {
         const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${name},${address}`;
         const appleMapsUrl = `maps://?daddr=${name},${address}`;
-    
         const url = Platform.OS === "ios" ? appleMapsUrl : googleMapsUrl;
     
         Linking.canOpenURL(url)
@@ -47,6 +54,27 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
         Alert.alert("Report Submitted", `You reported: ${reason}`);
         setModalVisible(false);
     };
+    const handlePriceChange = () => {
+        Alert.alert("Prices Updated", `Petrol price: ${petrolPrice}\nDiesel price: ${dieselPrice}\nRating: ${rating}`);
+        setAddPriceModalVisible(false);
+
+    }
+    const setPetrolPrice = (event) => {
+        if (event.nativeEvent.text == "") {
+            setPError("Petrol price cannot be empty");
+          } else {
+            setPError("");
+            petrolPrice = event.nativeEvent.text;
+          }
+      };
+      const setDieselPrice = (event) => {
+        if (event.nativeEvent.text == "") {
+            setDError("Diesel price cannot be empty");
+          } else {
+            setDError("");
+            dieselPrice = event.nativeEvent.text;
+          }
+      };
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
             <View style={styles.container2}>
@@ -65,19 +93,19 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                         ))}
                     </View>
 
-                    <View>
-                        <View style={styles.priceHeadingContainer}>
+                    <View style={{flexDirection: 'row', marginVertical: 10,}}>
+                        <View style={styles.priceContainer}>
                             <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
-                            <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
-                        </View>
-                        <View style={styles.pricePricesContainer}>
                             <Heading level={3} style={styles.priceText}>€{petrol}</Heading>
+                        </View>
+                        <View style={styles.priceContainer}>
+                            <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
                             <Heading level={3} style={styles.priceText}>€{diesel}</Heading>
                         </View>
                     </View>
 
                     <View style={styles.verificationContainer}>
-                        <MaterialCommunityIcons name="check-circle" size={20} color={isVerified ? "#007bff" : "#888"} />
+                        <MaterialCommunityIcons name="check-circle" size={20} color={isVerified ? "#6dcf69" : "#888"} />
                         <Text style={styles.verificationText}>{verifications} verifications</Text>
                     </View>
                     
@@ -93,7 +121,7 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
 
             <View>
                 <View style={styles.options}>
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity style={styles.iconButton}  onPress={() => setAddPriceModalVisible(true)}>
                         <MaterialCommunityIcons name="plus-circle-outline" size={40} color="#36CB3B" />
                     </TouchableOpacity>
 
@@ -115,7 +143,7 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                 </View>
                 <View style={styles.likeButtonContainer}>
                     <TouchableOpacity style={styles.likeButton}>
-                        <MaterialCommunityIcons name="thumb-up-outline" size={40} color="#59B5DC" />
+                        <MaterialCommunityIcons name="thumb-up-outline" size={40} color="#6dcf69" />
                         <Text style={{ marginLeft: 10 }}>Is the price correct?</Text>
                     </TouchableOpacity>
                 </View>
@@ -125,16 +153,65 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Report an Issue</Text>
                         <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Wrong Price")}>
-                            <Text style={styles.modalButtonText}>Wrong Price</Text>
+                            <Text style={styles.modalButtonText}>Price (To High)</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Station Closed")}>
-                            <Text style={styles.modalButtonText}>Station Closed</Text>
+                            <Text style={styles.modalButtonText}>Price (To Low)</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.modalCancel} onPress={() => setModalVisible(false)}>
                             <Text style={styles.modalCancelText}>Close</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
+            </Modal>
+            <Modal visible={isAddPriceModalVisible} transparent animationType="fade">
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <View>
+                                <Heading level={3} style={{color: '#000', marginLeft: 10,}}>Add Price</Heading>
+                                
+                                <View style={{flexDirection: 'row', alignItems:'center', margin: 10,}}>
+                                    <Text style={styles.label}>Enter Petrol Price (€):</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="e.g. 160.20"
+                                        keyboardType="numeric"
+                                        inputMode='decimal'
+                                        maxLength={5}
+                                        contextMenuHidden={true}
+                                        onBlur={setPetrolPrice}
+                                    />
+                                </View>
+                                {pError ? <Text style={styles.errorText}>{pError}</Text> : null}
+                                <View style={{flexDirection: 'row', alignItems:'center', margin: 10,}}>
+                                    <Text style={styles.label}>Enter Diesel Price (€):</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="e.g. 160.20"
+                                        keyboardType="numeric"
+                                        inputMode='decimal'
+                                        maxLength={5}
+                                        contextMenuHidden={true}
+                                        onBlur={setDieselPrice}
+                                        
+                                    />
+                                </View>
+                                {dError ? <Text style={styles.errorText}>{dError}</Text> : null}
+
+                                <StarRating onRatingChange={setRating} />
+                            </View>
+                            <View style={{flexDirection:'row'}}>
+                                <TouchableOpacity style={styles.modalAddPrice} onPress={handlePriceChange}>
+                                    <Text style={styles.modalCancelText}>Add Price</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.modalCancel} onPress={() => setAddPriceModalVisible(false)}>
+                                    <Text style={styles.modalCancelText}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
             </Modal>
         </View>
     );
@@ -166,17 +243,7 @@ const styles = StyleSheet.create({
     stationDetailsText: {
         maxWidth: 200,
     },
-    priceHeadingContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        maxWidth: '55%',
-        marginTop: 15,
-    },
-    pricePricesContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        maxWidth: '55%',
-    },
+
     priceHeading: {
         color: '#000',
         marginRight: 15,
@@ -263,10 +330,18 @@ const styles = StyleSheet.create({
         fontSize: 16 
     },
     modalCancel: { 
-        marginTop: 10,
-        paddingHorizontal: '40%',
-        paddingVertical: 10,
-        backgroundColor: "#000",
+        margin: 10,
+        paddingHorizontal: 40,
+        paddingVertical: 20,
+        backgroundColor: "#e04a4a",
+        borderRadius: 30,
+        alignItems: "center",
+    },
+    modalAddPrice: { 
+        margin: 10,
+        paddingHorizontal: 40,
+        paddingVertical: 20,
+        backgroundColor: "#36CB3B",
         borderRadius: 30,
         alignItems: "center",
     },
@@ -274,7 +349,28 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 14,
         fontWeight: "bold",
-    }
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginBottom: 5,
+        marginRight: 5,
+      },
+    input: {
+        height: 50,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        fontSize: 16,
+        backgroundColor: "#fff",
+        minWidth: 80,
+        maxWidth: 80,
+    },
+    errorText: {
+        color: "red",
+        marginHorizontal: 10,
+      },
 });
 
 export default StationCard;

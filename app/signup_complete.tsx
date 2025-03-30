@@ -43,7 +43,7 @@ const SignUpScreenSetFuelType = () => {
 
   const handleSignUpComplete = () => {
     console.log("Navigating to Home Screen");
-    router.replace('./homescreen');
+    router.replace('./findfuel'); //To be changed to onboarding screens.
   };
 
   return (

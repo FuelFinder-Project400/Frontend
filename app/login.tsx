@@ -12,7 +12,7 @@ const SignUpScreen = () => {
   const [isChecked, setIsChecked] = useState(false);
 
 const handleLogin = () => {
-  router.replace('./homescreen')
+  router.replace('./findfuel')
 }
 
   return (

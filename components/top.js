@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, ScrollView } fr
 import { useTheme } from "../theme/ThemeContent";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NotificationCard from '../components/notification';
-
+import Heading from '@/components/headings';
 export default function Top() {
   const theme = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,8 +22,7 @@ export default function Top() {
         backgroundColor: theme.background,
       },
       logo: {
-        width: 100,
-        marginLeft: 10,
+        width: 0,
       },
       top: {
         flexDirection: "row",
@@ -31,8 +30,6 @@ export default function Top() {
         alignItems: "center",
         justifyContent: 'space-between',
         paddingHorizontal: 10,
-        marginTop: -150,
-        marginBottom: -150,
       },
       profileContainer: {
         flexDirection: 'row',
@@ -116,11 +113,7 @@ export default function Top() {
   });
   return (
     <View style={styles.top}>
-        <Image
-          source={require("../assets/images/FuelFinerIconTransparent.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Heading level={1}>FuelFinder</Heading>
         <View style={styles.profileContainer}>
         <TouchableOpacity
           style={styles.iconWrapper}

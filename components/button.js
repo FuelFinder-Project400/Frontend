@@ -7,17 +7,24 @@ const Button = ({ level = 1, color = 'blue', style = {}, children, onPress }) =>
   const textColor = color === 'black' ? '#fff' : theme.primaryText || '#000';
   // Define styles
   const styles = StyleSheet.create({
-        buttonContainer: {
-        paddingVertical: 15,
-        borderRadius: 30,
-        borderColor: 'black',
-        borderWidth: 2,
-        alignItems: 'center',
-        marginVertical: 10,
-        backgroundColor: color,
-        width: '80%',
-        margin: 15,
-    },
+    buttonContainer: {
+      paddingVertical: 15,
+      borderRadius: 30,
+      alignItems: 'center',
+      marginVertical: 10,
+      backgroundColor: color,
+      width: '80%',
+      margin: 15,
+  
+      // Shadow for iOS
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+  
+      // Shadow for Android
+      elevation: 5,
+  },
     buttonText: {
         fontWeight: 'bold',
         color: textColor,
