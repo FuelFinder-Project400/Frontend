@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Mod
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
 import StarRating from "./starRating";
+import { router } from 'expo-router';
 
 
 const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdated, verifications }) => {
@@ -77,6 +78,9 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
       };
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
+            <TouchableOpacity onPress={() => router.back()}>
+                <MaterialCommunityIcons name="arrow-left-circle" size={40} color={"#000"} style={{marginVertical: 10, marginTop: -5, marginLeft: -8}} />
+            </TouchableOpacity>
             <View style={styles.container2}>
                 <View>
                     <View style={styles.stationDetails}>

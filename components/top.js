@@ -4,8 +4,10 @@ import { useTheme } from "../theme/ThemeContent";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NotificationCard from '../components/notification';
 import Heading from '@/components/headings';
+import { useRouter } from 'expo-router';
 export default function Top() {
   const theme = useTheme();
+  const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [notifications, setNotifications] = useState([
       { id: 1, type: 'info', title: 'Welcome to FuelFinder', description: 'We hope you enjoy using our app.' },
@@ -129,10 +131,16 @@ export default function Top() {
             </View>
           )}
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.replace({
+            pathname: '/settings',
+          })}
+        >
           <Image
             source={require("../assets/images/defaultProfilePic.jpg")}
             style={styles.profilePic}
           />
+        </TouchableOpacity>
         </View>
         <Modal
         visible={modalVisible}
