@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
@@ -9,12 +9,13 @@ import { router } from 'expo-router';
 
 const SignUpScreen = () => {
   const theme = useTheme();
-  const [isChecked, setIsChecked] = useState(false);
 
 const handleLogin = () => {
   router.replace('./findfuel')
 }
-
+const handleSignUpInstead = () => {
+  router.replace('./signup')
+}
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView
@@ -31,6 +32,9 @@ const handleLogin = () => {
             <Heading level={1}>Login</Heading>
             <TextInput inputTitle="Email" inputType="email" />
             <TextInput inputTitle="Password" inputType="loginPassword" /> 
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleSignUpInstead}>
+              <Text style={{color: theme.primaryText, padding: 48, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Or Sign Up</Text>
+            </TouchableOpacity>
           </ScrollView>  
           <View style={styles.continueBtn}>
               <ContinueButton onPress={handleLogin} />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
@@ -20,6 +20,9 @@ const SignUpScreen = () => {
     console.log('Navigate to Set Fuel Type');
     router.replace('./signup_setFuelType');
   };
+  const handleLoginInstead = () => {
+    router.replace('./login');
+  }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView
@@ -43,6 +46,9 @@ const SignUpScreen = () => {
               checked={isChecked}
               onChange={handleCheckboxChange}
             />
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleLoginInstead}>
+              <Text style={{color: theme.primaryText, padding: 48, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Or Login</Text>
+            </TouchableOpacity>
           </ScrollView>
 
           {isChecked && (
@@ -67,7 +73,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 100,
   },
   text: {
     fontSize: 16,

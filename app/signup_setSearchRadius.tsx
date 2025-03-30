@@ -65,7 +65,7 @@ const SignUpScreenSetFuelType = () => {
         <Text style={styles.text}>Choose the maximum distance the app will search for nearby fuel stations.</Text>
         <Slider
             style={{ width: 300, height: 40 }}
-            minimumValue={5}
+            minimumValue={1}
             maximumValue={100}
             minimumTrackTintColor="#2b93cf"
             maximumTrackTintColor="#c7c5c5"

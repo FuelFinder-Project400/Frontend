@@ -77,8 +77,9 @@ export default function Top() {
         textAlign: "center",
       },
       closeButton: {
-        marginTop: 10,
-        padding: 10,
+        margin: 10,
+        paddingHorizontal: 40,
+        paddingVertical: 20,
         backgroundColor: "#000",
         borderRadius: 30,
         alignItems: "center",
