@@ -36,7 +36,7 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
 
     const openMaps = () => {
         const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${name},${address}`;
-        const appleMapsUrl = `maps://?daddr=${name},${address}`;
+        const appleMapsUrl = `maps://?daddr=${name}`;
         const url = Platform.OS === "ios" ? appleMapsUrl : googleMapsUrl;
     
         Linking.canOpenURL(url)

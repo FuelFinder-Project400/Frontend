@@ -1,12 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Alert, Text } from "react-native";
+import { StyleSheet, View, Alert, Text, TouchableOpacity, Platform, Linking } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
+import Geocoder from 'react-native-geocoding';
+import { useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function FuelMapView({ stations }) {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [geocodedStations, setGeocodedStations] = useState([]);
+  const [selectedStation, setSelectedStation] = useState(null);
+  const [loading, setLoading] = useState(true); // Track loading state
   const mapRef = useRef(null);
+  const router = useRouter();
+  
+  Geocoder.init(process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY);
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const rad = (x) => (x * Math.PI) / 180;
+    const R = 6371; 
+    const dLat = rad(lat2 - lat1);
+    const dLon = rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(rad(lat1)) * Math.cos(rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c * 1000; 
+  };
 
   useEffect(() => {
     (async () => {
@@ -27,9 +49,30 @@ export default function FuelMapView({ stations }) {
   }, []);
 
   useEffect(() => {
-    if (mapRef.current && stations.length > 0 && location) {
+    if (stations.length > 0) {
+      setLoading(true); // Start loading when geocoding starts
+      Promise.all(
+        stations.map(async (station) => {
+          try {
+            const response = await Geocoder.from(`${station.name},${station.address}`);
+            const { lat, lng } = response.results[0].geometry.location;
+            return { ...station, location: { latitude: lat, longitude: lng } };
+          } catch (error) {
+            console.error("Geocoding error:", error);
+            return null;
+          }
+        })
+      ).then((geocoded) => {
+        setGeocodedStations(geocoded.filter(Boolean));
+        setLoading(false); // Mark loading as complete
+      });
+    }
+  }, [stations]);
+
+  useEffect(() => {
+    if (mapRef.current && geocodedStations.length > 0 && location) {
       const coordinates = [
-        ...stations.map((s) => ({
+        ...geocodedStations.map((s) => ({
           latitude: s.location.latitude,
           longitude: s.location.longitude,
         })),
@@ -40,41 +83,146 @@ export default function FuelMapView({ stations }) {
         animated: true,
       });
     }
-  }, [stations, location]);
+  }, [geocodedStations, location]);
+
+  const handleMarkerPress = (station) => {
+    setSelectedStation(station);
+  };
+
+  const handleMapPress = () => {
+    if (selectedStation) {
+      setSelectedStation(null);
+    }
+  };
+
+  const getMarkerColor = (station) => {
+    if (!location) return "gray"; 
+    const distance = calculateDistance(
+      location.latitude,
+      location.longitude,
+      station.location.latitude,
+      station.location.longitude
+    );
+    const closestStation = geocodedStations.reduce((prev, curr) =>
+      calculateDistance(location.latitude, location.longitude, prev.location.latitude, prev.location.longitude) <
+      calculateDistance(location.latitude, location.longitude, curr.location.latitude, curr.location.longitude)
+        ? prev
+        : curr
+    );
+    const cheapestStation = geocodedStations.reduce((prev, curr) =>
+      (prev.petrol < curr.petrol || prev.diesel < curr.diesel) ? prev : curr
+    );
+    if (station.id === closestStation.id) return "blue"; 
+    if (station.id === cheapestStation.id) return "green"; 
+    return "red"; 
+  };
 
   if (errorMsg) {
     Alert.alert("Location Error", errorMsg);
   }
 
+  // Only render the map when loading is false
+  if (loading || !location || geocodedStations.length === 0) {
+    return (
+      <View style={styles.loading}>
+        <Text>Loading map...</Text>
+      </View>
+    );
+  }
+
+  const openMaps = (dirName, dirAddress) => {
+        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${dirName},${dirAddress}`;
+        const appleMapsUrl = `maps://?daddr=${dirName}`;
+        const url = Platform.OS === "ios" ? appleMapsUrl : googleMapsUrl;
+    
+        Linking.canOpenURL(url)
+          .then((supported) => {
+            if (supported) {
+              Linking.openURL(url);
+            } else {
+              Alert.alert("Error", "Could not open maps.");
+            }
+          })
+          .catch((err) => console.error("An error occurred", err));
+    };
+
+
+
   return (
     <View style={styles.container}>
-      {location ? (
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={location}
-          showsUserLocation={true}
-        >
-          {stations?.map((station, index) => {
-            if (station.location?.latitude && station.location?.longitude) {
-              return (
-                <Marker
-                  key={station.id || index}
-                  coordinate={{
-                    latitude: station.location.latitude,
-                    longitude: station.location.longitude,
-                  }}
-                  title={station.station_name || "Fuel Station"}
-                  description={`Petrol: ${station.petrol || "N/A"} | Diesel: ${station.diesel || "N/A"}`}
-                />
-              );
-            }
-            return null;
-          })}
-        </MapView>
-      ) : (
-        <View style={styles.loading}>
-          <Text>Loading map...</Text>
+      <MapView
+        ref={mapRef}
+        style={styles.map}
+        initialRegion={location}
+        showsUserLocation={true}
+        onPress={handleMapPress}
+      >
+        {geocodedStations.map((station, index) => {
+          const isSelected = selectedStation?.id === station.id;
+          const markerColor = getMarkerColor(station);
+          return (
+            <Marker
+              key={station.id || index}
+              coordinate={{
+                latitude: station.location.latitude,
+                longitude: station.location.longitude,
+              }}
+              pinColor={isSelected ? "orange" : markerColor}
+              onPress={() => handleMarkerPress(station)}
+            >
+              <MaterialCommunityIcons
+                name="fuel"
+                size={30}
+                color={isSelected ? "orange" : markerColor}
+                style={{ backgroundColor: '#FFF', padding: 5, borderRadius: 30 }}
+              />
+            </Marker>
+          );
+        })}
+      </MapView>
+
+      <View style={styles.legend}>
+        <Text style={styles.legendText}>
+          <Text style={{ color: "green" }}>●</Text> Cheapest
+        </Text>
+        <Text style={styles.legendText}>
+          <Text style={{ color: "blue" }}>●</Text> Closest
+        </Text>
+        <Text style={styles.legendText}>
+          <Text style={{ color: "red" }}>●</Text> Other Stations
+        </Text>
+      </View>
+
+      {selectedStation && (
+        <View style={styles.selectedStationInfo}>
+          <Text style={styles.stationTitle}>{selectedStation.station_name}</Text>
+          <Text>{`Address: ${selectedStation.address}`}</Text>
+          <Text>{`Petrol: ${selectedStation.petrol || "N/A"}`}</Text>
+          <Text>{`Diesel: ${selectedStation.diesel || "N/A"}`}</Text>
+          <TouchableOpacity
+            style={styles.viewStationButton}
+            onPress={() => router.push({
+              pathname: '/station',
+              params: {
+                name: selectedStation.station_name,
+                address: selectedStation.address,
+                petrol: selectedStation.petrol,
+                diesel: selectedStation.diesel,
+                distance: selectedStation.distance,
+                stars: selectedStation.stars,
+                lastUpdated: selectedStation.lastUpdated,
+                verifications: selectedStation.verifications,
+              }
+            })}
+          >
+            <Text style={styles.viewStationButtonText}>Go to Station Page</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.viewStationButton}
+            onPress={() => openMaps(selectedStation.station_name, selectedStation.address)}
+          >
+            <Text style={styles.viewStationButtonText}>Directions</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -92,5 +240,40 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  legend: {
+    position: "absolute",
+    bottom: 20,
+    left: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    padding: 10,
+    borderRadius: 10,
+  },
+  legendText: {
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  selectedStationInfo: {
+    position: "absolute",
+    bottom: 80,
+    left: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    padding: 15,
+    borderRadius: 10,
+    width: 200,
+  },
+  stationTitle: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  viewStationButton: {
+    marginTop: 10,
+    backgroundColor: "#007bff",
+    padding: 10,
+    borderRadius: 5,
+  },
+  viewStationButtonText: {
+    color: "#fff",
+    textAlign: "center",
   },
 });

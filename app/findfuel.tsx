@@ -5,7 +5,7 @@ import BottomNav from "../components/bottomNav";
 import Top from "@/components/top";
 import FilterButton from "@/components/filterButton";
 import FuelFinderCard from "@/components/FuelFinderCard";
-import MapPinButton from "@/components/mapPinButton";
+import PinButton from "@/components/pinButton";
 import { router } from "expo-router";
 
 export default function FindFuel() {
@@ -253,7 +253,7 @@ export default function FindFuel() {
         ))}
       </ScrollView>
       <View style={styles.mapButtonContainer}>
-        <MapPinButton onPress={handleMapPress}></MapPinButton>
+        <PinButton onPress={handleMapPress}></PinButton>
       </View>
       <View style={{ justifyContent: "flex-end" }}>
         <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />

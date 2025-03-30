@@ -2,10 +2,10 @@ import React from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-const MapPinButton = ({ onPress }) => {
+const PinButton = ({name = "location-pin", onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Icon name="location-pin" size={30} color="#fff" />
+      <Icon name={name} size={30} color="#fff" />
     </TouchableOpacity>
   );
 };
@@ -26,4 +26,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapPinButton;
+export default PinButton;
