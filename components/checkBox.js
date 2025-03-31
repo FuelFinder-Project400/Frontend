@@ -87,8 +87,13 @@ const Checkbox = ({ label = "Label", isTermsAndConditions = false, checked = fal
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text>Terms and Conditions...</Text>
-            {/* You can replace this Text with your actual terms and conditions content */}
+          <Text style={styles.modalText}>
+                1. Acceptance of Terms: By using this app, you agree to these terms and conditions.
+                {"\n\n"}2. User Responsibilities: You must provide accurate fuel prices and not manipulate data.
+                {"\n\n"}3. Data Usage: We collect data to improve the service, but we do not share personal data with third parties.
+                {"\n\n"}4. Limitation of Liability: We are not responsible for incorrect fuel prices submitted by users.
+                {"\n\n"}5. Updates to Terms: These terms may change, and continued use means you accept the updated terms.
+              </Text>
             <Button title="Close" onPress={handleCloseModal} />
           </View>
         </View>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, Image, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, Modal, TouchableWithoutFeedback, TextInput, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeContent";
 import BottomNav from "../components/bottomNav";
@@ -12,9 +12,10 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState("Settings");
   
   const theme = useTheme();
-  const initialFuelPreference = "Petrol"; // Change to "Diesel" if needed
+  const initialFuelPreference = "Petrol";
   const [selectedFuel, setSelectedFuel] = useState(initialFuelPreference);
   const [searchRadius, setSearchRadius] = useState(5);
+  const [isFavStationsModalVisible, setFavStationsModalVisible] = useState(false);
 
   const styles = StyleSheet.create({
     container: {
@@ -84,6 +85,48 @@ export default function Settings() {
       margin: 10,
       fontWeight:'bold',
     },
+    modalContainer: { 
+      flex: 1, 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      backgroundColor: 'rgba(0,0,0,0.5)'
+    },
+    modalContent: { 
+        backgroundColor: 'white', 
+        padding: 20, 
+        borderRadius: 10, 
+        width: '80%', 
+        alignItems: 'center' 
+    },
+    modalTitle: { 
+        fontSize: 18, 
+        fontWeight: 'bold', 
+        marginBottom: 10 
+    },
+    modalButton: { 
+        padding: 10, 
+        marginVertical: 5, 
+        backgroundColor: '#f0f0f0', 
+        width: '100%', 
+        alignItems: 'center', 
+        borderRadius: 5 
+    },
+    modalButtonText: { 
+        fontSize: 16 
+    },
+    modalCancel: { 
+        margin: 10,
+        paddingHorizontal: 40,
+        paddingVertical: 20,
+        backgroundColor: "#000",
+        borderRadius: 30,
+        alignItems: "center",
+    },
+    modalCancelText: { 
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "bold",
+    },
   });
 
   return (
@@ -133,12 +176,26 @@ export default function Settings() {
             <Text style={styles.text}>{searchRadius} km</Text>
           </View>
           <View style={styles.settingOptionContainer}>
-            <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center'}}>
+            <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center'}} onPress={() => setFavStationsModalVisible(true)}>
               <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Favourite Stations</Heading>
               <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
             </TouchableOpacity>
           </View>
         </View>
+        <Modal visible={isFavStationsModalVisible} transparent animationType="fade">
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+              <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Favourite Stations</Text>
+                      <View>
+                          <TouchableOpacity style={styles.modalCancel} onPress={() => setFavStationsModalVisible(false)}>
+                              <Text style={styles.modalCancelText}>Close</Text>
+                          </TouchableOpacity>
+                      </View>
+                  </View>
+              </View>
+          </TouchableWithoutFeedback>
+      </Modal>
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
             <BottomNav activeTab={activeTab} setActiveTab={setActiveTab}/>
         </View>
