@@ -1,31 +1,144 @@
 import React, { useState } from "react";
-import { Text, Image, StyleSheet, View, ScrollView } from "react-native";
+import { Text, Image, StyleSheet, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { Polygon } from "react-native-svg";
 import { useTheme } from "../theme/ThemeContent";
-import Button from "@/components/button";
 import BottomNav from "../components/bottomNav";
-import NotificationCard from '../components/notification';
 import Heading from "@/components/headings";
 import Top from "@/components/top";
+import Slider from '@react-native-community/slider';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default function Settings() {
   
   const [activeTab, setActiveTab] = useState("Settings");
   
   const theme = useTheme();
+  const initialFuelPreference = "Petrol"; // Change to "Diesel" if needed
+  const [selectedFuel, setSelectedFuel] = useState(initialFuelPreference);
+  const [searchRadius, setSearchRadius] = useState(5);
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.background,
+      width: '100%',
+      justifyContent: 'center',
     },
-    
+    main: {
+      flexDirection: 'column',
+      width: '100%',
+      alignItems: 'center',
+    },
+    settingOptionContainer : {
+      backgroundColor: '#FFF',
+      margin: 10,
+      width: '90%',
+      padding: 10,
+      borderRadius: 10,
+      elevation: 4,
+      // Shadow for iOS
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+    },
+    settingOptionHeading: {
+      color: '#000',
+      fontWeight: 'bold',
+      margin: 5,
+    },
+    segmentedControlContainer: {
+      flexDirection: "row",
+      borderRadius: 8,
+      overflow: "hidden",
+      backgroundColor: "#ddd",
+      marginVertical: 20,
+      marginHorizontal: 10,
+      height: 50,
+    },
+    segment: {
+      flex: 1,
+      paddingVertical: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    activeSegment: {
+      backgroundColor: "#007bff",
+      borderRadius: 10,
+      
+    },
+    inactiveSegment: {
+      backgroundColor: "#ddd",
+    },
+    activeText: {
+      color: "#fff",
+      fontWeight: "bold",
+    },
+    inactiveText: {
+      color: "#333",
+      fontWeight:'bold',
+    },
+    text: {
+      color: '#000',
+      textAlign: 'center',
+      fontSize: 18,
+      margin: 10,
+      fontWeight:'bold',
+    },
   });
 
   return (
     <SafeAreaView style={styles.container}>
         <Top></Top>
-        <Heading level={1}>Settings Screen</Heading>
+        <View style={styles.main}>
+          <View style={styles.settingOptionContainer}>
+            <Heading level={5} style={styles.settingOptionHeading}>Fuel Preference</Heading>
+            <View style={styles.segmentedControlContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.segment,
+                  selectedFuel === "Petrol" ? styles.activeSegment : styles.inactiveSegment,
+                ]}
+                onPress={() => setSelectedFuel("Petrol")}
+              >
+                <Text style={selectedFuel === "Petrol" ? styles.activeText : styles.inactiveText}>
+                  Petrol
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.segment,
+                  selectedFuel === "Diesel" ? styles.activeSegment : styles.inactiveSegment,
+                ]}
+                onPress={() => setSelectedFuel("Diesel")}
+              >
+                <Text style={selectedFuel === "Diesel" ? styles.activeText : styles.inactiveText}>
+                  Diesel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.settingOptionContainer}>
+            <Heading level={5} style={styles.settingOptionHeading}>Search Radius</Heading>
+            <Slider
+                style={{ width: 300, height: 40, alignSelf:'center', marginTop: 10, }}
+                minimumValue={1}
+                maximumValue={100}
+                minimumTrackTintColor="#2b93cf"
+                maximumTrackTintColor="#c7c5c5"
+                step={1}
+                value={searchRadius}
+                onValueChange={(value) => setSearchRadius(value)}
+            />
+            <Text style={styles.text}>{searchRadius} km</Text>
+          </View>
+          <View style={styles.settingOptionContainer}>
+            <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center'}}>
+              <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Favourite Stations</Heading>
+              <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
+            </TouchableOpacity>
+          </View>
+        </View>
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
             <BottomNav activeTab={activeTab} setActiveTab={setActiveTab}/>
         </View>

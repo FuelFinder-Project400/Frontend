@@ -230,6 +230,11 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         borderWidth: 2,
         borderColor: 'transparent', // Default border color
+        // Shadow for iOS
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     favoritedContainer: {
         borderColor: 'yellow', // Border color when favorited

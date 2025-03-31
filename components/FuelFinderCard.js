@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
 
 const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUpdated, verifications }) => {
