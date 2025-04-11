@@ -7,24 +7,48 @@ import TextInput from '../components/textInput';
 import Checkbox from '../components/checkBox';
 import ContinueButton from '../components/continueButton';
 import { useRouter } from 'expo-router';
+import Cognito from '../aws/cognito';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUpScreen = () => {
   const router = useRouter();
   const theme = useTheme();
   const [isChecked, setIsChecked] = useState(false);
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+
   const handleCheckboxChange = (newCheckedState: boolean) => {
     setIsChecked(newCheckedState);
   };
-  const handleContinueSignUp = () => {
-    console.log('Navigate to Set Fuel Type');
-    router.replace('./signup_setFuelType');
+
+  const handleContinueSignUp = async () => {
+    setConfirmPasswordError('');
+  
+    if (password !== confirmPassword) {
+      setConfirmPasswordError('Passwords do not match');
+      return;
+    }
+  
+    try {
+      const result:any = await Cognito.signUp(email, password);
+      console.log('SignUp success:', result);
+      await AsyncStorage.setItem('email', result.user.username);
+      await AsyncStorage.setItem('userID', result.userSub);
+      router.replace('./signup_verifyAccount');
+    } catch (err) {
+      console.error('SignUp error:', err);
+    }
   };
+
   const handleLoginInstead = () => {
     router.replace('./login');
-  }
+  };
+
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
         style={[styles.container, { backgroundColor: theme.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -38,16 +62,31 @@ const SignUpScreen = () => {
             />
             <Heading level={1}>Sign Up</Heading>
             <Text style={[styles.text, { color: theme.primaryText }]}>Using Email</Text>
-            <TextInput inputTitle="Email" inputType="email" />
-            <TextInput inputTitle="Password" inputType="password" />
-            <TextInput inputTitle="Confirm Password" inputType="confirmPassword" />
+
+            <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} />
+            <TextInput inputTitle="Password" inputType="password" value={password} onChangeText={setPassword} />
+            <TextInput
+              inputTitle="Confirm Password"
+              inputType="confirmPassword"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              externalError={confirmPasswordError}
+            />
+
             <Checkbox
               isTermsAndConditions={true}
               checked={isChecked}
               onChange={handleCheckboxChange}
             />
-            <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleLoginInstead}>
-              <Text style={{color: theme.primaryText, padding: 48, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Or Login</Text>
+
+            <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handleLoginInstead}>
+              <Text style={{
+                color: theme.primaryText,
+                padding: 48,
+                fontWeight: 'bold',
+                fontSize: 18,
+                textDecorationLine: 'underline'
+              }}>Or Login</Text>
             </TouchableOpacity>
           </ScrollView>
 
