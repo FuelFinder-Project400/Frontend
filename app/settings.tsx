@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Text, StyleSheet, View, TouchableOpacity, Modal, TouchableWithoutFeedback, TextInput, Keyboard } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, StyleSheet, View, TouchableOpacity, Modal, TouchableWithoutFeedback, TextInput, Keyboard, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeContent";
 import BottomNav from "../components/bottomNav";
@@ -16,9 +16,32 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState("Settings");
   
   const theme = useTheme();
-  const initialFuelPreference = "Petrol";
-  const [selectedFuel, setSelectedFuel] = useState(initialFuelPreference);
-  const [searchRadius, setSearchRadius] = useState(5);
+  const [searchRadius, setSearchRadius] = useState<number>(0);
+  const [selectedFuel, setSelectedFuel] = useState('');
+  const [xp, setXP] = useState<number>(0);
+  const [email, setEmail] = useState('');
+  useEffect(() => {
+    const getSearchRadius = async () => {
+      const searchRadius = await AsyncStorage.getItem('searchRadius');
+      setSearchRadius(searchRadius ? +searchRadius : 0);  // Default to 0 if not found
+    };
+    const getFuelType = async () => {
+      const fuelType: any = await AsyncStorage.getItem('fuelType');
+      setSelectedFuel(fuelType);
+    }
+    const getXP = async () => {
+      const xp: any = await AsyncStorage.getItem('xp');
+      setXP(xp ? +xp : 0);
+    }
+    const getEmail = async () => {
+      const email: any = await AsyncStorage.getItem('email');
+      setEmail(email);
+    }
+    getSearchRadius();
+    getFuelType();
+    getXP();
+    getEmail();
+  }, []);
   const [isFavStationsModalVisible, setFavStationsModalVisible] = useState(false);
 
   const styles = StyleSheet.create({
@@ -131,6 +154,12 @@ export default function Settings() {
         fontSize: 14,
         fontWeight: "bold",
     },
+    scrollContainer: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingBottom: 100,
+    },
   });
   const handleSignOut = () => {
     AsyncStorage.clear();
@@ -140,7 +169,21 @@ export default function Settings() {
   return (
     <SafeAreaView style={styles.container}>
         <Top></Top>
-        <View style={styles.main}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.main}>
+          <View style={styles.settingOptionContainer}>
+            <Heading level={5} style={styles.settingOptionHeading}>Account Details</Heading>
+            <View style={{flexDirection:'row'}}>
+              <View style={{flexDirection: 'column',alignItems:'flex-end'}}>
+                <Text style={{fontWeight: 'bold', margin: 5}}>Email:</Text>
+                <Text style={{fontWeight: 'bold', margin: 5}}>XP:</Text>
+              </View>
+              <View style={{flexDirection: 'column'}}>
+                <Text style={{margin: 5}}>{email}</Text>
+                <Text style={{margin: 5}}>{xp}</Text>
+              </View>
+            </View>
+          </View>
           <View style={styles.settingOptionContainer}>
             <Heading level={5} style={styles.settingOptionHeading}>Fuel Preference</Heading>
             <View style={styles.segmentedControlContainer}>
@@ -190,29 +233,30 @@ export default function Settings() {
             </TouchableOpacity>
           </View>
           <View style={styles.settingOptionContainer}>
-            <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center', justifyContent:'center'}} onPress={handleSignOut}>
+            <TouchableOpacity style={{ flexDirection:'row', alignContent: 'center', justifyContent:'center'}} onPress={handleSignOut}>
               <Heading level={4} style={{color:'#e61c36', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Sign Out</Heading>
               <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#e61c36" />
             </TouchableOpacity>
           </View>
         </View>
-        <Modal visible={isFavStationsModalVisible} transparent animationType="fade">
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-              <View style={styles.modalContainer}>
-                  <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>Favourite Stations</Text>
-                      <View>
-                          <TouchableOpacity style={styles.modalCancel} onPress={() => setFavStationsModalVisible(false)}>
-                              <Text style={styles.modalCancelText}>Close</Text>
-                          </TouchableOpacity>
-                      </View>
-                  </View>
-              </View>
-          </TouchableWithoutFeedback>
+      </ScrollView>
+      <Modal visible={isFavStationsModalVisible} transparent animationType="fade">
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>Favourite Stations</Text>
+                    <View>
+                        <TouchableOpacity style={styles.modalCancel} onPress={() => setFavStationsModalVisible(false)}>
+                            <Text style={styles.modalCancelText}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </TouchableWithoutFeedback>
       </Modal>
-        <View style={{flex: 1, justifyContent: 'flex-end'}}>
-            <BottomNav activeTab={activeTab} setActiveTab={setActiveTab}/>
-        </View>
+      <View style={{flex: 1, justifyContent: 'flex-end'}}>
+          <BottomNav activeTab={activeTab} setActiveTab={setActiveTab}/>
+      </View>
     </SafeAreaView>
   );
 }

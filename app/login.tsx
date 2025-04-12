@@ -8,16 +8,19 @@ import ContinueButton from '../components/continueButton';
 import { router } from 'expo-router';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GetUserToStorage } from '@/aws/api';
 
 const SignUpScreen = () => {
   const theme = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const handleLogin = async () => {
+    Keyboard.dismiss();
     const login:any = await Cognito.signIn(email, password);
     AsyncStorage.setItem('email', email);
     AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
     AsyncStorage.setItem('idToken', login.idToken);
+    await GetUserToStorage(login.session.accessToken.payload.username);
     console.log(login.idToken);
     router.replace('./findfuel');
   }
@@ -64,7 +67,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 100, // Add padding to the bottom to ensure button is visible
+    paddingBottom: 100,
   },
   logo: {
     width: 250,

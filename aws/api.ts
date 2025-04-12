@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Define the base URL for your API (adjust it accordingly)
 const API_URL = process.env.EXPO_PUBLIC_API_URL; // Replace with your actual URL
 
-// Define the function to post a new user
+// Post a new user
 export const postUserFromStorage = async () => {
     try {
       // Fetch values from AsyncStorage
@@ -49,5 +49,36 @@ export const postUserFromStorage = async () => {
     } catch (error) {
       console.error('Error posting user data:', error);
       throw new Error('Failed to post user data');
+    }
+  };
+
+  // Get User Data and Store it Locally
+  export const GetUserToStorage = async (userId: string) => {
+    try {
+      // Get the idToken from AsyncStorage for Authorization header
+      const idToken = await AsyncStorage.getItem('idToken');
+      if (!idToken) {
+        console.error('No idToken found in AsyncStorage');
+        throw new Error('No idToken found');
+      }
+  
+      // Set the Authorization header
+      const headers = {
+        'Authorization': `Bearer ${idToken}`,
+      };
+  
+      // Make the GET request to the API
+      const response = await axios.get(`${API_URL}/user/${userId}`, {
+        headers,
+      });
+  
+      console.log('\n\n\nUser info:', response.data);
+  
+      // Store the fetched user data in AsyncStorage
+      await AsyncStorage.setItem('xp', response.data.xp);
+      await AsyncStorage.setItem('fuelType', response.data.fuelType);
+      await AsyncStorage.setItem('searchRadius', response.data.searchRadius);
+    } catch (error) {
+      console.error('Error fetching user info:', error);
     }
   };
