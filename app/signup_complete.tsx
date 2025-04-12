@@ -4,6 +4,10 @@ import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
 import ContinueButton from '@/components/continueButton';
+import {postUserFromStorage} from '../aws/api';
+import Cognito from '../aws/cognito';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const SignUpScreenSetFuelType = () => {
   const router = useRouter();
 
@@ -41,9 +45,13 @@ const SignUpScreenSetFuelType = () => {
       },
   });
 
-  const handleSignUpComplete = () => {
+  const handleSignUpComplete = async () => {
     console.log("Navigating to Home Screen");
-    router.replace('./findfuel'); //To be changed to onboarding screens.
+    const requst = await postUserFromStorage();
+    if(requst){
+      router.replace('./findfuel'); //To be changed to onboarding screens.
+    }
+    
   };
 
   return (

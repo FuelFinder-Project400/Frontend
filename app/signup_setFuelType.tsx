@@ -3,6 +3,7 @@ import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
 import Button from '../components/button';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUpScreenSetFuelType = () => {
   const router = useRouter();
@@ -38,6 +39,7 @@ const SignUpScreenSetFuelType = () => {
 
   const handleSetFuelType = (fuelType: string) => {
     console.log({ fuelType });
+    AsyncStorage.setItem('fuelType', fuelType);
     router.replace('./signup_setSearchRadius');
   };
 

@@ -5,6 +5,7 @@ import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
 import Slider from '@react-native-community/slider';
 import ContinueButton from '@/components/continueButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const SignUpScreenSetFuelType = () => {
   const router = useRouter();
   const theme = useTheme();
@@ -48,6 +49,7 @@ const SignUpScreenSetFuelType = () => {
 
   const handleSetSearchRadius = () => {
     console.log({ searchRadius });
+    AsyncStorage.setItem('searchRadius', `${searchRadius}`);
     router.replace('./signup_complete');
   };
 

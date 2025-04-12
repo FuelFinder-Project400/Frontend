@@ -3,6 +3,7 @@ import {
     CognitoUser,
     AuthenticationDetails,
   } from 'amazon-cognito-identity-js';
+import { setEngine } from 'crypto';
   
   const poolData = {
     UserPoolId: `${process.env.EXPO_PUBLIC_USER_POOL_ID}`,
@@ -21,12 +22,12 @@ import {
       });
     }
   
-    signIn(email:string, password:string) {
+    signIn(email:any, password:any) {
       const authDetails = new AuthenticationDetails({
         Username: email,
         Password: password,
       });
-  
+      
       const user = new CognitoUser({
         Username: email,
         Pool: userPool,
@@ -78,6 +79,7 @@ import {
     signOut() {
       const user = userPool.getCurrentUser();
       if (user) user.signOut();
+      console.log('User Signedout');
     }
   }
   

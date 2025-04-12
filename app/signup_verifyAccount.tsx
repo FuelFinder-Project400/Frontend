@@ -57,6 +57,13 @@ const SignUpScreenSetFuelType = () => {
     try {
       const verified = await Cognito.verifyAccount(confirmationCode, email);
       if (verified) {
+        const password = await AsyncStorage.getItem('password');
+        const login:any = await Cognito.signIn(email, password);
+        console.log(login);
+        AsyncStorage.setItem('idToken', login.idToken);
+        AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
+        AsyncStorage.removeItem('password');
+        console.log(login.idToken);
         router.replace('/signup_setFuelType');
       }
     } catch (error) {
@@ -79,7 +86,7 @@ const SignUpScreenSetFuelType = () => {
         <Text style={styles.text}>Please Check Your Email For A Verification Code.</Text>
         <TextInput
           placeholder="Enter confirmation code"
-          placeholderTextColor={'#000'}
+          placeholderTextColor={'#717780'}
           value={confirmationCode}
           onChangeText={setConfirmationCode}
           keyboardType="numeric"

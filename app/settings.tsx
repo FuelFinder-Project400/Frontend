@@ -7,6 +7,10 @@ import Heading from "@/components/headings";
 import Top from "@/components/top";
 import Slider from '@react-native-community/slider';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Cognito from '../aws/cognito';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from "expo-router";
+
 export default function Settings() {
   
   const [activeTab, setActiveTab] = useState("Settings");
@@ -128,7 +132,11 @@ export default function Settings() {
         fontWeight: "bold",
     },
   });
-
+  const handleSignOut = () => {
+    AsyncStorage.clear();
+    Cognito.signOut();
+    router.replace('./login');
+  };
   return (
     <SafeAreaView style={styles.container}>
         <Top></Top>
@@ -179,6 +187,12 @@ export default function Settings() {
             <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center'}} onPress={() => setFavStationsModalVisible(true)}>
               <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Favourite Stations</Heading>
               <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.settingOptionContainer}>
+            <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center', justifyContent:'center'}} onPress={handleSignOut}>
+              <Heading level={4} style={{color:'#e61c36', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Sign Out</Heading>
+              <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#e61c36" />
             </TouchableOpacity>
           </View>
         </View>

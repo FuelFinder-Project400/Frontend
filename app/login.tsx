@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context'; // Import SafeAreaView
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
 import TextInput from '../components/textInput';
 import ContinueButton from '../components/continueButton';
 import { router } from 'expo-router';
+import Cognito from '../aws/cognito';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUpScreen = () => {
   const theme = useTheme();
-
-const handleLogin = () => {
-  router.replace('./findfuel')
-}
-const handleSignUpInstead = () => {
-  router.replace('./signup')
-}
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const handleLogin = async () => {
+    const login:any = await Cognito.signIn(email, password);
+    AsyncStorage.setItem('email', email);
+    AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
+    AsyncStorage.setItem('idToken', login.idToken);
+    console.log(login.idToken);
+    router.replace('./findfuel');
+  }
+  const handleSignUpInstead = () => {
+    router.replace('./signup')
+  }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView
@@ -30,8 +38,8 @@ const handleSignUpInstead = () => {
               resizeMode="contain"
             />
             <Heading level={1}>Login</Heading>
-            <TextInput inputTitle="Email" inputType="email" />
-            <TextInput inputTitle="Password" inputType="loginPassword" /> 
+            <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} />
+            <TextInput inputTitle="Password" inputType="login-password" value={password} onChangeText={setPassword} /> 
             <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleSignUpInstead}>
               <Text style={{color: theme.primaryText, padding: 48, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Or Sign Up</Text>
             </TouchableOpacity>

@@ -37,6 +37,7 @@ const SignUpScreen = () => {
       console.log('SignUp success:', result);
       await AsyncStorage.setItem('email', result.user.username);
       await AsyncStorage.setItem('userID', result.userSub);
+      await AsyncStorage.setItem('password', password);
       router.replace('./signup_verifyAccount');
     } catch (err) {
       console.error('SignUp error:', err);

@@ -61,7 +61,7 @@ const TextInput = ({ inputTitle = "blank", inputType = "default", value, onChang
   };
 
   const handleChange = (text) => {
-    onChangeText(text); // 👈 pass value to parent
+    onChangeText(text);
     if (inputType === 'email') {
       setError(!isValidEmail(text) ? 'Please enter a valid email address.' : '');
     } else if (inputType === 'password' && inputTitle !== 'Confirm Password') {
@@ -82,7 +82,7 @@ const TextInput = ({ inputTitle = "blank", inputType = "default", value, onChang
         placeholder={inputTitle}
         placeholderTextColor={theme.primaryText}
         keyboardType={getKeyboardType()}
-        secureTextEntry={inputType === 'password' || inputType === 'confirmPassword'}
+        secureTextEntry={inputType === 'password' || inputType === 'confirmPassword' || inputType === 'login-password'}
       />
       {(error || externalError) && (
         <Text style={styles.errorText}>{error || externalError}</Text>
