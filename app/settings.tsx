@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, StyleSheet, View, TouchableOpacity, Modal, TouchableWithoutFeedback, TextInput, Keyboard, ScrollView } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, Modal, TouchableWithoutFeedback, TextInput, Keyboard, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeContent";
 import BottomNav from "../components/bottomNav";
@@ -10,6 +10,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from "expo-router";
+import {UpdateUserFromStorage} from '@/aws/api';
+
 
 export default function Settings() {
   
@@ -23,7 +25,7 @@ export default function Settings() {
   useEffect(() => {
     const getSearchRadius = async () => {
       const searchRadius = await AsyncStorage.getItem('searchRadius');
-      setSearchRadius(searchRadius ? +searchRadius : 0);  // Default to 0 if not found
+      setSearchRadius(searchRadius ? +searchRadius : 0);
     };
     const getFuelType = async () => {
       const fuelType: any = await AsyncStorage.getItem('fuelType');
@@ -166,6 +168,21 @@ export default function Settings() {
     Cognito.signOut();
     router.replace('./login');
   };
+  const handleFuelTypeChange = (fuelType:string) => {
+    setSelectedFuel(fuelType);
+    AsyncStorage.setItem('fuelType', fuelType);
+    const update:any = UpdateUserFromStorage();
+    if(update){
+      Alert.alert('Fuel Preference Has Been Updated To ', fuelType);
+    }
+  }
+  const handleSearchRadiusChange = (searchRadius:number) =>{
+    AsyncStorage.setItem('searchRadius', `${searchRadius}`);
+    const update:any = UpdateUserFromStorage();
+    if(update){
+      Alert.alert('Search Radius Has Been Updated To ', `${searchRadius}km`);
+    }
+  }
   return (
     <SafeAreaView style={styles.container}>
         <Top></Top>
@@ -192,7 +209,7 @@ export default function Settings() {
                   styles.segment,
                   selectedFuel === "Petrol" ? styles.activeSegment : styles.inactiveSegment,
                 ]}
-                onPress={() => setSelectedFuel("Petrol")}
+                onPress={() => handleFuelTypeChange("Petrol")}
               >
                 <Text style={selectedFuel === "Petrol" ? styles.activeText : styles.inactiveText}>
                   Petrol
@@ -204,7 +221,7 @@ export default function Settings() {
                   styles.segment,
                   selectedFuel === "Diesel" ? styles.activeSegment : styles.inactiveSegment,
                 ]}
-                onPress={() => setSelectedFuel("Diesel")}
+                onPress={() => handleFuelTypeChange("Diesel")}
               >
                 <Text style={selectedFuel === "Diesel" ? styles.activeText : styles.inactiveText}>
                   Diesel
@@ -222,6 +239,7 @@ export default function Settings() {
                 maximumTrackTintColor="#c7c5c5"
                 step={1}
                 value={searchRadius}
+                onSlidingComplete={(value) => handleSearchRadiusChange(value)}
                 onValueChange={(value) => setSearchRadius(value)}
             />
             <Text style={styles.text}>{searchRadius} km</Text>

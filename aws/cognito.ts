@@ -3,7 +3,7 @@ import {
     CognitoUser,
     AuthenticationDetails,
   } from 'amazon-cognito-identity-js';
-  
+import AsyncStorage from '@react-native-async-storage/async-storage';
   const poolData = {
     UserPoolId: `${process.env.EXPO_PUBLIC_USER_POOL_ID}`,
     ClientId: `${process.env.EXPO_PUBLIC_CLIENT_ID}`,
@@ -71,6 +71,49 @@ import {
       });
     }
     
+    tryAutoRefresh = async () => {
+      try {
+        const email = await AsyncStorage.getItem('email');
+        const refreshTokenValue = await AsyncStorage.getItem('refreshToken');
+        if (!email || !refreshTokenValue) {
+          return null;
+        }
+    
+        const cognitoUser = new CognitoUser({
+          Username: email,
+          Pool: userPool,
+        });
+    
+        const refreshToken = {
+          getToken: () => refreshTokenValue,
+        };
+    
+        // Refresh the session using the refresh token
+        return new Promise((resolve, reject) => {
+          cognitoUser.refreshSession(refreshToken, async (err, session) => {
+            if (err) {
+              console.log('Error refreshing session:', err);
+              return reject(err);
+            }
+    
+            const idToken = session.getIdToken().getJwtToken();
+            const newRefreshToken = session.getRefreshToken().getToken();
+    
+            await AsyncStorage.setItem('idToken', idToken);
+            await AsyncStorage.setItem('refreshToken', newRefreshToken);
+    
+            resolve({
+              idToken,
+              refreshToken: newRefreshToken,
+            });
+          });
+        });
+      } catch (err) {
+        console.error('Failed to refresh session:', err);
+        return false;
+      }
+    };
+
     getCurrentUser() {
       return userPool.getCurrentUser();
     }

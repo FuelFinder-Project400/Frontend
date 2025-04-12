@@ -82,3 +82,53 @@ export const postUserFromStorage = async () => {
       console.error('Error fetching user info:', error);
     }
   };
+
+  // Update User From Storage
+export const UpdateUserFromStorage = async () => {
+  try {
+    // Fetch values from AsyncStorage
+    const user_id = await AsyncStorage.getItem('userID');
+    const fuelType = await AsyncStorage.getItem('fuelType');
+    const searchRadius = await AsyncStorage.getItem('searchRadius');
+    const xp = await AsyncStorage.getItem('xp');
+    console.log(user_id, fuelType,searchRadius, xp);
+    // Check if all values are available
+    if (!user_id || !fuelType || !searchRadius || !xp) {
+      console.error('Missing required data from AsyncStorage');
+      throw new Error('Missing required data from AsyncStorage');
+    }
+
+    // Create the JSON object for the API request
+    const userData = {
+      fuelType,
+      searchRadius,
+      xp
+    };
+
+    // Get the idToken from AsyncStorage for Authorization header
+    const idToken = await AsyncStorage.getItem('idToken');
+    if (!idToken) {
+      console.error('No idToken found in AsyncStorage');
+      throw new Error('No idToken found');
+    }
+
+    // Set the Authorization header
+    const headers = {
+      'Authorization': `Bearer ${idToken}`,
+    };
+
+    // Send the PUT request to the API
+    const response = await axios.put(`${API_URL}/user/${user_id}`, userData, { headers });
+
+    if (response.status === 200) {
+      console.log('User Updated successfully:', response.data);
+      return true; // Return data or handle it as needed
+    } else {
+      console.error('Error updating user:', response.data.message);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error updating user data:', error);
+    throw new Error('Failed to update user data');
+  }
+};

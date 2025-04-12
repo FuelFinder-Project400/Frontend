@@ -20,6 +20,7 @@ const SignUpScreen = () => {
     AsyncStorage.setItem('email', email);
     AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
     AsyncStorage.setItem('idToken', login.idToken);
+    AsyncStorage.setItem('refreshToken', login.refreshToken);
     await GetUserToStorage(login.session.accessToken.payload.username);
     console.log(login.idToken);
     router.replace('./findfuel');
