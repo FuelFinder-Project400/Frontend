@@ -17,10 +17,10 @@ const SignUpScreen = () => {
   const handleLogin = async () => {
     Keyboard.dismiss();
     const login:any = await Cognito.signIn(email, password);
-    AsyncStorage.setItem('email', email);
-    AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
-    AsyncStorage.setItem('idToken', login.idToken);
-    AsyncStorage.setItem('refreshToken', login.refreshToken);
+    await AsyncStorage.setItem('email', email);
+    await AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
+    await AsyncStorage.setItem('idToken', login.idToken);
+    await AsyncStorage.setItem('refreshToken', login.refreshToken);
     await GetUserToStorage(login.session.accessToken.payload.username);
     console.log(login.idToken);
     router.replace('./findfuel');

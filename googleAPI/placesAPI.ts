@@ -72,7 +72,6 @@ export function useFuelStations() {
                 const placeDetailsData = await placeDetailsResponse.json();
                 const placeDetails = placeDetailsData.result;
 
-                // Get full address from the place details response
                 const fullAddress = placeDetails.formatted_address || station.vicinity;
                 const eircode = extractEircode(fullAddress);
                 const address = eircode || fullAddress;
@@ -81,12 +80,10 @@ export function useFuelStations() {
                 const locationRes = await fetch(locationURL);
                 const locationData = await locationRes.json();
                 const s_location = locationData.results[0].geometry.location;
-
+                
                 //Try and pull other information from API
-                const info = await GetStationPrice(station.id);
-                if(info != null){
-                  console.log(info);
-                }
+                const info = await GetStationPrice(station.place_id);
+
                 return {
                   id: station.place_id,
                   station_name: station.name,
@@ -97,6 +94,7 @@ export function useFuelStations() {
                   distance: calculateDistance(location.coords.latitude, location.coords.longitude, s_location.lat, s_location.lng),
                   lastUpdated: info?.data.reported_at || "",
                   verifications: info?.data.verifications || 0,
+                  user_id: info?.data.user_id,
                   location: {
                     lat: s_location.lat,
                     lng: s_location.lng
@@ -179,7 +177,6 @@ export function useFuelStations() {
             
             //Try and pull other information from API
             const info = await GetStationPrice(station.place_id);
-
             return {
               id: station.place_id,
               station_name: station.name,
