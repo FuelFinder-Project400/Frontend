@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {updateFavouriteStationsToDB} from '@/aws/api';
 
 const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastUpdated, verifications, user_id }) => {
-    const [isFavorited, setIsFavorited] = useState(false);
+
     const [isModalVisible, setModalVisible] = useState(false);
     const [isAddPriceModalVisible, setAddPriceModalVisible] = useState(false);
     const [petrolPrice, setPetrolPrice] = useState(petrol);
@@ -16,45 +16,53 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
     const [pError, setPError] = useState("");
     const [dError, setDError] = useState("");
     const [favouriteStations, setFavouriteStations] = useState([]);
-    
+    const [isFavorited, setIsFavorited] = useState(false);
+
     useEffect(() => {
-        const getFavouriteStations = async () => {
-          try {
-            const storedFavourites = await AsyncStorage.getItem('favourite_stations');
-            const parsedFavourites = storedFavourites ? JSON.parse(storedFavourites) : [];
-            setFavouriteStations(parsedFavourites);
-            setIsFavorited(parsedFavourites.includes(id));
-          } catch (error) {
-            console.error('Error loading favourites:', error);
-          }
-        };
-    
-        getFavouriteStations();
-      }, [id]);
-    
-      const toggleFavorite = async () => {
+    const getFavouriteStations = async () => {
         try {
-          let updatedFavourites = [...favouriteStations];
-    
-          if (updatedFavourites.includes(id)) {
-            // Remove from favourites
-            updatedFavourites = updatedFavourites.filter(id => id !== id);
-          } else {
-            // Add to favourites
-            updatedFavourites.push(id);
-          }
-    
-          // Save updated array to AsyncStorage
-          await AsyncStorage.setItem('favourite_stations', JSON.stringify(updatedFavourites));
-          
-          // Update state
-          setFavouriteStations(updatedFavourites);
-          setIsFavorited(!isFavorited);
-          console.log("Done");
+        const storedFavourites = await AsyncStorage.getItem('favourite_stations');
+        const parsedFavourites = storedFavourites ? JSON.parse(storedFavourites) : [];
+        setFavouriteStations(parsedFavourites);
+        setIsFavorited(parsedFavourites.some(station => station.station_id === id));
         } catch (error) {
-          console.error('Error updating favourites:', error);
+        console.error('Error loading favourites:', error);
         }
-      };
+    };
+
+    getFavouriteStations();
+    }, [id]);
+
+    const toggleFavorite = async () => {
+    try {
+        let updatedFavourites = [...favouriteStations];
+
+        const fav_station = { station_id: id, station_name: name };
+
+        const isFavorited = updatedFavourites.some(
+        (station) => station.station_id === id
+        );
+
+        if (isFavorited) {
+        updatedFavourites = updatedFavourites.filter(
+            (station) => station.station_id !== id
+        );
+        } else {
+        updatedFavourites.push(fav_station);
+        }
+
+        await AsyncStorage.setItem('favourite_stations', JSON.stringify(updatedFavourites));
+
+        setFavouriteStations(updatedFavourites);
+        setIsFavorited(!isFavorited);
+
+        updateFavouriteStationsToDB();
+        
+        console.log("Done");
+    } catch (error) {
+        console.error('Error updating favourites:', error);
+    }
+    };
 
     function getLastUpdated(lastUpdated) {
         const now = new Date();
@@ -125,15 +133,10 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
         }
         setDieselPrice(text);
       };
-      const handleBack = () => {
-        const update = updateFavouriteStationsToDB();
-        if(update){
-            router.back(); 
-        }
-      };
+
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
-            <TouchableOpacity onPress={handleBack}>
+            <TouchableOpacity onPress={() => router.back()}>
                 <MaterialCommunityIcons name="arrow-left-circle" size={40} color={"#000"} style={{marginVertical: 10, marginTop: -5, marginLeft: -8}} />
             </TouchableOpacity>
             <View style={styles.container2}>

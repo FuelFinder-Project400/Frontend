@@ -80,6 +80,7 @@ export const postUserFromStorage = async () => {
       await AsyncStorage.setItem('fuelType', response.data.fuelType);
       await AsyncStorage.setItem('searchRadius', response.data.searchRadius);
       await AsyncStorage.setItem('profilePic', response.data.profilePic);
+      await AsyncStorage.setItem('favourite_stations', response.data.favourite_stations);
     } catch (error) {
       console.error('Error fetching user info:', error);
     }
