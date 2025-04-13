@@ -214,7 +214,7 @@ export default function Settings() {
       const base64 = result.assets[0].base64;
       const upload:any = await UploadProfilePic(base64);
       if(upload){
-        AsyncStorage.setItem('ProfilePic', upload.imageUrl);
+        AsyncStorage.setItem('profilePic', upload.imageUrl);
         router.replace('./settings');
       }
     }

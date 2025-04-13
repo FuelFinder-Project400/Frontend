@@ -32,6 +32,7 @@ export default function StationPage() {
               stars={station.stars}
               lastUpdated={station.lastUpdated}
               verifications={station.verifications}
+              user_id={station.user_id}
             />
         </View>
         <View style={{flex: 1, justifyContent: 'flex-end'}}>

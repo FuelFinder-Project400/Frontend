@@ -71,6 +71,7 @@ export default function FindFuel() {
         stars: station.stars,
         lastUpdated: station.lastUpdated,
         verifications: station.verifications,
+        user_id: station.user_id
       },
     });
 

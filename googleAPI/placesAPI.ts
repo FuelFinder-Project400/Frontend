@@ -179,9 +179,7 @@ export function useFuelStations() {
             
             //Try and pull other information from API
             const info = await GetStationPrice(station.place_id);
-            if(info != null){
-              console.log(info);
-            }
+
             return {
               id: station.place_id,
               station_name: station.name,
@@ -192,6 +190,7 @@ export function useFuelStations() {
               distance: calculateDistance(location.coords.latitude, location.coords.longitude, s_location.lat, s_location.lng),
               lastUpdated: info?.data.reported_at || "",
               verifications: info?.data.verifications || 0,
+              user_id: info?.data.user_id,
               location: {
                 lat: s_location.lat,
                 lng: s_location.lng

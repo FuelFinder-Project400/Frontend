@@ -3,15 +3,15 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Mod
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
 import { router } from 'expo-router';
-import { postPrice } from '@/aws/api';
+import { postPrice, postReport } from '@/aws/api';
 
 
-const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastUpdated, verifications }) => {
+const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastUpdated, verifications, user_id }) => {
     const [isFavorited, setIsFavorited] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isAddPriceModalVisible, setAddPriceModalVisible] = useState(false);
-    const [petrolPrice, setPetrolPrice] = useState("");
-    const [dieselPrice, setDieselPrice] = useState("");
+    const [petrolPrice, setPetrolPrice] = useState(petrol);
+    const [dieselPrice, setDieselPrice] = useState(diesel);
     const [pError, setPError] = useState("");
     const [dError, setDError] = useState("");
 
@@ -53,8 +53,13 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
     };
     
     const handleReport = (reason) => {
-        Alert.alert("Report Submitted", `You reported: ${reason}`);
-        setModalVisible(false);
+        const addReport = postReport(petrolPrice, dieselPrice, id, user_id, reason);
+        if(addReport){
+            //handle XP here ....
+            //handle notification ....
+            Alert.alert("Report Submitted", `You reported: ${reason}`);
+            setModalVisible(false);
+        }
     };
     const handlePriceChange = () => {
         const addPrice = postPrice(petrolPrice, dieselPrice, id);
@@ -165,10 +170,10 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Report an Issue</Text>
-                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Wrong Price")}>
+                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Price to high")}>
                             <Text style={styles.modalButtonText}>Price (To High)</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Station Closed")}>
+                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Price to low")}>
                             <Text style={styles.modalButtonText}>Price (To Low)</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.modalCancel} onPress={() => setModalVisible(false)}>

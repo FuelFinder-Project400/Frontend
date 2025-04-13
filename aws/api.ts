@@ -249,3 +249,54 @@ export const GetStationPrice = async (station_id: string) => {
   } catch (error) {
   }
 };
+
+// Post a new report
+export const postReport = async (petrolPrice:any, dieselPrice:any, station_id:string, user_id: string, reportReason: string
+) => {
+  try {
+    console.log(user_id, petrolPrice, dieselPrice, reportReason, station_id);
+    // Fetch values from AsyncStorage
+    const reported_by = await AsyncStorage.getItem('userID');
+    
+    if (!user_id || !petrolPrice || !dieselPrice || !station_id || !reportReason) {
+      console.error('Missing required data');
+      throw new Error('Missing required data');
+    }
+    console.log('I made it here');
+    // Create the JSON object for the API request
+    const reportData = {
+      user_id,
+      petrolPrice,
+      dieselPrice,
+      station_id,
+      reported_by,
+      reportReason
+    };
+    console.log(reportData);
+    // Get the idToken from AsyncStorage for Authorization header
+    const idToken = await AsyncStorage.getItem('idToken');
+    if (!idToken) {
+      console.error('No idToken found in AsyncStorage');
+      throw new Error('No idToken found');
+    }
+
+    // Set the Authorization header
+    const headers = {
+      'Authorization': `Bearer ${idToken}`,
+    };
+
+    // Send the POST request to the API
+    const response = await axios.post(`${API_URL}/report`, reportData, { headers });
+
+    if (response.status === 201) {
+      console.log('Report created successfully:', response.data);
+      return true; // Return data or handle it as needed
+    } else {
+      console.error('Error creating Report:', response.data.message);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error posting report data:', error);
+    throw new Error('Failed to post user data');
+  }
+};
