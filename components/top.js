@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { useTheme } from "../theme/ThemeContent";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NotificationCard from '../components/notification';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Top() {
   const theme = useTheme();
   const router = useRouter();
@@ -14,7 +15,16 @@ export default function Top() {
       { id: 2, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.20 was €161.30' },
       { id: 3, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.10 was €161.20' },
     ]);
-
+  const [profilePic, setProfilePic] = useState('../assets/images/defaultProfilePic.jpg');
+  useEffect(() => {
+      const getProfilePic = async () => {
+        const profilePic = await AsyncStorage.getItem('profilePic');
+        if(profilePic != ''){
+          setProfilePic(profilePic);
+        }
+      }
+      getProfilePic();
+    }, []);
   const handleRemoveNotification = (id) => {
     setNotifications(notifications.filter((notif) => notif.id !== id));
   };
@@ -137,7 +147,7 @@ export default function Top() {
           })}
         >
           <Image
-            source={require("../assets/images/defaultProfilePic.jpg")}
+            source={{ uri: profilePic }}
             style={styles.profilePic}
           />
         </TouchableOpacity>

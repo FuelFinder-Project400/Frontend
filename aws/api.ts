@@ -78,6 +78,7 @@ export const postUserFromStorage = async () => {
       await AsyncStorage.setItem('xp', response.data.xp);
       await AsyncStorage.setItem('fuelType', response.data.fuelType);
       await AsyncStorage.setItem('searchRadius', response.data.searchRadius);
+      await AsyncStorage.setItem('profilePic', response.data.profilePic);
     } catch (error) {
       console.error('Error fetching user info:', error);
     }
@@ -130,5 +131,44 @@ export const UpdateUserFromStorage = async () => {
   } catch (error) {
     console.error('Error updating user data:', error);
     throw new Error('Failed to update user data');
+  }
+};
+
+// Post a new user
+export const UploadProfilePic = async (image: string) => {
+  try {
+    // Fetch values from AsyncStorage
+    const user_id = await AsyncStorage.getItem('userID');
+
+    // Create the JSON object for the API request
+    const userData = {
+      image
+    };
+
+    // Get the idToken from AsyncStorage for Authorization header
+    const idToken = await AsyncStorage.getItem('idToken');
+    if (!idToken) {
+      console.error('No idToken found in AsyncStorage');
+      throw new Error('No idToken found');
+    }
+
+    // Set the Authorization header
+    const headers = {
+      'Authorization': `Bearer ${idToken}`,
+    };
+
+    // Send the POST request to the API
+    const response = await axios.post(`${API_URL}/user/${user_id}/img`, userData, { headers });
+
+    if (response.status === 200) {
+      console.log('User created successfully:', response.data);
+      return true; // Return data or handle it as needed
+    } else {
+      console.error('Error creating user:', response.data.message);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error posting user data:', error);
+    throw new Error('Failed to post user data');
   }
 };

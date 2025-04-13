@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, StyleSheet, View, TouchableOpacity, Modal, TouchableWithoutFeedback, TextInput, Keyboard, ScrollView, Alert } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, Modal, TouchableWithoutFeedback,Image, Keyboard, ScrollView, Alert, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeContent";
 import BottomNav from "../components/bottomNav";
@@ -10,8 +10,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from "expo-router";
-import {UpdateUserFromStorage} from '@/aws/api';
-
+import {UpdateUserFromStorage, UploadProfilePic} from '@/aws/api';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function Settings() {
   
@@ -22,6 +22,7 @@ export default function Settings() {
   const [selectedFuel, setSelectedFuel] = useState('');
   const [xp, setXP] = useState<number>(0);
   const [email, setEmail] = useState('');
+  const [profilePic, setProfilePic] = useState('../assets/images/defaultProfilePic.jpg');
   useEffect(() => {
     const getSearchRadius = async () => {
       const searchRadius = await AsyncStorage.getItem('searchRadius');
@@ -39,10 +40,17 @@ export default function Settings() {
       const email: any = await AsyncStorage.getItem('email');
       setEmail(email);
     }
+    const getProfilePic = async () => {
+      const profilePic:any = await AsyncStorage.getItem('profilePic');
+      if(profilePic != ''){
+        setProfilePic(profilePic);
+      }
+    }
     getSearchRadius();
     getFuelType();
     getXP();
     getEmail();
+    getProfilePic();
   }, []);
   const [isFavStationsModalVisible, setFavStationsModalVisible] = useState(false);
 
@@ -162,6 +170,11 @@ export default function Settings() {
       alignItems: 'center',
       paddingBottom: 100,
     },
+    profilePic: {
+      width: 60,
+      height: 60,
+      borderRadius: 40,
+    },
   });
   const handleSignOut = () => {
     AsyncStorage.clear();
@@ -183,6 +196,29 @@ export default function Settings() {
       Alert.alert('Search Radius Has Been Updated To ', `${searchRadius}km`);
     }
   }
+  const handleImagePick = async () => {
+    // Request permission first
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission denied', 'We need access to your photos to upload a profile picture.');
+      return;
+    }
+  
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      base64: true,
+      quality: 1,
+    });
+  
+    if (!result.canceled && result.assets && result.assets[0].base64) {
+      const base64 = result.assets[0].base64;
+      const upload:any = await UploadProfilePic(base64);
+      if(upload){
+        AsyncStorage.setItem('ProfilePic', upload.imageUrl);
+        router.replace('./settings');
+      }
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
         <Top></Top>
@@ -190,15 +226,26 @@ export default function Settings() {
           <View style={styles.main}>
           <View style={styles.settingOptionContainer}>
             <Heading level={5} style={styles.settingOptionHeading}>Account Details</Heading>
-            <View style={{flexDirection:'row'}}>
-              <View style={{flexDirection: 'column',alignItems:'flex-end'}}>
-                <Text style={{fontWeight: 'bold', margin: 5}}>Email:</Text>
-                <Text style={{fontWeight: 'bold', margin: 5}}>XP:</Text>
+            <View style={{flexDirection: 'row', margin: 5}}>
+              <View style={{flexDirection:'row'}}>
+                <View style={{flexDirection: 'column',alignItems:'flex-end'}}>
+                  <Text style={{fontWeight: 'bold', margin: 5}}>Email:</Text>
+                  <Text style={{fontWeight: 'bold', margin: 5}}>XP:</Text>
+                </View>
+                <View style={{flexDirection: 'column'}}>
+                  <Text style={{margin: 5}}>{email}</Text>
+                  <Text style={{margin: 5}}>{xp}</Text>
+                </View>
               </View>
-              <View style={{flexDirection: 'column'}}>
-                <Text style={{margin: 5}}>{email}</Text>
-                <Text style={{margin: 5}}>{xp}</Text>
-              </View>
+            </View>
+            <View style={{flexDirection:'row', marginTop: 20}}>
+            <TouchableOpacity style={{padding: 10, backgroundColor:'#007bff', width: '40%', borderRadius: 30,marginLeft: 5,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleImagePick}>
+                  <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 14}}>Change Picture</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{alignItems:'center',flexDirection:'row',padding: 10, backgroundColor:'#e61c36', width: '40%', borderRadius: 30,marginLeft: 5,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleSignOut}>
+              <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 14, marginRight: 5}}>Sign Out</Text>
+              <MaterialCommunityIcons name="arrow-right-circle" size={20} color="#FFF" />
+            </TouchableOpacity>
             </View>
           </View>
           <View style={styles.settingOptionContainer}>
@@ -248,12 +295,6 @@ export default function Settings() {
             <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center'}} onPress={() => setFavStationsModalVisible(true)}>
               <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Favourite Stations</Heading>
               <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.settingOptionContainer}>
-            <TouchableOpacity style={{ flexDirection:'row', alignContent: 'center', justifyContent:'center'}} onPress={handleSignOut}>
-              <Heading level={4} style={{color:'#e61c36', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Sign Out</Heading>
-              <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#e61c36" />
             </TouchableOpacity>
           </View>
         </View>
