@@ -43,11 +43,11 @@ const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUp
                 <View style={{flexDirection: 'row', marginVertical: 10,}}>
                     <View style={styles.priceContainer}>
                         <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
-                        <Heading level={3} style={styles.priceText}>€{petrol}</Heading>
+                        <Heading level={3} style={styles.priceText}>€{petrol || " N/A"}</Heading>
                     </View>
                     <View style={styles.priceContainer}>
                         <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
-                        <Heading level={3} style={styles.priceText}>€{diesel}</Heading>
+                        <Heading level={3} style={styles.priceText}>€{diesel || " N/A"}</Heading>
                     </View>
                 </View>
 

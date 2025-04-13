@@ -62,6 +62,7 @@ export default function FindFuel() {
     router.push({
       pathname: '/station',
       params: {
+        id: station.id,
         name: station.station_name,
         address: station.address,
         petrol: station.petrol,
@@ -74,8 +75,35 @@ export default function FindFuel() {
     });
 
 };
+const stationsWithPrices = searchedStations.filter(station => station.petrol !== "");
+const stationsWithoutPrices = searchedStations.filter(station => station.petrol == "");
  // Function to sort stations based on the active filter
- const sortedStations = (Array.isArray(searchedStations) ? searchedStations : []).sort((a, b) => {
+ const sortedStationsWithPrices = (Array.isArray(stationsWithPrices) ? stationsWithPrices : []).sort((a, b) => {
+  if (activeButton === "Closest") {
+    return parseFloat(a.distance) - parseFloat(b.distance);
+  } else if (activeButton === "Cheapest") {
+    const aPrice = userFuelPreference === "petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
+    const bPrice = userFuelPreference === "petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
+    return aPrice - bPrice;
+  } else if (activeButton === "Verified") {
+    const aPrice = userFuelPreference === "petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
+    const bPrice = userFuelPreference === "petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
+
+    const aIsVerified = a.verifications >= 5;
+    const bIsVerified = b.verifications >= 5;
+
+    if (aIsVerified && !bIsVerified) {
+      return -1; // a is verified, b is not (a comes first)
+    } else if (!aIsVerified && bIsVerified) {
+      return 1; // b is verified, a is not (b comes first)
+    } else {
+      return aPrice - bPrice;  // Sort by cheapest price
+    }
+  }
+  return 0;
+});
+// Function to sort stations based on the active filter
+const sortedStationsWithoutPrices = (Array.isArray(stationsWithoutPrices) ? stationsWithoutPrices : []).sort((a, b) => {
   if (activeButton === "Closest") {
     return parseFloat(a.distance) - parseFloat(b.distance);
   } else if (activeButton === "Cheapest") {
@@ -122,7 +150,22 @@ const onRefresh = async () => {
         ))}
       </View>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent} refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
-        {sortedStations.map((station) => (
+        {sortedStationsWithPrices.map((station) => (
+          <TouchableOpacity key={station.id} onPress={() => handleStationPress(station)}>
+              <FuelFinderCard
+                key={station.id}
+                name={station.station_name}
+                address={station.address}
+                petrol={station.petrol}
+                diesel={station.diesel}
+                distance={station.distance}
+                stars={station.stars}
+                lastUpdated={station.lastUpdated}
+                verifications={station.verifications}
+              />
+          </TouchableOpacity>
+        ))}
+        {sortedStationsWithoutPrices.map((station) => (
           <TouchableOpacity key={station.id} onPress={() => handleStationPress(station)}>
               <FuelFinderCard
                 key={station.id}

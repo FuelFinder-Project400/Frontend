@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Geocoder from 'react-native-geocoding';
+import { GetStationPrice } from "@/aws/api";
+
 // Define the type for Fuel Station
 interface FuelStation {
   id: string;
@@ -80,16 +81,22 @@ export function useFuelStations() {
                 const locationRes = await fetch(locationURL);
                 const locationData = await locationRes.json();
                 const s_location = locationData.results[0].geometry.location;
+
+                //Try and pull other information from API
+                const info = await GetStationPrice(station.id);
+                if(info != null){
+                  console.log(info);
+                }
                 return {
                   id: station.place_id,
                   station_name: station.name,
                   address: address, // Use eircode if available, else use full address
-                  petrol: "",
-                  diesel: "",
+                  petrol: info?.data.petrolPrice || "",
+                  diesel: info?.data.dieselPrice || "",
                   stars: station.rating || "",
                   distance: calculateDistance(location.coords.latitude, location.coords.longitude, s_location.lat, s_location.lng),
-                  lastUpdated: "",
-                  verifications: 0,
+                  lastUpdated: info?.data.reported_at || "",
+                  verifications: info?.data.verifications || 0,
                   location: {
                     lat: s_location.lat,
                     lng: s_location.lng
@@ -122,10 +129,9 @@ export function useFuelStations() {
     const distance = R * c; // Distance in km
     return distance.toFixed(1); // Rounded to one decimal place
   }
-  // Function to extract eircode from the address if present
-const extractEircode = (address: string) => {
-  console.log("Address before regex:", address);  // Check the address being passed
-  // Updated regex to match Eircodes (e.g. F91C3F1, F91 C3F1, or F91 K122)
+
+  const extractEircode = (address: string) => {
+
   const eircodeRegex = /\b[A-Za-z][0-9]{2}\s[A-Za-z0-9]{4}\b/;
 
   // Search for the regex in the address
@@ -133,15 +139,13 @@ const extractEircode = (address: string) => {
 
   if (index !== -1) {
     // Extract the Eircode using the index of the match
-    const match = address.slice(index, index + 8); // Eircodes are always 7 characters long
-    console.log("Eircode found:", match);  // Log the found Eircode
+    const match = address.slice(index, index + 8);
     return match;  // Return the matched Eircode
   } else {
-    console.log("No Eircode found in address:", address);  // Log if no Eircode found
     return null;  // Return null if no match
   }
 };
-  // Function to manually refresh the stations (re-fetch from API)
+
   const refreshStations = async () => {
     if (!location || !location.coords) {
       setErrorMsg("Location data is not available.");
@@ -172,16 +176,22 @@ const extractEircode = (address: string) => {
             const locationRes = await fetch(locationURL);
             const locationData = await locationRes.json();
             const s_location = locationData.results[0].geometry.location;
+            
+            //Try and pull other information from API
+            const info = await GetStationPrice(station.place_id);
+            if(info != null){
+              console.log(info);
+            }
             return {
               id: station.place_id,
               station_name: station.name,
               address: address, // Use eircode if available, else use full address
-              petrol: "",
-              diesel: "",
+              petrol: info?.data.petrolPrice || "",
+              diesel: info?.data.dieselPrice || "",
               stars: station.rating || "",
               distance: calculateDistance(location.coords.latitude, location.coords.longitude, s_location.lat, s_location.lng),
-              lastUpdated: "",
-              verifications: 0,
+              lastUpdated: info?.data.reported_at || "",
+              verifications: info?.data.verifications || 0,
               location: {
                 lat: s_location.lat,
                 lng: s_location.lng

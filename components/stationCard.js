@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Modal,TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
-import StarRating from "./starRating";
 import { router } from 'expo-router';
+import { postPrice } from '@/aws/api';
 
 
-const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdated, verifications }) => {
+const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastUpdated, verifications }) => {
     const [isFavorited, setIsFavorited] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isAddPriceModalVisible, setAddPriceModalVisible] = useState(false);
+    const [petrolPrice, setPetrolPrice] = useState("");
+    const [dieselPrice, setDieselPrice] = useState("");
     const [pError, setPError] = useState("");
     const [dError, setDError] = useState("");
-    const [rating, setRating] = useState(0);
-    let petrolPrice = 0;
-    let dieselPrice = 0;
+
     const toggleFavorite = () => {
         setIsFavorited(!isFavorited);
     };
@@ -23,7 +23,8 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
         const now = new Date();
         const updatedDate = new Date(lastUpdated);
         const diffInSeconds = Math.floor((now - updatedDate) / 1000);
-
+        
+        if (isNaN(diffInSeconds)) return "N/A";
         if (diffInSeconds < 60) return "just now";
         if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min ago`;
         if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hrs ago`;
@@ -56,25 +57,31 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
         setModalVisible(false);
     };
     const handlePriceChange = () => {
-        Alert.alert("Prices Updated", `Petrol price: ${petrolPrice}\nDiesel price: ${dieselPrice}\nRating: ${rating}`);
-        setAddPriceModalVisible(false);
+        const addPrice = postPrice(petrolPrice, dieselPrice, id);
+        if(addPrice){
+            //handle XP here ....
+            //handle notification ....
+            Alert.alert("Prices Updated", `Petrol price: ${petrolPrice}\nDiesel price: ${dieselPrice}`);
+            setAddPriceModalVisible(false);
+        }
 
     }
-    const setPetrolPrice = (event) => {
-        if (event.nativeEvent.text == "") {
-            setPError("Petrol price cannot be empty");
-          } else {
-            setPError("");
-            petrolPrice = event.nativeEvent.text;
-          }
+    const handlePetrolChange = (text) => {
+        if (text === "") {
+          setPError("Petrol price cannot be empty");
+        } else {
+          setPError("");
+        }
+        setPetrolPrice(text);
       };
-      const setDieselPrice = (event) => {
-        if (event.nativeEvent.text == "") {
-            setDError("Diesel price cannot be empty");
-          } else {
-            setDError("");
-            dieselPrice = event.nativeEvent.text;
-          }
+      
+      const handleDieselChange = (text) => {
+        if (text === "") {
+          setDError("Diesel price cannot be empty");
+        } else {
+          setDError("");
+        }
+        setDieselPrice(text);
       };
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
@@ -100,11 +107,11 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                     <View style={{flexDirection: 'row', marginVertical: 10,}}>
                         <View style={styles.priceContainer}>
                             <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
-                            <Heading level={3} style={styles.priceText}>€{petrol}</Heading>
+                            <Heading level={3} style={styles.priceText}>€{petrol || " N/A"}</Heading>
                         </View>
                         <View style={styles.priceContainer}>
                             <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
-                            <Heading level={3} style={styles.priceText}>€{diesel}</Heading>
+                            <Heading level={3} style={styles.priceText}>€{diesel || " N/A"}</Heading>
                         </View>
                     </View>
 
@@ -145,12 +152,14 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                         />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.likeButtonContainer}>
-                    <TouchableOpacity style={styles.likeButton}>
+                {petrol !== "" && diesel !== "" && (
+                    <View style={styles.likeButtonContainer}>
+                        <TouchableOpacity style={styles.likeButton}>
                         <MaterialCommunityIcons name="thumb-up-outline" size={40} color="#6dcf69" />
                         <Text style={{ marginLeft: 10 }}>Is the price correct?</Text>
-                    </TouchableOpacity>
-                </View>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
             <Modal visible={isModalVisible} transparent animationType="fade">
                 <View style={styles.modalContainer}>
@@ -184,7 +193,7 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                                         inputMode='decimal'
                                         maxLength={5}
                                         contextMenuHidden={true}
-                                        onBlur={setPetrolPrice}
+                                        onChangeText={handlePetrolChange}
                                     />
                                 </View>
                                 {pError ? <Text style={styles.errorText}>{pError}</Text> : null}
@@ -197,13 +206,11 @@ const StationCard = ({ name, address, petrol, diesel, distance, stars, lastUpdat
                                         inputMode='decimal'
                                         maxLength={5}
                                         contextMenuHidden={true}
-                                        onBlur={setDieselPrice}
+                                        onChangeText={handleDieselChange}
                                         
                                     />
                                 </View>
                                 {dError ? <Text style={styles.errorText}>{dError}</Text> : null}
-
-                                <StarRating onRatingChange={setRating} />
                             </View>
                             <View style={{flexDirection:'row'}}>
                                 <TouchableOpacity style={styles.modalAddPrice} onPress={handlePriceChange}>

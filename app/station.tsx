@@ -23,6 +23,7 @@ export default function StationPage() {
         <Top></Top>
         <View>
           <StationCard
+              id={station.id}
               name={station.name}
               address={station.address}
               petrol={station.petrol}

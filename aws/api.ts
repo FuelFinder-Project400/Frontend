@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // Define the base URL for your API (adjust it accordingly)
 const API_URL = process.env.EXPO_PUBLIC_API_URL; // Replace with your actual URL
 
@@ -134,7 +135,7 @@ export const UpdateUserFromStorage = async () => {
   }
 };
 
-// Post a new user
+// Upload Profile Pic
 export const UploadProfilePic = async (image: string) => {
   try {
     // Fetch values from AsyncStorage
@@ -170,5 +171,81 @@ export const UploadProfilePic = async (image: string) => {
   } catch (error) {
     console.error('Error posting user data:', error);
     throw new Error('Failed to post user data');
+  }
+};
+// Post a new price
+export const postPrice = async (petrolPrice:any, dieselPrice:any, station_id:string
+) => {
+  try {
+    // Fetch values from AsyncStorage
+    const user_id = await AsyncStorage.getItem('userID');
+    
+    if (!user_id || !petrolPrice || !dieselPrice || !station_id) {
+      console.error('Missing required data');
+      throw new Error('Missing required data');
+    }
+
+    // Create the JSON object for the API request
+    const priceData = {
+      user_id,
+      petrolPrice,
+      dieselPrice,
+      station_id
+    };
+
+    // Get the idToken from AsyncStorage for Authorization header
+    const idToken = await AsyncStorage.getItem('idToken');
+    if (!idToken) {
+      console.error('No idToken found in AsyncStorage');
+      throw new Error('No idToken found');
+    }
+
+    // Set the Authorization header
+    const headers = {
+      'Authorization': `Bearer ${idToken}`,
+    };
+
+    // Send the POST request to the API
+    const response = await axios.post(`${API_URL}/price`, priceData, { headers });
+
+    if (response.status === 201) {
+      console.log('User created successfully:', response.data);
+      return true; // Return data or handle it as needed
+    } else {
+      console.error('Error creating user:', response.data.message);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error posting user data:', error);
+    throw new Error('Failed to post user data');
+  }
+};
+// Get User Data and Store it Locally
+export const GetStationPrice = async (station_id: string) => {
+  try {
+    // Get the idToken from AsyncStorage for Authorization header
+    const idToken = await AsyncStorage.getItem('idToken');
+    if (!idToken) {
+      console.error('No idToken found in AsyncStorage');
+      throw new Error('No idToken found');
+    }
+
+    // Set the Authorization header
+    const headers = {
+      'Authorization': `Bearer ${idToken}`,
+    };
+    console.log(station_id);
+    // Make the GET request to the API
+    const response = await axios.get(`${API_URL}/station/${station_id}`, {
+      headers,
+    });
+
+    if (response.status === 200){
+      return response;
+    }
+    else{
+      return null;
+    }
+  } catch (error) {
   }
 };

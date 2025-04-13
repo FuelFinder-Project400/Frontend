@@ -87,9 +87,23 @@ export default function FuelMapView({ stations }) {
         ? prev
         : curr
     );
-    const cheapestStation = stations.reduce((prev, curr) =>
-      (prev.petrol < curr.petrol || prev.diesel < curr.diesel) ? prev : curr
-    );
+    const cheapestStation = stations.reduce((prev, curr) => {
+      const prevPetrol = parseFloat(prev.petrol);
+      const currPetrol = parseFloat(curr.petrol);
+      const prevDiesel = parseFloat(prev.diesel);
+      const currDiesel = parseFloat(curr.diesel);
+    
+      const prevMin = (isNaN(prevPetrol) ? Infinity : prevPetrol);
+      const currMin = (isNaN(currPetrol) ? Infinity : currPetrol);
+    
+      const prevMinDiesel = (isNaN(prevDiesel) ? Infinity : prevDiesel);
+      const currMinDiesel = (isNaN(currDiesel) ? Infinity : currDiesel);
+    
+      const prevLowest = Math.min(prevMin, prevMinDiesel);
+      const currLowest = Math.min(currMin, currMinDiesel);
+    
+      return currLowest < prevLowest ? curr : prev;
+    });
     if (station.id === closestStation.id) return "blue"; 
     if (station.id === cheapestStation.id) return "green"; 
     return "red"; 
