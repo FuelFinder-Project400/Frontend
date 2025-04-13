@@ -25,6 +25,7 @@
     "expo": "~52.0.23",
     "expo-blur": "~14.0.1",
     "expo-font": "~13.0.2",
+    "expo-google-places": "^0.2.5",
     "expo-haptics": "~14.0.0",
     "expo-image-picker": "~16.0.6",
     "expo-linking": "~7.0.3",

@@ -9,9 +9,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default function FuelMapView({ stations }) {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [geocodedStations, setGeocodedStations] = useState([]);
+
   const [selectedStation, setSelectedStation] = useState(null);
-  const [loading, setLoading] = useState(true); // Track loading state
   const mapRef = useRef(null);
   const router = useRouter();
   
@@ -49,32 +48,11 @@ export default function FuelMapView({ stations }) {
   }, []);
 
   useEffect(() => {
-    if (stations.length > 0) {
-      setLoading(true); // Start loading when geocoding starts
-      Promise.all(
-        stations.map(async (station) => {
-          try {
-            const response = await Geocoder.from(`${station.name},${station.address}`);
-            const { lat, lng } = response.results[0].geometry.location;
-            return { ...station, location: { latitude: lat, longitude: lng } };
-          } catch (error) {
-            console.error("Geocoding error:", error);
-            return null;
-          }
-        })
-      ).then((geocoded) => {
-        setGeocodedStations(geocoded.filter(Boolean));
-        setLoading(false); // Mark loading as complete
-      });
-    }
-  }, [stations]);
-
-  useEffect(() => {
-    if (mapRef.current && geocodedStations.length > 0 && location) {
+    if (mapRef.current && stations.length > 0 && location) {
       const coordinates = [
-        ...geocodedStations.map((s) => ({
-          latitude: s.location.latitude,
-          longitude: s.location.longitude,
+        ...stations.map((s) => ({
+          latitude: s.location.lat,
+          longitude: s.location.lng,
         })),
         { latitude: location.latitude, longitude: location.longitude },
       ];
@@ -83,7 +61,7 @@ export default function FuelMapView({ stations }) {
         animated: true,
       });
     }
-  }, [geocodedStations, location]);
+  }, [stations, location]);
 
   const handleMarkerPress = (station) => {
     setSelectedStation(station);
@@ -100,16 +78,16 @@ export default function FuelMapView({ stations }) {
     const distance = calculateDistance(
       location.latitude,
       location.longitude,
-      station.location.latitude,
-      station.location.longitude
+      station.location.lat,
+      station.location.lng
     );
-    const closestStation = geocodedStations.reduce((prev, curr) =>
-      calculateDistance(location.latitude, location.longitude, prev.location.latitude, prev.location.longitude) <
-      calculateDistance(location.latitude, location.longitude, curr.location.latitude, curr.location.longitude)
+    const closestStation = stations.reduce((prev, curr) =>
+      calculateDistance(location.latitude, location.longitude, prev.location.lat, prev.location.lng) <
+      calculateDistance(location.latitude, location.longitude, curr.location.lat, curr.location.lng)
         ? prev
         : curr
     );
-    const cheapestStation = geocodedStations.reduce((prev, curr) =>
+    const cheapestStation = stations.reduce((prev, curr) =>
       (prev.petrol < curr.petrol || prev.diesel < curr.diesel) ? prev : curr
     );
     if (station.id === closestStation.id) return "blue"; 
@@ -121,18 +99,10 @@ export default function FuelMapView({ stations }) {
     Alert.alert("Location Error", errorMsg);
   }
 
-  // Only render the map when loading is false
-  if (loading || !location || geocodedStations.length === 0) {
-    return (
-      <View style={styles.loading}>
-        <Text>Loading map...</Text>
-      </View>
-    );
-  }
 
   const openMaps = (dirName, dirAddress) => {
         const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${dirName},${dirAddress}`;
-        const appleMapsUrl = `maps://?daddr=${dirName}`;
+        const appleMapsUrl = `maps://?daddr=${dirName},${dirAddress}`;
         const url = Platform.OS === "ios" ? appleMapsUrl : googleMapsUrl;
     
         Linking.canOpenURL(url)
@@ -157,15 +127,15 @@ export default function FuelMapView({ stations }) {
         showsUserLocation={true}
         onPress={handleMapPress}
       >
-        {geocodedStations.map((station, index) => {
+        {stations.map((station, index) => {
           const isSelected = selectedStation?.id === station.id;
           const markerColor = getMarkerColor(station);
           return (
             <Marker
               key={station.id || index}
               coordinate={{
-                latitude: station.location.latitude,
-                longitude: station.location.longitude,
+                latitude: station.location.lat,
+                longitude: station.location.lng,
               }}
               pinColor={isSelected ? "orange" : markerColor}
               onPress={() => handleMarkerPress(station)}

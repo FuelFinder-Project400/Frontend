@@ -9,6 +9,7 @@ const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUp
         const updatedDate = new Date(lastUpdated);
         const diffInSeconds = Math.floor((now - updatedDate) / 1000);
 
+        if (isNaN(diffInSeconds)) return "N/A";
         if (diffInSeconds < 60) return "just now";
         if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min ago`;
         if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hrs ago`;
@@ -19,11 +20,11 @@ const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUp
     }
 
     const isVerified = verifications >= 5;
-
+    const isNotVisited = petrol == "";
     return (
-        <View style={[styles.container, isVerified && styles.verifiedContainer]}>
+        <View style={[styles.container, isVerified && styles.verifiedContainer, isNotVisited && styles.isNotVisitedContainer]}>
             {isVerified && <Text style={styles.verifiedLabel}>Verified by Users</Text>}
-
+            {isNotVisited && <Text style={styles.isNotVisitedLabel}>No Price Added Yet</Text>}
             <View>
                 <View style={styles.stationDetails}>
                     <View style={styles.stationDetailsText}>
@@ -137,6 +138,21 @@ const styles = StyleSheet.create({
     },
     distanceText: {
         color: '#000',
+    },
+    isNotVisitedContainer: {
+        borderColor: '#7a1ce6',
+    },
+    isNotVisitedLabel: {
+        position: 'absolute',
+        top: -10,
+        left: 15,
+        backgroundColor: '#7a1ce6',
+        color: '#fff',
+        paddingHorizontal: 10,
+        paddingVertical: 3,
+        fontSize: 12,
+        borderRadius: 5,
+        fontWeight: 'bold',
     },
 });
 
