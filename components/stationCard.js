@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Modal,TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
 import { router } from 'expo-router';
 import { postPrice, postReport } from '@/aws/api';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {updateFavouriteStationsToDB} from '@/aws/api';
 
 const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastUpdated, verifications, user_id }) => {
     const [isFavorited, setIsFavorited] = useState(false);
@@ -14,10 +15,46 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
     const [dieselPrice, setDieselPrice] = useState(diesel);
     const [pError, setPError] = useState("");
     const [dError, setDError] = useState("");
-
-    const toggleFavorite = () => {
-        setIsFavorited(!isFavorited);
-    };
+    const [favouriteStations, setFavouriteStations] = useState([]);
+    
+    useEffect(() => {
+        const getFavouriteStations = async () => {
+          try {
+            const storedFavourites = await AsyncStorage.getItem('favourite_stations');
+            const parsedFavourites = storedFavourites ? JSON.parse(storedFavourites) : [];
+            setFavouriteStations(parsedFavourites);
+            setIsFavorited(parsedFavourites.includes(id));
+          } catch (error) {
+            console.error('Error loading favourites:', error);
+          }
+        };
+    
+        getFavouriteStations();
+      }, [id]);
+    
+      const toggleFavorite = async () => {
+        try {
+          let updatedFavourites = [...favouriteStations];
+    
+          if (updatedFavourites.includes(id)) {
+            // Remove from favourites
+            updatedFavourites = updatedFavourites.filter(id => id !== id);
+          } else {
+            // Add to favourites
+            updatedFavourites.push(id);
+          }
+    
+          // Save updated array to AsyncStorage
+          await AsyncStorage.setItem('favourite_stations', JSON.stringify(updatedFavourites));
+          
+          // Update state
+          setFavouriteStations(updatedFavourites);
+          setIsFavorited(!isFavorited);
+          console.log("Done");
+        } catch (error) {
+          console.error('Error updating favourites:', error);
+        }
+      };
 
     function getLastUpdated(lastUpdated) {
         const now = new Date();
@@ -88,9 +125,15 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
         }
         setDieselPrice(text);
       };
+      const handleBack = () => {
+        const update = updateFavouriteStationsToDB();
+        if(update){
+            router.back(); 
+        }
+      };
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity onPress={handleBack}>
                 <MaterialCommunityIcons name="arrow-left-circle" size={40} color={"#000"} style={{marginVertical: 10, marginTop: -5, marginLeft: -8}} />
             </TouchableOpacity>
             <View style={styles.container2}>

@@ -27,7 +27,7 @@ export default function Settings() {
     const getSearchRadius = async () => {
       const searchRadius = await AsyncStorage.getItem('searchRadius');
       setSearchRadius(searchRadius ? +searchRadius : 0);
-    };
+    }
     const getFuelType = async () => {
       const fuelType: any = await AsyncStorage.getItem('fuelType');
       setSelectedFuel(fuelType);
