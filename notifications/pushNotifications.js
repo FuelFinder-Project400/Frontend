@@ -31,6 +31,5 @@ export async function registerForPushNotificationsAsync() {
       importance: Notifications.AndroidImportance.MAX,
     });
   }
-
   return token;
 }

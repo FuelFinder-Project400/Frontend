@@ -180,13 +180,13 @@ export const UploadProfilePic = async (image: string) => {
   }
 };
 // Post a new price
-export const postPrice = async (petrolPrice:any, dieselPrice:any, station_id:string
+export const postPrice = async (petrolPrice:any, dieselPrice:any, station_id:string, station_name:string
 ) => {
   try {
     // Fetch values from AsyncStorage
     const user_id = await AsyncStorage.getItem('userID');
     
-    if (!user_id || !petrolPrice || !dieselPrice || !station_id) {
+    if (!user_id || !petrolPrice || !dieselPrice || !station_id ||!station_name) {
       console.error('Missing required data');
       throw new Error('Missing required data');
     }
@@ -196,7 +196,8 @@ export const postPrice = async (petrolPrice:any, dieselPrice:any, station_id:str
       user_id,
       petrolPrice,
       dieselPrice,
-      station_id
+      station_id,
+      station_name
     };
 
     // Get the idToken from AsyncStorage for Authorization header

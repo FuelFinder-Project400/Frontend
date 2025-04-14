@@ -106,7 +106,7 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
         }
     };
     const handlePriceChange = async () => {
-        const addPrice = await postPrice(petrolPrice, dieselPrice, id);
+        const addPrice = await postPrice(petrolPrice, dieselPrice, id, name);
         if(addPrice){
             //handle XP here ....
             await sendThankYouNotification();
