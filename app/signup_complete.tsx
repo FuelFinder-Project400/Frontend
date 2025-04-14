@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, SafeAreaView } from 'react-native';
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
 import ContinueButton from '@/components/continueButton';
 import {postUserFromStorage} from '../aws/api';
+import {registerForPushNotificationsAsync} from '@/notifications/pushNotifications';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -53,7 +54,6 @@ const SignUpScreenSetFuelType = () => {
     }
     
   };
-
   return (
     <SafeAreaView style={styles.container}>
         <View style={[styles.container, { alignItems: 'center' }]}>

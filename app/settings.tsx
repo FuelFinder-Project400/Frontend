@@ -22,7 +22,6 @@ export default function Settings() {
   const [selectedFuel, setSelectedFuel] = useState('');
   const [xp, setXP] = useState<number>(0);
   const [email, setEmail] = useState('');
-  const [profilePic, setProfilePic] = useState('../assets/images/defaultProfilePic.jpg');
   useEffect(() => {
     const getSearchRadius = async () => {
       const searchRadius = await AsyncStorage.getItem('searchRadius');
@@ -40,17 +39,10 @@ export default function Settings() {
       const email: any = await AsyncStorage.getItem('email');
       setEmail(email);
     }
-    const getProfilePic = async () => {
-      const profilePic:any = await AsyncStorage.getItem('profilePic');
-      if(profilePic != ''){
-        setProfilePic(profilePic);
-      }
-    }
     getSearchRadius();
     getFuelType();
     getXP();
     getEmail();
-    getProfilePic();
   }, []);
   const [isFavStationsModalVisible, setFavStationsModalVisible] = useState(false);
 
@@ -212,9 +204,8 @@ export default function Settings() {
   
     if (!result.canceled && result.assets && result.assets[0].base64) {
       const base64 = result.assets[0].base64;
-      const upload:any = await UploadProfilePic(base64);
+      const upload: boolean = await UploadProfilePic(base64);
       if(upload){
-        AsyncStorage.setItem('profilePic', upload.imageUrl);
         router.replace('./settings');
       }
     }

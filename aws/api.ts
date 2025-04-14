@@ -11,7 +11,8 @@ export const postUserFromStorage = async () => {
       const user_id = await AsyncStorage.getItem('userID');
       const fuelType = await AsyncStorage.getItem('fuelType');
       const searchRadius = await AsyncStorage.getItem('searchRadius');
-      console.log(user_id, fuelType,searchRadius);
+      const push_token = await AsyncStorage.getItem('push_token') || "";
+      console.log(user_id, fuelType,searchRadius, push_token);
       // Check if all values are available
       if (!user_id || !fuelType || !searchRadius) {
         console.error('Missing required data from AsyncStorage');
@@ -23,6 +24,7 @@ export const postUserFromStorage = async () => {
         user_id,
         fuelType,
         searchRadius,
+        push_token
       };
   
       // Get the idToken from AsyncStorage for Authorization header
@@ -81,6 +83,7 @@ export const postUserFromStorage = async () => {
       await AsyncStorage.setItem('searchRadius', response.data.searchRadius);
       await AsyncStorage.setItem('profilePic', response.data.profilePic);
       await AsyncStorage.setItem('favourite_stations', response.data.favourite_stations);
+      await AsyncStorage.setItem('push_token', response.data.push_token || "");
     } catch (error) {
       console.error('Error fetching user info:', error);
     }
@@ -94,6 +97,7 @@ export const UpdateUserFromStorage = async () => {
     const fuelType = await AsyncStorage.getItem('fuelType');
     const searchRadius = await AsyncStorage.getItem('searchRadius');
     const xp = await AsyncStorage.getItem('xp');
+    const push_token = await AsyncStorage.getItem('push_token') || "";
     console.log(user_id, fuelType,searchRadius, xp);
     // Check if all values are available
     if (!user_id || !fuelType || !searchRadius || !xp) {
@@ -105,7 +109,8 @@ export const UpdateUserFromStorage = async () => {
     const userData = {
       fuelType,
       searchRadius,
-      xp
+      xp,
+      push_token
     };
 
     // Get the idToken from AsyncStorage for Authorization header

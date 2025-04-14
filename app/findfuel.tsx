@@ -8,10 +8,22 @@ import FuelFinderCard from "@/components/FuelFinderCard";
 import PinButton from "@/components/pinButton";
 import { router } from "expo-router";
 import { useFuelStations } from "@/googleAPI/placesAPI"; 
+import { registerForPushNotificationsAsync } from "@/notifications/pushNotifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function FindFuel() {
   const theme = useTheme();
   const { stations: searchedStations, errorMsg, refreshStations  } = useFuelStations();
-  //console.log(errorMsg);
+  
+  useEffect(() => {
+    async function registerToken() {
+      const token = await registerForPushNotificationsAsync();
+      if (token) {
+        await AsyncStorage.setItem('push_token', token);
+      }
+    }
+  
+    registerToken();
+  }, []);
   
   const styles = StyleSheet.create({
     container: {

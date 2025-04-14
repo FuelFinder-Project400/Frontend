@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { postPrice, postReport } from '@/aws/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {updateFavouriteStationsToDB} from '@/aws/api';
-
+import { sendThankYouNotification, sendReportSentNotification } from '@/notifications/notification-templates';
 const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastUpdated, verifications, user_id }) => {
 
     const [isModalVisible, setModalVisible] = useState(false);
@@ -97,21 +97,19 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
           .catch((err) => console.error("An error occurred", err));
     };
     
-    const handleReport = (reason) => {
-        const addReport = postReport(petrolPrice, dieselPrice, id, user_id, reason);
+    const handleReport = async (reason) => {
+        const addReport = await postReport(petrolPrice, dieselPrice, id, user_id, reason);
         if(addReport){
             //handle XP here ....
-            //handle notification ....
-            Alert.alert("Report Submitted", `You reported: ${reason}`);
+            await sendReportSentNotification();
             setModalVisible(false);
         }
     };
-    const handlePriceChange = () => {
-        const addPrice = postPrice(petrolPrice, dieselPrice, id);
+    const handlePriceChange = async () => {
+        const addPrice = await postPrice(petrolPrice, dieselPrice, id);
         if(addPrice){
             //handle XP here ....
-            //handle notification ....
-            Alert.alert("Prices Updated", `Petrol price: ${petrolPrice}\nDiesel price: ${dieselPrice}`);
+            await sendThankYouNotification();
             setAddPriceModalVisible(false);
         }
 

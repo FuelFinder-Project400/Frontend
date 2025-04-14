@@ -12,8 +12,6 @@ export default function Top() {
   const [modalVisible, setModalVisible] = useState(false);
   const [notifications, setNotifications] = useState([
       { id: 1, type: 'info', title: 'Welcome to FuelFinder', description: 'We hope you enjoy using our app.' },
-      { id: 2, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.20 was €161.30' },
-      { id: 3, type: 'default', title: 'Fuel Price Change', description: 'Price has decreased at Fuel Station\n\nPetrol is now €160.10 was €161.20' },
     ]);
   const [profilePic, setProfilePic] = useState('../assets/images/defaultProfilePic.jpg');
   useEffect(() => {
