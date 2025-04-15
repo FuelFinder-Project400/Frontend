@@ -8,7 +8,7 @@ import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const SignUpScreenSetFuelType = () => {
   const router = useRouter();
-
+  const [isDisabled, setDisabled] = useState(false);
   const theme = useTheme();
 
   const styles = StyleSheet.create({
@@ -53,6 +53,7 @@ const SignUpScreenSetFuelType = () => {
   const handleSignUpVerifyAccount = async () => {
     const email = await AsyncStorage.getItem('email');
     try {
+      setDisabled(true);
       const verified = await Cognito.verifyAccount(confirmationCode, email);
       if (verified) {
         const password = await AsyncStorage.getItem('password');
@@ -64,8 +65,10 @@ const SignUpScreenSetFuelType = () => {
         console.log(login.idToken);
         router.replace('/signup_setFuelType');
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error("Verification failed:", error);
+      Alert.alert('Login Failed', error.message || 'Something went wrong. Please try again.');
+      setDisabled(true);
     }
   };
 
@@ -94,7 +97,7 @@ const SignUpScreenSetFuelType = () => {
         />
         </View>
         <View style={styles.continueBtn}>
-        <ContinueButton onPress={handleSignUpVerifyAccount} />
+        <ContinueButton onPress={handleSignUpVerifyAccount} disabled={isDisabled}/>
         </View>
     </SafeAreaView>
     </TouchableWithoutFeedback>

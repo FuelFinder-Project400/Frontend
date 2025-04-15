@@ -15,7 +15,7 @@ const SignUpScreen = () => {
   const router = useRouter();
   const theme = useTheme();
   const [isChecked, setIsChecked] = useState(false);
-
+  const [isDisabled, setDisabled] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -50,6 +50,7 @@ const SignUpScreen = () => {
       return;
     }
     try {
+      setDisabled(true);
       const result:any = await Cognito.signUp(email, password);
       console.log('SignUp success:', result);
       await AsyncStorage.setItem('email', result.user.username);
@@ -59,6 +60,7 @@ const SignUpScreen = () => {
       router.replace('./signup_verifyAccount');
     } catch (err) {
       console.log('SignUp error:', err);
+      setDisabled(false);
       Alert.alert('Error', `${err}`);
     }
   };
@@ -113,7 +115,7 @@ const SignUpScreen = () => {
 
           {isChecked && (
             <View style={styles.continueBtn}>
-              <ContinueButton onPress={handleContinueSignUp} />
+              <ContinueButton onPress={handleContinueSignUp} disabled={isDisabled}/>
             </View>
           )}
         </SafeAreaView>

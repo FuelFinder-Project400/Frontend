@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUpScreenSetFuelType = () => {
   const router = useRouter();
-
+  const [isDisabled, setDisabled] = useState(false);
 
   const theme = useTheme();
 
@@ -48,11 +48,12 @@ const SignUpScreenSetFuelType = () => {
 
   const handleSignUpComplete = async () => {
     console.log("Navigating to Home Screen");
+    setDisabled(true);
     const requst = await postUserFromStorage();
     if(requst){
       router.replace('./findfuel'); //To be changed to onboarding screens.
     }
-    
+    setDisabled(false);
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -67,7 +68,7 @@ const SignUpScreenSetFuelType = () => {
         </Heading>
         </View>
         <View style={styles.continueBtn}>
-        <ContinueButton onPress={handleSignUpComplete} />
+        <ContinueButton onPress={handleSignUpComplete} disabled={isDisabled}/>
         </View>
     </SafeAreaView>
   );

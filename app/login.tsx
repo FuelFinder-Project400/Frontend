@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
@@ -14,17 +14,25 @@ const SignUpScreen = () => {
   const theme = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isDisabled, setDisabled] = useState(false);
   const handleLogin = async () => {
     Keyboard.dismiss();
-    const login:any = await Cognito.signIn(email, password);
-    await AsyncStorage.setItem('email', email);
-    await AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
-    await AsyncStorage.setItem('idToken', login.idToken);
-    await AsyncStorage.setItem('refreshToken', login.refreshToken);
-    await GetUserToStorage(login.session.accessToken.payload.username);
-    console.log(login.idToken);
-    router.replace('./findfuel');
-  }
+    try {
+      setDisabled(true);
+      const login: any = await Cognito.signIn(email, password);
+      await AsyncStorage.setItem('email', email);
+      await AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
+      await AsyncStorage.setItem('idToken', login.idToken);
+      await AsyncStorage.setItem('refreshToken', login.refreshToken);
+      await GetUserToStorage(login.session.accessToken.payload.username);
+      console.log(login.idToken);
+      router.replace('./findfuel');
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      Alert.alert('Login Failed', error.message || 'Something went wrong. Please try again.');
+      setDisabled(false);
+    }
+  };
   const handleSignUpInstead = () => {
     router.replace('./signup')
   }
@@ -49,7 +57,7 @@ const SignUpScreen = () => {
             </TouchableOpacity>
           </ScrollView>  
           <View style={styles.continueBtn}>
-              <ContinueButton onPress={handleLogin} />
+              <ContinueButton onPress={handleLogin} disabled={isDisabled}/>
             </View>   
         </SafeAreaView>
       </KeyboardAvoidingView>
