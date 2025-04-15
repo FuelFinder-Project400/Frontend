@@ -234,7 +234,6 @@ export const GetStationPrice = async (station_id: string) => {
     const headers = {
       'Authorization': `Bearer ${idToken}`,
     };
-    console.log(station_id);
     // Make the GET request to the API
     const response = await axios.get(`${API_URL}/station/${station_id}`, {
       headers,

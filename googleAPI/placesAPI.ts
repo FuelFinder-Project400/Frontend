@@ -165,7 +165,6 @@ export function useFuelStations() {
             const placeDetailsResponse = await fetch(placeDetailsUrl);
             const placeDetailsData = await placeDetailsResponse.json();
             const placeDetails = placeDetailsData.result;
-
             const fullAddress = placeDetails.formatted_address || station.vicinity;
             const eircode = extractEircode(fullAddress);
             const address = eircode || fullAddress;

@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function FindFuel() {
   const theme = useTheme();
   const { stations: searchedStations, errorMsg, refreshStations  } = useFuelStations();
-  
+  const [selectedFuel, setSelectedFuel] = useState('');
   useEffect(() => {
     async function registerToken() {
       const token = await registerForPushNotificationsAsync();
@@ -21,7 +21,11 @@ export default function FindFuel() {
         await AsyncStorage.setItem('push_token', token);
       }
     }
-  
+    const getFuelType = async () => {
+      const fuelType: any = await AsyncStorage.getItem('fuelType');
+      setSelectedFuel(fuelType);
+    }
+    getFuelType();
     registerToken();
   }, []);
   
@@ -54,7 +58,6 @@ export default function FindFuel() {
   });
 
   const userPreference = "Closest";
-  const userFuelPreference = "petrol";
 
   const [activeButton, setActiveButton] = useState(userPreference);
 
@@ -86,12 +89,12 @@ const stationsWithoutPrices = searchedStations.filter(station => station.petrol 
   if (activeButton === "Closest") {
     return parseFloat(a.distance) - parseFloat(b.distance);
   } else if (activeButton === "Cheapest") {
-    const aPrice = userFuelPreference === "petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
-    const bPrice = userFuelPreference === "petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
+    const aPrice = selectedFuel === "Petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
+    const bPrice = selectedFuel === "Petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
     return aPrice - bPrice;
   } else if (activeButton === "Verified") {
-    const aPrice = userFuelPreference === "petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
-    const bPrice = userFuelPreference === "petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
+    const aPrice = selectedFuel === "Petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
+    const bPrice = selectedFuel === "Petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
 
     const aIsVerified = a.verifications >= 5;
     const bIsVerified = b.verifications >= 5;
@@ -111,12 +114,12 @@ const sortedStationsWithoutPrices = (Array.isArray(stationsWithoutPrices) ? stat
   if (activeButton === "Closest") {
     return parseFloat(a.distance) - parseFloat(b.distance);
   } else if (activeButton === "Cheapest") {
-    const aPrice = userFuelPreference === "petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
-    const bPrice = userFuelPreference === "petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
+    const aPrice = selectedFuel === "Petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
+    const bPrice = selectedFuel === "Petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
     return aPrice - bPrice;
   } else if (activeButton === "Verified") {
-    const aPrice = userFuelPreference === "petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
-    const bPrice = userFuelPreference === "petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
+    const aPrice = selectedFuel === "Petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
+    const bPrice = selectedFuel === "Petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
 
     const aIsVerified = a.verifications >= 5;
     const bIsVerified = b.verifications >= 5;
@@ -137,7 +140,6 @@ const onRefresh = async () => {
   setTimeout(() => {
     setIsRefreshing(false);
     console.log("Data refreshed");
-    //console.log(searchedStations);
   }, 2000);
 };
   return (
