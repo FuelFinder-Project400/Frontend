@@ -150,7 +150,11 @@ export default function Top() {
           })}
         >
           <Image
-            source={{ uri: profilePic }}
+            source={
+              profilePic && profilePic.startsWith('https') 
+                ? { uri: profilePic }
+                : require('../assets/images/defaultProfilePic.jpg')
+            }
             style={styles.profilePic}
           />
         </TouchableOpacity>

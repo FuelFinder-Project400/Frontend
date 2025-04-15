@@ -9,9 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const SignUpScreenSetFuelType = () => {
   const router = useRouter();
 
-
   const theme = useTheme();
-
 
   const styles = StyleSheet.create({
     container: {
@@ -92,6 +90,7 @@ const SignUpScreenSetFuelType = () => {
           keyboardType="numeric"
           style={styles.textInput}
           maxLength={6}
+          textContentType='oneTimeCode'
         />
         </View>
         <View style={styles.continueBtn}>

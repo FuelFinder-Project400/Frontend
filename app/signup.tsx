@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Alert, TextInput as RNTextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContent';
 import Heading from '@/components/headings';
@@ -9,6 +9,7 @@ import ContinueButton from '../components/continueButton';
 import { useRouter } from 'expo-router';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { error } from 'console';
 
 const SignUpScreen = () => {
   const router = useRouter();
@@ -19,32 +20,51 @@ const SignUpScreen = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const isValidEmail = (email:string) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return emailRegex.test(email);
+  };
 
+  const isValidPassword = (password:string) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return passwordRegex.test(password);
+  };
   const handleCheckboxChange = (newCheckedState: boolean) => {
     setIsChecked(newCheckedState);
   };
 
   const handleContinueSignUp = async () => {
     setConfirmPasswordError('');
-  
+    setPasswordError('');
+    setEmailError('');
+    if(!isValidEmail){
+      setEmailError('Please enter a valid email address.');
+    }
+    if(!isValidPassword(password)){
+      setPasswordError('Password must contain at least\n1 uppercase letter,\n1 special character,\n1 number,\nand be 8+ characters.')
+    }
     if (password !== confirmPassword) {
       setConfirmPasswordError('Passwords do not match');
       return;
     }
-  
     try {
       const result:any = await Cognito.signUp(email, password);
       console.log('SignUp success:', result);
       await AsyncStorage.setItem('email', result.user.username);
       await AsyncStorage.setItem('userID', result.userSub);
       await AsyncStorage.setItem('password', password);
+      Keyboard.dismiss();
       router.replace('./signup_verifyAccount');
     } catch (err) {
-      console.error('SignUp error:', err);
+      console.log('SignUp error:', err);
+      Alert.alert('Error', `${err}`);
     }
   };
 
   const handleLoginInstead = () => {
+    Keyboard.dismiss();
     router.replace('./login');
   };
 
@@ -64,8 +84,8 @@ const SignUpScreen = () => {
             <Heading level={1}>Sign Up</Heading>
             <Text style={[styles.text, { color: theme.primaryText }]}>Using Email</Text>
 
-            <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} />
-            <TextInput inputTitle="Password" inputType="password" value={password} onChangeText={setPassword} />
+            <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} externalError={emailError}/>
+            <TextInput inputTitle="Password" inputType="password" value={password} onChangeText={setPassword} externalError={passwordError}/>
             <TextInput
               inputTitle="Confirm Password"
               inputType="confirmPassword"

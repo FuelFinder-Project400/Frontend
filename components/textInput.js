@@ -48,27 +48,23 @@ const TextInput = ({ inputTitle = "blank", inputType = "default", value, onChang
       default: return 'default';
     }
   };
-
-  const isValidEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    return emailRegex.test(email);
+  const getTextContentType = (inputType) => {
+    if (inputType === 'password') {
+      return 'none';
+    } else if (inputType === 'confirmPassword'){
+      return 'none';
+    }
+      else if (inputType === 'email') {
+      return 'emailAddress';
+    } else if (inputType === 'username') {
+      return 'username';
+    } else {
+      return 'none';
+    }
   };
-
-  const isValidPassword = (password) => {
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    return passwordRegex.test(password);
-  };
-
   const handleChange = (text) => {
     onChangeText(text);
-    if (inputType === 'email') {
-      setError(!isValidEmail(text) ? 'Please enter a valid email address.' : '');
-    } else if (inputType === 'password' && inputTitle !== 'Confirm Password') {
-      setError(!isValidPassword(text) ? 
-        'Password must contain at least\n1 uppercase letter,\n1 special character,\n1 number,\nand be 8+ characters.' : '');
-    } else {
-      setError('');
-    }
+    setError('');
   };
 
   return (
@@ -82,7 +78,10 @@ const TextInput = ({ inputTitle = "blank", inputType = "default", value, onChang
         placeholderTextColor={theme.primaryText}
         keyboardType={getKeyboardType()}
         secureTextEntry={inputType === 'password' || inputType === 'confirmPassword' || inputType === 'login-password'}
+        textContentType={getTextContentType(inputType)}
+        autoCorrect={false}
       />
+      <RNTextInput style={{height: 0.1}}/>
       {(error || externalError) && (
         <Text style={styles.errorText}>{error || externalError}</Text>
       )}

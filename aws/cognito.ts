@@ -31,14 +31,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
         Username: email,
         Pool: userPool,
       });
-  
+      
       return new Promise((resolve, reject) => {
         user.authenticateUser(authDetails, {
           onSuccess: (session) => {
             const idToken = session.getIdToken().getJwtToken();
             const accessToken = session.getAccessToken().getJwtToken();
             const refreshToken = session.getRefreshToken().getToken();
-  
+
             resolve({
               idToken,
               accessToken,
@@ -46,7 +46,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
               session,
             });
           },
-          onFailure: (err) => reject(err),
+          onFailure: (err) => console.log(err),
         });
       });
     }
