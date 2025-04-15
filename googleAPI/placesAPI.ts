@@ -5,6 +5,7 @@ import { GetStationPrice } from "@/aws/api";
 
 // Define the type for Fuel Station
 interface FuelStation {
+  users_who_verified: any;
   id: string;
   station_name: string;
   address: string;
@@ -191,6 +192,7 @@ export function useFuelStations() {
                 lat: s_location.lat,
                 lng: s_location.lng
               },
+              users_who_verified : info?.data.users_who_verified,
             };
           })
         );

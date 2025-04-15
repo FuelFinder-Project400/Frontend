@@ -168,6 +168,7 @@ const onRefresh = async () => {
                 stars={station.stars}
                 lastUpdated={station.lastUpdated}
                 verifications={station.verifications}
+                users_who_verified={station.users_who_verified}
               />
           </TouchableOpacity>
         ))}
@@ -183,6 +184,7 @@ const onRefresh = async () => {
                 stars={station.stars}
                 lastUpdated={station.lastUpdated}
                 verifications={station.verifications}
+                users_who_verified={station.users_who_verified}
               />
           </TouchableOpacity>
         ))}

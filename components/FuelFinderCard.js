@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
 
-const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUpdated, verifications }) => {
+const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUpdated, verifications, users_who_verified }) => {
     function getLastUpdated(lastUpdated) {
         const now = new Date();
         const updatedDate = new Date(lastUpdated);

@@ -24,15 +24,6 @@ export default function StationPage() {
         <View>
           <StationCard
               id={station.id}
-              name={station.name}
-              address={station.address}
-              petrol={station.petrol}
-              diesel={station.diesel}
-              distance={station.distance}
-              stars={station.stars}
-              lastUpdated={station.lastUpdated}
-              verifications={station.verifications}
-              user_id={station.user_id}
             />
         </View>
         <View style={{flex: 1, justifyContent: 'flex-end'}}>

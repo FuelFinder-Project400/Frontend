@@ -406,3 +406,36 @@ export const DeleteUserNotifications = async (notification_id:string) => {
     Cognito.tryAutoRefresh();
   }
 };
+// Delete User Data and Store it Locally
+export const VerifyPrice = async (station_id:string) => {
+  try {
+    const userId = await AsyncStorage.getItem('userID');
+    if(!userId){
+      console.error('No User ID found in AsyncStorage');
+    }
+    // Get the idToken from AsyncStorage for Authorization header
+    const idToken = await AsyncStorage.getItem('idToken');
+    if (!idToken) {
+      console.error('No idToken found in AsyncStorage');
+    }
+
+    // Set the Authorization header
+    const headers = {
+      'Authorization': `Bearer ${idToken}`,
+    };
+
+    // Make the PUT request to the API
+    const response = await axios.put(`${API_URL}/price/${station_id}/${userId}`, {
+      headers,
+    });
+
+    if(response.status === 200){
+      console.log(response.data.message);  
+      return true;
+    }
+
+  } catch (error) {
+    Cognito.tryAutoRefresh();
+    return false;
+  }
+};

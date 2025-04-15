@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Modal,TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Modal,TextInput, TouchableWithoutFeedback, Keyboard, ActivityIndicator} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
 import { router } from 'expo-router';
 import { postPrice, postReport, UpdateUserFromStorage } from '@/aws/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {updateFavouriteStationsToDB} from '@/aws/api';
+import {updateFavouriteStationsToDB, VerifyPrice} from '@/aws/api';
 import { sendThankYouNotification, sendReportSentNotification } from '@/notifications/notification-templates';
 const StationCard = ({ id }) => {
 
@@ -19,18 +19,29 @@ const StationCard = ({ id }) => {
     const [petrolPrice, setPetrolPrice] = useState('');
     const [dieselPrice, setDieselPrice] = useState('');
     const [station, setStation] = useState(null);
-
+    const [hasVerified, setHasVerified] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [petrolPriceChanged, setPetrolPriceChanged] = useState(false);
+    const [dieselPriceChanged, setDieselPriceChanged] = useState(false);
     const fetchStationFromStorage = async () => {
         try {
             const stored = await AsyncStorage.getItem('stations');
+            const userID = await AsyncStorage.getItem('userID'); // retrieve userID
+    
             if (stored) {
                 const stations = JSON.parse(stored);
                 const match = stations.find(s => s.id === id);
                 setStation(match || null);
+    
                 if (match) {
                     setPetrolPrice(match.petrol);
                     setDieselPrice(match.diesel);
                     setIsVerified(match.verifications >= 5);
+    
+                    const hasUserVerified = match.users_who_verified?.includes(userID);
+                    setHasVerified(Boolean(hasUserVerified));
+                } else {
+                    setHasVerified(false); // fallback
                 }
             }
         } catch (err) {
@@ -134,47 +145,57 @@ const StationCard = ({ id }) => {
     };
     
     const handlePriceChange = async () => {
-        try {
-          const addPrice = await postPrice(petrolPrice, dieselPrice, station.id, station.station_name);
-          
-          if (addPrice) {
-            const storedStations = await AsyncStorage.getItem('stations');
-            let stationList = storedStations ? JSON.parse(storedStations) : [];
-            let user_id = await AsyncStorage.getItem('userID');
-            let id = station.id;
-            const updatedStationList = stationList.map(station => {
-              if (station.id === id) {
-                return {
-                  ...station,
-                  petrol: petrolPrice,
-                  diesel: dieselPrice,
-                  lastUpdated: new Date().toISOString(),
-                  verifications: 1,
-                  user_id: user_id,
-                };
-              }
-              return station;
-            });
-            await AsyncStorage.setItem('stations', JSON.stringify(updatedStationList));
-        
-            setStation(updatedStationList);
-            let xp = parseInt(await AsyncStorage.getItem('xp'));
-            let newXP = xp + 100;
-            await AsyncStorage.setItem('xp', `${newXP}`);
-            await UpdateUserFromStorage();
-            await sendThankYouNotification();
+        if(petrolPrice == "" || !petrolPriceChanged){
+            setPError('Petrol price cannot be empty');
+        }
+        else if(dieselPrice == "" || !dieselPriceChanged){
+            setDError('Diesel price cannot be empty');
+        }
+        else{
+            try {
+                setIsLoading(true);
+            const addPrice = await postPrice(petrolPrice, dieselPrice, station.id, station.station_name);
+            
+            if (addPrice) {
+                const storedStations = await AsyncStorage.getItem('stations');
+                let stationList = storedStations ? JSON.parse(storedStations) : [];
+                let user_id = await AsyncStorage.getItem('userID');
+                let id = station.id;
+                const updatedStationList = stationList.map(station => {
+                if (station.id === id) {
+                    return {
+                    ...station,
+                    petrol: petrolPrice,
+                    diesel: dieselPrice,
+                    lastUpdated: new Date().toISOString(),
+                    verifications: 1,
+                    user_id: user_id,
+                    };
+                }
+                return station;
+                });
+                await AsyncStorage.setItem('stations', JSON.stringify(updatedStationList));
+            
+                setStation(updatedStationList);
+                let xp = parseInt(await AsyncStorage.getItem('xp'));
+                let newXP = xp + 100;
+                await AsyncStorage.setItem('xp', `${newXP}`);
+                await UpdateUserFromStorage();
+                await sendThankYouNotification();
+                setIsLoading(false);
+                setAddPriceModalVisible(false);
+                router.replace({
+                    pathname: '/station',
+                    params: {
+                    id: id
+                    },
+                });
+            }
+            } catch (error) {
+            console.error("Error in handlePriceChange:", error);
+            Alert.alert('Error Occured','Please Try Again');
             setAddPriceModalVisible(false);
-            router.replace({
-                pathname: '/station',
-                params: {
-                  id: station.id
-                },
-              });
-          }
-        } catch (error) {
-          console.error("Error in handlePriceChange:", error);
-          Alert.alert('Error Occured','Please Try Again');
-          setAddPriceModalVisible(false);
+            }
         }
       };
     const handlePetrolChange = (text) => {
@@ -182,6 +203,7 @@ const StationCard = ({ id }) => {
           setPError("Petrol price cannot be empty");
         } else {
           setPError("");
+          setPetrolPriceChanged(true);
         }
         setPetrolPrice(text);
       };
@@ -191,10 +213,54 @@ const StationCard = ({ id }) => {
           setDError("Diesel price cannot be empty");
         } else {
           setDError("");
+          setDieselPriceChanged(true);
         }
         setDieselPrice(text);
       };
-
+      const handleVerify = async () => {
+        try {
+          const userID = await AsyncStorage.getItem('userID');
+          if (!userID) {
+            console.warn("No user ID found in storage.");
+            return;
+          }
+      
+            const verify = await VerifyPrice(id);
+            setHasVerified(true);
+            const stored = await AsyncStorage.getItem('stations');
+            let stationList = stored ? JSON.parse(stored) : [];
+      
+            const updatedStationList = stationList.map(station => {
+              if (station.id === id) {
+                const updatedUsers = Array.isArray(station.users_who_verified)
+                  ? [...new Set([...station.users_who_verified, userID])]
+                  : [userID];
+      
+                return {
+                  ...station,
+                  users_who_verified: updatedUsers,
+                };
+              }
+              return station;
+            });
+      
+            await AsyncStorage.setItem('stations', JSON.stringify(updatedStationList));
+           
+        } catch (err) {
+          console.error('Failed to verify station:', err);
+        }
+      };
+      const handlePriceModalClose = () => {
+        if (petrolPrice == "" || dieselPrice == ""){
+            router.replace({
+                pathname: '/station',
+                params: {
+                id: id
+                },
+            });
+        }
+        setAddPriceModalVisible(false);
+      }
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
             <TouchableOpacity onPress={() => router.replace('./findfuel')}>
@@ -264,11 +330,11 @@ const StationCard = ({ id }) => {
                         />
                     </TouchableOpacity>
                 </View>
-                {station.petrol !== "" && station.diesel !== "" && (
+                {(station.petrol !== "" && station.diesel !== "" && hasVerified == false) && (
                     <View style={styles.likeButtonContainer}>
-                        <TouchableOpacity style={styles.likeButton}>
-                        <MaterialCommunityIcons name="thumb-up-outline" size={40} color="#6dcf69" />
-                        <Text style={{ marginLeft: 10 }}>Is the price correct?</Text>
+                        <TouchableOpacity style={styles.likeButton} onPress={handleVerify}>
+                            <MaterialCommunityIcons name="thumb-up-outline" size={40} color="#6dcf69" />
+                            <Text style={{ marginLeft: 10 }}>Is the price correct?</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -290,52 +356,61 @@ const StationCard = ({ id }) => {
                 </View>
             </Modal>
             <Modal visible={isAddPriceModalVisible} transparent animationType="fade">
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <View>
-                                <Heading level={3} style={{color: '#000', marginLeft: 10,}}>Add Price</Heading>
-                                
-                                <View style={{flexDirection: 'row', alignItems:'center', margin: 10,}}>
-                                    <Text style={styles.label}>Enter Petrol Price (€):</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="e.g. 160.20"
-                                        keyboardType="numeric"
-                                        inputMode='decimal'
-                                        maxLength={5}
-                                        contextMenuHidden={true}
-                                        onChangeText={handlePetrolChange}
-                                    />
-                                </View>
-                                {pError ? <Text style={styles.errorText}>{pError}</Text> : null}
-                                <View style={{flexDirection: 'row', alignItems:'center', margin: 10,}}>
-                                    <Text style={styles.label}>Enter Diesel Price (€):</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="e.g. 160.20"
-                                        keyboardType="numeric"
-                                        inputMode='decimal'
-                                        maxLength={5}
-                                        contextMenuHidden={true}
-                                        onChangeText={handleDieselChange}
-                                        
-                                    />
-                                </View>
-                                {dError ? <Text style={styles.errorText}>{dError}</Text> : null}
-                            </View>
-                            <View style={{flexDirection:'row'}}>
-                                <TouchableOpacity style={styles.modalAddPrice} onPress={handlePriceChange}>
-                                    <Text style={styles.modalCancelText}>Add Price</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.modalCancel} onPress={() => setAddPriceModalVisible(false)}>
-                                    <Text style={styles.modalCancelText}>Close</Text>
-                                </TouchableOpacity>
-                            </View>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Heading level={3} style={{ color: '#000', marginLeft: 10 }}>Add Price</Heading>
+                        
+                        <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10 }}>
+                            <Text style={styles.label}>Enter Petrol Price (€):</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="e.g. 160.20"
+                                keyboardType="numeric"
+                                inputMode="decimal"
+                                maxLength={5}
+                                contextMenuHidden={true}
+                                onChangeText={handlePetrolChange}
+                            />
                         </View>
+                        {pError ? <Text style={styles.errorText}>{pError}</Text> : null}
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10 }}>
+                            <Text style={styles.label}>Enter Diesel Price (€):</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="e.g. 160.20"
+                                keyboardType="numeric"
+                                inputMode="decimal"
+                                maxLength={5}
+                                contextMenuHidden={true}
+                                onChangeText={handleDieselChange}
+                            />
+                        </View>
+                        {dError ? <Text style={styles.errorText}>{dError}</Text> : null}
+                        <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity
+                            style={styles.modalAddPrice}
+                            onPress={handlePriceChange}
+                            disabled={isLoading}  // Disable button while loading
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator size="small" color="#fff" />  // Show spinner while loading
+                            ) : (
+                                <Text style={styles.modalCancelText}>Add Price</Text>
+                            )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.modalCancel}
+                            onPress={handlePriceModalClose}
+                        >
+                            <Text style={styles.modalCancelText}>Close</Text>
+                        </TouchableOpacity>
                     </View>
-                </TouchableWithoutFeedback>
-            </Modal>
+                </View>
+                    </View>
+            </TouchableWithoutFeedback>
+        </Modal>
         </View>
     );
 };
