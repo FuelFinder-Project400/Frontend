@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';  // If you use Expo for vector ic
 
 const ContinueButton = ({ onPress, disabled }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}> disabled={disabled}
+    <TouchableOpacity style={styles.button} onPress={onPress} disabled={disabled}>
       <View style={styles.buttonContent}>
         <Text style={styles.arrow}>
           <Ionicons name="arrow-forward" size={24} color="white" />

@@ -9,7 +9,6 @@ import ContinueButton from '../components/continueButton';
 import { useRouter } from 'expo-router';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { error } from 'console';
 
 const SignUpScreen = () => {
   const router = useRouter();

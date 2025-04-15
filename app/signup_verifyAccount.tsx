@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import ContinueButton from '@/components/continueButton';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const SignUpScreenSetFuelType = () => {
+const SignUpScreenVerifyAccount = () => {
   const router = useRouter();
   const [isDisabled, setDisabled] = useState(false);
   const theme = useTheme();
@@ -40,14 +40,23 @@ const SignUpScreenSetFuelType = () => {
         marginBottom: 20,
     },
     textInput: {
-      margin: 10,
-      padding: 10,
-      backgroundColor: '#FFF',
-      fontSize: 20,
-      color: '#000',
-      width: 300,
-      borderRadius: 10
-    },
+        height: 50,
+        marginBottom: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 15, 
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: theme.primaryText,
+        backgroundColor: '#bab8b8',
+        fontSize: 16,
+        textAlign: 'left',
+        maxWidth: 250,
+        width: 250,
+        zIndex: 1,
+      },
+      inputText:{
+        margin: 5,
+      },
   });
   const [confirmationCode, setConfirmationCode] = useState('');
   const handleSignUpVerifyAccount = async () => {
@@ -68,7 +77,7 @@ const SignUpScreenSetFuelType = () => {
     } catch (error:any) {
       console.error("Verification failed:", error);
       Alert.alert('Login Failed', error.message || 'Something went wrong. Please try again.');
-      setDisabled(true);
+      setDisabled(false);
     }
   };
 
@@ -85,16 +94,18 @@ const SignUpScreenSetFuelType = () => {
             Verify Account
         </Heading>
         <Text style={styles.text}>Please Check Your Email For A Verification Code.</Text>
-        <TextInput
-          placeholder="Enter confirmation code"
-          placeholderTextColor={'#717780'}
-          value={confirmationCode}
-          onChangeText={setConfirmationCode}
-          keyboardType="numeric"
-          style={styles.textInput}
-          maxLength={6}
-          textContentType='oneTimeCode'
-        />
+         <View>
+            <Text style={[styles.inputText, { color: theme.primaryText }]}>Confirmation Code</Text>
+            <TextInput
+                    placeholder="Enter confirmation code"
+                    value={confirmationCode}
+                    onChangeText={setConfirmationCode}
+                    keyboardType="numeric"
+                    style={styles.textInput}
+                    maxLength={6}
+                    textContentType='oneTimeCode'
+                  />
+            </View>
         </View>
         <View style={styles.continueBtn}>
         <ContinueButton onPress={handleSignUpVerifyAccount} disabled={isDisabled}/>
@@ -104,4 +115,4 @@ const SignUpScreenSetFuelType = () => {
   );
 };
 
-export default SignUpScreenSetFuelType;
+export default SignUpScreenVerifyAccount;

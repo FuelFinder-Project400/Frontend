@@ -10,7 +10,7 @@ import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GetUserToStorage } from '@/aws/api';
 
-const SignUpScreen = () => {
+const LoginScreen = () => {
   const theme = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,6 +36,9 @@ const SignUpScreen = () => {
   const handleSignUpInstead = () => {
     router.replace('./signup')
   }
+  const handleForgotPassword = () => {
+    router.replace('./signup_forgot_password');
+  }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView
@@ -51,7 +54,10 @@ const SignUpScreen = () => {
             />
             <Heading level={1}>Login</Heading>
             <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} />
-            <TextInput inputTitle="Password" inputType="login-password" value={password} onChangeText={setPassword} /> 
+            <TextInput inputTitle="Password" inputType="login-password" value={password} onChangeText={setPassword} />
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleForgotPassword}>
+              <Text style={{color: theme.primaryText, padding: 20, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Forgot Password?</Text>
+            </TouchableOpacity> 
             <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleSignUpInstead}>
               <Text style={{color: theme.primaryText, padding: 48, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Or Sign Up</Text>
             </TouchableOpacity>
@@ -91,4 +97,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUpScreen;
+export default LoginScreen;

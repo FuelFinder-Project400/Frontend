@@ -123,7 +123,54 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
       if (user) user.signOut();
       console.log('User Signed Out');
     }
+
+    forgotPassword(email: string): Promise<void> {
+      const user = new CognitoUser({
+        Username: email,
+        Pool: userPool,
+      });
+  
+      return new Promise((resolve, reject) => {
+        user.forgotPassword({
+          onSuccess: (data) => {
+            console.log("Code sent successfully:", data);
+            resolve();
+          },
+          onFailure: (err) => {
+            console.error("Error sending forgot password code:", err);
+            reject(err);
+          },
+        });
+      });
+    }
+  
+    confirmPassword(email: string, code: string, newPassword: string): Promise<void> {
+      const user = new CognitoUser({
+        Username: email,
+        Pool: userPool,
+      });
+  
+      return new Promise((resolve, reject) => {
+        user.confirmPassword(code, newPassword, {
+          onSuccess: () => {
+            console.log("Password successfully changed.");
+            resolve();
+          },
+          onFailure: (err) => {
+            console.error("Error confirming new password:", err);
+            reject(err);
+          },
+        });
+      });
+    }
   }
+
+
+
+
+
+
+  
   
   export default new CognitoService();
   

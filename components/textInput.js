@@ -58,7 +58,10 @@ const TextInput = ({ inputTitle = "blank", inputType = "default", value, onChang
       return 'emailAddress';
     } else if (inputType === 'username') {
       return 'username';
-    } else {
+    } else if (inputType === 'onetimepasscode'){
+      return 'oneTimeCode';
+    } 
+    else {
       return 'none';
     }
   };
