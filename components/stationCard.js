@@ -156,7 +156,7 @@ const StationCard = ({ id }) => {
             setStation(updatedStationList);
         
             await sendThankYouNotification();
-            setAddPriceModalVisible(false); // Close the modal
+            setAddPriceModalVisible(false);
             router.replace({
                 pathname: '/station',
                 params: {
@@ -166,6 +166,8 @@ const StationCard = ({ id }) => {
           }
         } catch (error) {
           console.error("Error in handlePriceChange:", error);
+          Alert.alert('Error Occured','Please Try Again');
+          setAddPriceModalVisible(false);
         }
       };
     const handlePetrolChange = (text) => {

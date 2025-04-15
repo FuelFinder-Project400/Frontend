@@ -217,7 +217,7 @@ export default function Settings() {
     if (!result.canceled && result.assets && result.assets[0].base64) {
       const base64 = result.assets[0].base64;
       setPictureChanging(true);
-      const upload: boolean = await UploadProfilePic(base64);
+      const upload: boolean = (await UploadProfilePic(base64)) || false;
       if(upload){
         router.replace('./settings');
       }

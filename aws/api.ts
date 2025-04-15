@@ -1,6 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Cognito from '../aws/cognito';
 // Define the base URL for your API (adjust it accordingly)
 const API_URL = process.env.EXPO_PUBLIC_API_URL; // Replace with your actual URL
 
@@ -16,7 +16,6 @@ export const postUserFromStorage = async () => {
       // Check if all values are available
       if (!user_id || !fuelType || !searchRadius) {
         console.error('Missing required data from AsyncStorage');
-        throw new Error('Missing required data from AsyncStorage');
       }
   
       // Create the JSON object for the API request
@@ -31,7 +30,6 @@ export const postUserFromStorage = async () => {
       const idToken = await AsyncStorage.getItem('idToken');
       if (!idToken) {
         console.error('No idToken found in AsyncStorage');
-        throw new Error('No idToken found');
       }
   
       // Set the Authorization header
@@ -51,7 +49,7 @@ export const postUserFromStorage = async () => {
       }
     } catch (error) {
       console.error('Error posting user data:', error);
-      throw new Error('Failed to post user data');
+      Cognito.tryAutoRefresh();
     }
   };
 
@@ -62,7 +60,6 @@ export const postUserFromStorage = async () => {
       const idToken = await AsyncStorage.getItem('idToken');
       if (!idToken) {
         console.error('No idToken found in AsyncStorage');
-        throw new Error('No idToken found');
       }
   
       // Set the Authorization header
@@ -86,6 +83,7 @@ export const postUserFromStorage = async () => {
       await AsyncStorage.setItem('push_token', response.data.push_token || "");
     } catch (error) {
       console.error('Error fetching user info:', error);
+      Cognito.tryAutoRefresh();
     }
   };
 
@@ -102,7 +100,6 @@ export const UpdateUserFromStorage = async () => {
     // Check if all values are available
     if (!user_id || !fuelType || !searchRadius || !xp) {
       console.error('Missing required data from AsyncStorage');
-      throw new Error('Missing required data from AsyncStorage');
     }
 
     // Create the JSON object for the API request
@@ -117,7 +114,6 @@ export const UpdateUserFromStorage = async () => {
     const idToken = await AsyncStorage.getItem('idToken');
     if (!idToken) {
       console.error('No idToken found in AsyncStorage');
-      throw new Error('No idToken found');
     }
 
     // Set the Authorization header
@@ -137,7 +133,7 @@ export const UpdateUserFromStorage = async () => {
     }
   } catch (error) {
     console.error('Error updating user data:', error);
-    throw new Error('Failed to update user data');
+    Cognito.tryAutoRefresh();
   }
 };
 
@@ -156,7 +152,6 @@ export const UploadProfilePic = async (image: string) => {
     const idToken = await AsyncStorage.getItem('idToken');
     if (!idToken) {
       console.error('No idToken found in AsyncStorage');
-      throw new Error('No idToken found');
     }
 
     // Set the Authorization header
@@ -177,7 +172,7 @@ export const UploadProfilePic = async (image: string) => {
     }
   } catch (error) {
     console.error('Error posting user data:', error);
-    throw new Error('Failed to post user data');
+    Cognito.tryAutoRefresh();
   }
 };
 // Post a new price
@@ -189,7 +184,6 @@ export const postPrice = async (petrolPrice:any, dieselPrice:any, station_id:str
     
     if (!user_id || !petrolPrice || !dieselPrice || !station_id ||!station_name) {
       console.error('Missing required data');
-      throw new Error('Missing required data');
     }
 
     // Create the JSON object for the API request
@@ -205,7 +199,6 @@ export const postPrice = async (petrolPrice:any, dieselPrice:any, station_id:str
     const idToken = await AsyncStorage.getItem('idToken');
     if (!idToken) {
       console.error('No idToken found in AsyncStorage');
-      throw new Error('No idToken found');
     }
 
     // Set the Authorization header
@@ -225,7 +218,7 @@ export const postPrice = async (petrolPrice:any, dieselPrice:any, station_id:str
     }
   } catch (error) {
     console.error('Error posting user data:', error);
-    throw new Error('Failed to post user data');
+    Cognito.tryAutoRefresh();
   }
 };
 // Get User Data and Store it Locally
@@ -235,7 +228,6 @@ export const GetStationPrice = async (station_id: string) => {
     const idToken = await AsyncStorage.getItem('idToken');
     if (!idToken) {
       console.error('No idToken found in AsyncStorage');
-      throw new Error('No idToken found');
     }
 
     // Set the Authorization header
@@ -255,6 +247,7 @@ export const GetStationPrice = async (station_id: string) => {
       return null;
     }
   } catch (error) {
+    Cognito.tryAutoRefresh();
   }
 };
 
@@ -268,7 +261,6 @@ export const postReport = async (petrolPrice:any, dieselPrice:any, station_id:st
     
     if (!user_id || !petrolPrice || !dieselPrice || !station_id || !reportReason) {
       console.error('Missing required data');
-      throw new Error('Missing required data');
     }
     console.log('I made it here');
     // Create the JSON object for the API request
@@ -285,7 +277,6 @@ export const postReport = async (petrolPrice:any, dieselPrice:any, station_id:st
     const idToken = await AsyncStorage.getItem('idToken');
     if (!idToken) {
       console.error('No idToken found in AsyncStorage');
-      throw new Error('No idToken found');
     }
 
     // Set the Authorization header
@@ -305,7 +296,7 @@ export const postReport = async (petrolPrice:any, dieselPrice:any, station_id:st
     }
   } catch (error) {
     console.error('Error posting report data:', error);
-    throw new Error('Failed to post user data');
+    Cognito.tryAutoRefresh();
   }
 };
 
@@ -319,7 +310,6 @@ export const updateFavouriteStationsToDB = async () => {
     // Check if all values are available
     if (!user_id || !favourite_stations) {
       console.error('Missing required data from AsyncStorage');
-      throw new Error('Missing required data from AsyncStorage');
     }
 
     // Create the JSON object for the API request
@@ -331,7 +321,6 @@ export const updateFavouriteStationsToDB = async () => {
     const idToken = await AsyncStorage.getItem('idToken');
     if (!idToken) {
       console.error('No idToken found in AsyncStorage');
-      throw new Error('No idToken found');
     }
 
     // Set the Authorization header
@@ -351,7 +340,7 @@ export const updateFavouriteStationsToDB = async () => {
     }
   } catch (error) {
     console.error('Error updating user data:', error);
-    throw new Error('Failed to update user data');
+    Cognito.tryAutoRefresh();
   }
 };
 
@@ -361,13 +350,11 @@ export const updateFavouriteStationsToDB = async () => {
     const userId = await AsyncStorage.getItem('userID');
     if(!userId){
       console.error('No User ID found in AsyncStorage');
-      throw new Error('No User ID found');
     }
     // Get the idToken from AsyncStorage for Authorization header
     const idToken = await AsyncStorage.getItem('idToken');
     if (!idToken) {
       console.error('No idToken found in AsyncStorage');
-      throw new Error('No idToken found');
     }
 
     // Set the Authorization header
@@ -385,5 +372,6 @@ export const updateFavouriteStationsToDB = async () => {
     }
 
   } catch (error) {
+    Cognito.tryAutoRefresh();
   }
 };
