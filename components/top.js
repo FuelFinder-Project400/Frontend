@@ -6,7 +6,7 @@ import NotificationCard from '../components/notification';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {GetUserNotifications} from '@/aws/api';
+import {GetUserNotifications, DeleteUserNotifications} from '@/aws/api';
 export default function Top() {
   const theme = useTheme();
   const router = useRouter();
@@ -27,8 +27,9 @@ export default function Top() {
       getProfilePic();
       getNotifications();
     }, []);
-  const handleRemoveNotification = (id) => {
+  const handleRemoveNotification = async (id) => {
     setNotifications(notifications.filter((notif) => notif.notification_id !== id));
+    await DeleteUserNotifications(id);
   };
   const styles = StyleSheet.create({
     container: {
