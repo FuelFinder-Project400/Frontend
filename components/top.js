@@ -6,13 +6,12 @@ import NotificationCard from '../components/notification';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {GetUserNotifications} from '@/aws/api';
 export default function Top() {
   const theme = useTheme();
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
-  const [notifications, setNotifications] = useState([
-      { id: 1, type: 'info', title: 'Welcome to FuelFinder', description: 'We hope you enjoy using our app.' },
-    ]);
+  const [notifications, setNotifications] = useState([]);
   const [profilePic, setProfilePic] = useState('../assets/images/defaultProfilePic.jpg');
   useEffect(() => {
       const getProfilePic = async () => {
@@ -21,7 +20,14 @@ export default function Top() {
           setProfilePic(profilePic);
         }
       }
+      const getNotifications = async () => {
+        const notifications = await GetUserNotifications();
+        if (notifications != null){
+          setNotifications(notifications);
+        }
+      }
       getProfilePic();
+      getNotifications();
     }, []);
   const handleRemoveNotification = (id) => {
     setNotifications(notifications.filter((notif) => notif.id !== id));
@@ -164,7 +170,7 @@ export default function Top() {
               {notifications.length > 0 ? (
                 notifications.map((notification) => (
                   <NotificationCard
-                    key={notification.id}
+                    key={notification.notification_id}
                     type={notification.type}
                     title={notification.title}
                     description={notification.description}

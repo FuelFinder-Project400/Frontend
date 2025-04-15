@@ -353,3 +353,37 @@ export const updateFavouriteStationsToDB = async () => {
     throw new Error('Failed to update user data');
   }
 };
+
+ // Get User Data and Store it Locally
+ export const GetUserNotifications = async () => {
+  try {
+    const userId = await AsyncStorage.getItem('userID');
+    if(!userId){
+      console.error('No User ID found in AsyncStorage');
+      throw new Error('No User ID found');
+    }
+    // Get the idToken from AsyncStorage for Authorization header
+    const idToken = await AsyncStorage.getItem('idToken');
+    if (!idToken) {
+      console.error('No idToken found in AsyncStorage');
+      throw new Error('No idToken found');
+    }
+
+    // Set the Authorization header
+    const headers = {
+      'Authorization': `Bearer ${idToken}`,
+    };
+
+    // Make the GET request to the API
+    const response = await axios.get(`${API_URL}/user/${userId}/notifications`, {
+      headers,
+    });
+
+    if(response.status === 200){
+        return response.data;
+    }
+
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+  }
+};
