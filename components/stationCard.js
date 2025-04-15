@@ -7,37 +7,61 @@ import { postPrice, postReport } from '@/aws/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {updateFavouriteStationsToDB} from '@/aws/api';
 import { sendThankYouNotification, sendReportSentNotification } from '@/notifications/notification-templates';
-const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastUpdated, verifications, user_id }) => {
+const StationCard = ({ id }) => {
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [isAddPriceModalVisible, setAddPriceModalVisible] = useState(false);
-    const [petrolPrice, setPetrolPrice] = useState(petrol);
-    const [dieselPrice, setDieselPrice] = useState(diesel);
+    const [isVerified, setIsVerified] = useState(false);
     const [pError, setPError] = useState("");
     const [dError, setDError] = useState("");
     const [favouriteStations, setFavouriteStations] = useState([]);
     const [isFavorited, setIsFavorited] = useState(false);
+    const [petrolPrice, setPetrolPrice] = useState('');
+    const [dieselPrice, setDieselPrice] = useState('');
+    const [station, setStation] = useState(null);
 
-    useEffect(() => {
-    const getFavouriteStations = async () => {
+    const fetchStationFromStorage = async () => {
         try {
-        const storedFavourites = await AsyncStorage.getItem('favourite_stations');
-        const parsedFavourites = storedFavourites ? JSON.parse(storedFavourites) : [];
-        setFavouriteStations(parsedFavourites);
-        setIsFavorited(parsedFavourites.some(station => station.station_id === id));
-        } catch (error) {
-        console.error('Error loading favourites:', error);
+            const stored = await AsyncStorage.getItem('stations');
+            if (stored) {
+                const stations = JSON.parse(stored);
+                const match = stations.find(s => s.id === id);
+                setStation(match || null);
+                if (match) {
+                    setPetrolPrice(match.petrol);
+                    setDieselPrice(match.diesel);
+                    setIsVerified(match.verifications >= 5);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load station:', err);
         }
     };
 
-    getFavouriteStations();
+    useEffect(() => {
+        fetchStationFromStorage();  // Fetch the station details
+        const getFavouriteStations = async () => {
+            try {
+                const storedFavourites = await AsyncStorage.getItem('favourite_stations');
+                const parsedFavourites = storedFavourites ? JSON.parse(storedFavourites) : [];
+                setFavouriteStations(parsedFavourites);
+                setIsFavorited(parsedFavourites.some(station => station.station_id === id));
+            } catch (error) {
+                console.error('Error loading favourites:', error);
+            }
+        };
+        getFavouriteStations();  // Fetch favourite stations
     }, [id]);
+
+    if (!station) {
+        return;
+    }
 
     const toggleFavorite = async () => {
     try {
         let updatedFavourites = [...favouriteStations];
 
-        const fav_station = { station_id: id, station_name: name };
+        const fav_station = { station_id: id, station_name: station.station_name };
 
         const isFavorited = updatedFavourites.some(
         (station) => station.station_id === id
@@ -79,11 +103,10 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
         return `${Math.floor(diffInSeconds / 29030400)} years ago`;
     }
 
-    const isVerified = verifications >= 5;
 
     const openMaps = () => {
-        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${name},${address}`;
-        const appleMapsUrl = `maps://?daddr=${name}`;
+        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.station_name},${station.address}`;
+        const appleMapsUrl = `maps://?daddr=${station.station_name}`;
         const url = Platform.OS === "ios" ? appleMapsUrl : googleMapsUrl;
     
         Linking.canOpenURL(url)
@@ -98,22 +121,53 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
     };
     
     const handleReport = async (reason) => {
-        const addReport = await postReport(petrolPrice, dieselPrice, id, user_id, reason);
+        const addReport = await postReport(petrolPrice, dieselPrice, station.id, station.user_id, reason);
         if(addReport){
             //handle XP here ....
             await sendReportSentNotification();
             setModalVisible(false);
         }
     };
+    
     const handlePriceChange = async () => {
-        const addPrice = await postPrice(petrolPrice, dieselPrice, id, name);
-        if(addPrice){
-            //handle XP here ....
+        try {
+          const addPrice = await postPrice(petrolPrice, dieselPrice, station.id, station.station_name);
+          
+          if (addPrice) {
+            const storedStations = await AsyncStorage.getItem('stations');
+            let stationList = storedStations ? JSON.parse(storedStations) : [];
+            let user_id = await AsyncStorage.getItem('userID');
+            let id = station.id;
+            const updatedStationList = stationList.map(station => {
+              if (station.id === id) {
+                return {
+                  ...station,
+                  petrol: petrolPrice,
+                  diesel: dieselPrice,
+                  lastUpdated: new Date().toISOString(),
+                  verifications: 1,
+                  user_id: user_id,
+                };
+              }
+              return station;
+            });
+            await AsyncStorage.setItem('stations', JSON.stringify(updatedStationList));
+        
+            setStation(updatedStationList);
+        
             await sendThankYouNotification();
-            setAddPriceModalVisible(false);
+            setAddPriceModalVisible(false); // Close the modal
+            router.replace({
+                pathname: '/station',
+                params: {
+                  id: station.id
+                },
+              });
+          }
+        } catch (error) {
+          console.error("Error in handlePriceChange:", error);
         }
-
-    }
+      };
     const handlePetrolChange = (text) => {
         if (text === "") {
           setPError("Petrol price cannot be empty");
@@ -134,7 +188,7 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
 
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity onPress={() => router.replace('./findfuel')}>
                 <MaterialCommunityIcons name="arrow-left-circle" size={40} color={"#000"} style={{marginVertical: 10, marginTop: -5, marginLeft: -8}} />
             </TouchableOpacity>
             <View style={styles.container2}>
@@ -142,13 +196,13 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
                     <View style={styles.stationDetails}>
                         <View style={styles.stationDetailsText}>
                             <Heading level={4} style={{ color: '#000' }}>
-                                {name}
+                                {station.station_name}
                             </Heading>
                         </View>
                     </View>
 
                     <View style={styles.starsContainer}>
-                        {Array.from({ length: stars }).map((_, index) => (
+                        {Array.from({ length: station.stars }).map((_, index) => (
                             <MaterialCommunityIcons key={index} name="star" size={20} color="#FFD700" style={styles.starIcon} />
                         ))}
                     </View>
@@ -156,26 +210,26 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
                     <View style={{flexDirection: 'row', marginVertical: 10,}}>
                         <View style={styles.priceContainer}>
                             <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
-                            <Heading level={3} style={styles.priceText}>€{petrol || " N/A"}</Heading>
+                            <Heading level={3} style={styles.priceText}>€{petrolPrice || " N/A"}</Heading>
                         </View>
                         <View style={styles.priceContainer}>
                             <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
-                            <Heading level={3} style={styles.priceText}>€{diesel || " N/A"}</Heading>
+                            <Heading level={3} style={styles.priceText}>€{dieselPrice || " N/A"}</Heading>
                         </View>
                     </View>
 
                     <View style={styles.verificationContainer}>
                         <MaterialCommunityIcons name="check-circle" size={20} color={isVerified ? "#6dcf69" : "#888"} />
-                        <Text style={styles.verificationText}>{verifications} verifications</Text>
+                        <Text style={styles.verificationText}>{station.verifications} verifications</Text>
                     </View>
                     
                     <View style={{ marginTop: 10 }}>
-                        <Text style={{ color: '#878383', fontWeight: 'bold' }}>Last Updated: {getLastUpdated(lastUpdated)}</Text>
+                        <Text style={{ color: '#878383', fontWeight: 'bold' }}>Last Updated: {getLastUpdated(station.lastUpdated)}</Text>
                     </View>
                 </View>
 
                 <View style={styles.distanceContainer}>
-                    <Heading level={3} style={styles.distanceText}>{distance}km</Heading>
+                    <Heading level={3} style={styles.distanceText}>{station.distance}km</Heading>
                 </View>
             </View>
 
@@ -201,7 +255,7 @@ const StationCard = ({ id, name, address, petrol, diesel, distance, stars, lastU
                         />
                     </TouchableOpacity>
                 </View>
-                {petrol !== "" && diesel !== "" && (
+                {station.petrol !== "" && station.diesel !== "" && (
                     <View style={styles.likeButtonContainer}>
                         <TouchableOpacity style={styles.likeButton}>
                         <MaterialCommunityIcons name="thumb-up-outline" size={40} color="#6dcf69" />

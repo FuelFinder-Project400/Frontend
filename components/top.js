@@ -16,9 +16,7 @@ export default function Top() {
   useEffect(() => {
       const getProfilePic = async () => {
         const profilePic = await AsyncStorage.getItem('profilePic');
-        if(profilePic != ''){
-          setProfilePic(profilePic);
-        }
+        setProfilePic(profilePic);
       }
       const getNotifications = async () => {
         const notifications = await GetUserNotifications();
@@ -30,7 +28,7 @@ export default function Top() {
       getNotifications();
     }, []);
   const handleRemoveNotification = (id) => {
-    setNotifications(notifications.filter((notif) => notif.id !== id));
+    setNotifications(notifications.filter((notif) => notif.notification_id !== id));
   };
   const styles = StyleSheet.create({
     container: {
@@ -174,7 +172,7 @@ export default function Top() {
                     type={notification.type}
                     title={notification.title}
                     description={notification.description}
-                    onClose={() => handleRemoveNotification(notification.id)}
+                    onClose={() => handleRemoveNotification(notification.notification_id)}
                   />
                 ))
               ) : (

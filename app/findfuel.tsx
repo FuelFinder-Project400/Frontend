@@ -71,19 +71,10 @@ export default function FindFuel() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   const handleStationPress = (station: any) => {
-    router.push({
+    router.replace({
       pathname: '/station',
       params: {
-        id: station.id,
-        name: station.station_name,
-        address: station.address,
-        petrol: station.petrol,
-        diesel: station.diesel,
-        distance: station.distance,
-        stars: station.stars,
-        lastUpdated: station.lastUpdated,
-        verifications: station.verifications,
-        user_id: station.user_id
+        id: station.id
       },
     });
 

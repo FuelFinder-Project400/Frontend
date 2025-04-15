@@ -169,6 +169,7 @@ export const UploadProfilePic = async (image: string) => {
 
     if (response.status === 200) {
       console.log('User created successfully:', response.data);
+      await AsyncStorage.setItem('profilePic', response.data.imageUrl);
       return true; // Return data or handle it as needed
     } else {
       console.error('Error creating user:', response.data.message);
@@ -384,6 +385,5 @@ export const updateFavouriteStationsToDB = async () => {
     }
 
   } catch (error) {
-    console.error('Error fetching user info:', error);
   }
 };
