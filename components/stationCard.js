@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Platform, Mod
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Heading from './headings';
 import { router } from 'expo-router';
-import { postPrice, postReport } from '@/aws/api';
+import { postPrice, postReport, UpdateUserFromStorage } from '@/aws/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {updateFavouriteStationsToDB} from '@/aws/api';
 import { sendThankYouNotification, sendReportSentNotification } from '@/notifications/notification-templates';
@@ -123,9 +123,13 @@ const StationCard = ({ id }) => {
     const handleReport = async (reason) => {
         const addReport = await postReport(petrolPrice, dieselPrice, station.id, station.user_id, reason);
         if(addReport){
-            //handle XP here ....
+            let xp = parseInt(await AsyncStorage.getItem('xp'));
+            let newXP = xp + 100;
+            await AsyncStorage.setItem('xp', `${newXP}`);
+            await UpdateUserFromStorage();
             await sendReportSentNotification();
             setModalVisible(false);
+            setAddPriceModalVisible(true);
         }
     };
     
@@ -154,7 +158,10 @@ const StationCard = ({ id }) => {
             await AsyncStorage.setItem('stations', JSON.stringify(updatedStationList));
         
             setStation(updatedStationList);
-        
+            let xp = parseInt(await AsyncStorage.getItem('xp'));
+            let newXP = xp + 100;
+            await AsyncStorage.setItem('xp', `${newXP}`);
+            await UpdateUserFromStorage();
             await sendThankYouNotification();
             setAddPriceModalVisible(false);
             router.replace({
