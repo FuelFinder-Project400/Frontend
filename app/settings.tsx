@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from "expo-router";
-import {UpdateUserFromStorage, UploadProfilePic} from '@/aws/api';
+import {updateFavouriteStationsToDB, UpdateUserFromStorage, UploadProfilePic} from '@/aws/api';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function Settings() {
@@ -20,8 +20,10 @@ export default function Settings() {
   const theme = useTheme();
   const [searchRadius, setSearchRadius] = useState<number>(0);
   const [selectedFuel, setSelectedFuel] = useState('');
+  const [pictureChanging, setPictureChanging] = useState(false);
   const [xp, setXP] = useState<number>(0);
   const [email, setEmail] = useState('');
+  const [favouriteStations, setFavouriteStations] = useState([]);
   useEffect(() => {
     const getSearchRadius = async () => {
       const searchRadius = await AsyncStorage.getItem('searchRadius');
@@ -39,10 +41,20 @@ export default function Settings() {
       const email: any = await AsyncStorage.getItem('email');
       setEmail(email);
     }
+    const getFavouriteStations = async () => {
+      try {
+          const storedFavourites = await AsyncStorage.getItem('favourite_stations');
+          const parsedFavourites = storedFavourites ? JSON.parse(storedFavourites) : [];
+          setFavouriteStations(parsedFavourites);
+      } catch (error) {
+          console.error('Error loading favourites:', error);
+      }
+    };
     getSearchRadius();
     getFuelType();
     getXP();
     getEmail();
+    getFavouriteStations();
   }, []);
   const [isFavStationsModalVisible, setFavStationsModalVisible] = useState(false);
 
@@ -204,12 +216,34 @@ export default function Settings() {
   
     if (!result.canceled && result.assets && result.assets[0].base64) {
       const base64 = result.assets[0].base64;
+      setPictureChanging(true);
       const upload: boolean = await UploadProfilePic(base64);
       if(upload){
         router.replace('./settings');
       }
+      setPictureChanging(false);
     }
   };
+  const handleDeleteFavourite =(station_id: string) => {
+     try {
+            let updatedFavourites = [...favouriteStations];
+    
+            const fav_station = { station_id: station_id};
+  
+            updatedFavourites = updatedFavourites.filter(
+                (station:any) => station.station_id !== station_id);
+    
+            AsyncStorage.setItem('favourite_stations', JSON.stringify(updatedFavourites));
+    
+            setFavouriteStations(updatedFavourites);
+    
+            updateFavouriteStationsToDB();
+            
+            console.log("Done");
+        } catch (error) {
+            console.error('Error updating favourites:', error);
+        }
+  }
   return (
     <SafeAreaView style={styles.container}>
         <Top></Top>
@@ -230,12 +264,11 @@ export default function Settings() {
               </View>
             </View>
             <View style={{flexDirection:'row', marginTop: 20}}>
-            <TouchableOpacity style={{padding: 10, backgroundColor:'#007bff', width: '40%', borderRadius: 30,marginLeft: 5,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleImagePick}>
+            <TouchableOpacity disabled={pictureChanging} style={{alignItems:'center', padding: 10, backgroundColor:'#007bff', width: '40%', borderRadius: 30,marginLeft: 5,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleImagePick}>
                   <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 14}}>Change Picture</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{alignItems:'center',flexDirection:'row',padding: 10, backgroundColor:'#e61c36', width: '40%', borderRadius: 30,marginLeft: 5,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleSignOut}>
-              <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 14, marginRight: 5}}>Sign Out</Text>
-              <MaterialCommunityIcons name="arrow-right-circle" size={20} color="#FFF" />
+            <TouchableOpacity style={{justifyContent:'center',flexDirection:'row',padding: 10, backgroundColor:'#e61c36', width: '40%', borderRadius: 30,marginLeft: 5,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleSignOut}>
+              <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 14}}>Sign Out</Text>
             </TouchableOpacity>
             </View>
           </View>
@@ -296,9 +329,37 @@ export default function Settings() {
                 <View style={styles.modalContent}>
                   <Text style={styles.modalTitle}>Favourite Stations</Text>
                     <View>
-                        <TouchableOpacity style={styles.modalCancel} onPress={() => setFavStationsModalVisible(false)}>
-                            <Text style={styles.modalCancelText}>Close</Text>
-                        </TouchableOpacity>
+                    {favouriteStations.length === 0 ? (
+                      <View>
+                        <Text style={{ fontSize: 16, textAlign: 'center', margin: 10 }}>
+                          You do not have any favourite stations yet.
+                        </Text>
+                        <Text style={{ fontSize: 16, textAlign: 'center', margin: 10 }}>
+                          Favourite a station by clicking a ⭐ on a station page.
+                        </Text>
+                        </View>
+                      ) : (
+                        favouriteStations.map((station: any) => (
+                          <View
+                            key={station.station_id}
+                            style={{
+                              flexDirection: 'row',
+                              margin: 5,
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              width: '100%',
+                            }}
+                          >
+                            <Text style={{ fontSize: 16 }}>{station.station_name}</Text>
+                            <TouchableOpacity onPress={() => handleDeleteFavourite(station.station_id)}>
+                              <MaterialCommunityIcons name="trash-can" size={40} color="#e61c36" />
+                            </TouchableOpacity>
+                          </View>
+                        ))
+                      )}
+                      <TouchableOpacity style={styles.modalCancel} onPress={() => setFavStationsModalVisible(false)}>
+                          <Text style={styles.modalCancelText}>Close</Text>
+                      </TouchableOpacity>
                     </View>
                 </View>
             </View>
