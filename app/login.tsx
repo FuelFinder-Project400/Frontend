@@ -9,12 +9,14 @@ import { router } from 'expo-router';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GetUserToStorage } from '@/aws/api';
+import { useFuelStations } from '@/googleAPI/placesAPI';
 
 const LoginScreen = () => {
   const theme = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isDisabled, setDisabled] = useState(false);
+  const { stations: searchedStations, errorMsg, refreshStations  } = useFuelStations();
   const handleLogin = async () => {
     Keyboard.dismiss();
     try {
@@ -26,6 +28,7 @@ const LoginScreen = () => {
       await AsyncStorage.setItem('refreshToken', login.refreshToken);
       await GetUserToStorage(login.session.accessToken.payload.username);
       console.log(login.idToken);
+      refreshStations();
       router.replace('./findfuel');
     } catch (error: any) {
       console.error('Login failed:', error);

@@ -26,6 +26,8 @@ export default function FindFuel() {
       setSelectedFuel(fuelType);
     }
     getFuelType();
+    refreshStations();
+    console.log('Data Refreshed');
     registerToken();
   }, []);
   

@@ -132,6 +132,7 @@ const StationCard = ({ id }) => {
     };
     
     const handleReport = async (reason) => {
+        setIsLoading(true);
         const addReport = await postReport(petrolPrice, dieselPrice, station.id, station.user_id, reason);
         if(addReport){
             let xp = parseInt(await AsyncStorage.getItem('xp'));
@@ -140,6 +141,7 @@ const StationCard = ({ id }) => {
             await UpdateUserFromStorage();
             await sendReportSentNotification();
             setModalVisible(false);
+            setIsLoading(false);
             setAddPriceModalVisible(true);
         }
     };
@@ -343,10 +345,10 @@ const StationCard = ({ id }) => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Report an Issue</Text>
-                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Price to high")}>
+                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Price to high")} disabled={isLoading}>
                             <Text style={styles.modalButtonText}>Price (To High)</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Price to low")}>
+                        <TouchableOpacity style={styles.modalButton} onPress={() => handleReport("Price to low")} disabled={isLoading}>
                             <Text style={styles.modalButtonText}>Price (To Low)</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.modalCancel} onPress={() => setModalVisible(false)}>
