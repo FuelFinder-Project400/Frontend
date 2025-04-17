@@ -31,7 +31,7 @@ const SignUpScreenSetFuelType = () => {
     logo: {
       width: 250,
       marginBottom: -100,
-      marginTop: -100,
+      marginTop: -149,
     },
     buttonContainer: {
       marginTop: 20,
@@ -43,6 +43,7 @@ const SignUpScreenSetFuelType = () => {
         marginTop: -30,
         marginRight: 30,
         marginBottom: 20,
+        height:'10%'
       },
   });
 
@@ -66,6 +67,7 @@ const SignUpScreenSetFuelType = () => {
         <Heading level={1} style={{ marginTop: 40 }}>
             Sign Up Complete
         </Heading>
+        <Text style={{color: theme.primaryText, fontSize: 18, marginVertical: 40}}>We hope you enjoy using our app!</Text>
         </View>
         <View style={styles.continueBtn}>
         <ContinueButton onPress={handleSignUpComplete} disabled={isDisabled}/>

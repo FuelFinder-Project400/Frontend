@@ -4,8 +4,8 @@ import * as Notifications from 'expo-notifications';
 export async function sendThankYouNotification() {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'Thanks for your contribution!',
-        body: 'Your fuel price update has been submitted! 🚗⛽',
+        title: 'You Have Gained 100 XP',
+        body: 'Thank you for your contribution! 🚗⛽',
         sound: 'default',
       },
       trigger: null,
@@ -16,8 +16,8 @@ export async function sendThankYouNotification() {
 export async function sendReportSentNotification() {
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: 'Thanks for your contribution!',
-      body: 'Your report has been sent, thank you! 👍',
+      title: 'Your Report Has Been Sent',
+      body: 'We have recieved your report, thank you 👍',
       sound: 'default',
     },
     trigger: null,

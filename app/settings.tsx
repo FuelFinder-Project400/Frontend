@@ -83,6 +83,20 @@ export default function Settings() {
       shadowOpacity: 0.3,
       shadowRadius: 4,
     },
+    signOutOptionContainer : {
+      backgroundColor: '#ff5454',
+      margin: 10,
+      marginRight: '5%',
+      width: '45%',
+      borderRadius: 10,
+      alignSelf:'flex-end',
+      elevation: 4,
+      // Shadow for iOS
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+    },
     settingOptionHeading: {
       color: '#000',
       fontWeight: 'bold',
@@ -104,7 +118,7 @@ export default function Settings() {
       alignItems: "center",
     },
     activeSegment: {
-      backgroundColor: "#007bff",
+      backgroundColor: "#ffac36",
       borderRadius: 10,
       
     },
@@ -247,6 +261,7 @@ export default function Settings() {
   return (
     <SafeAreaView style={styles.container}>
         <Top></Top>
+        <Heading level={2} style={{margin:10}}>Settings</Heading>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.main}>
           <View style={styles.settingOptionContainer}>
@@ -263,12 +278,9 @@ export default function Settings() {
                 </View>
               </View>
             </View>
-            <View style={{flexDirection:'row', marginTop: 20}}>
-            <TouchableOpacity disabled={pictureChanging} style={{alignItems:'center', padding: 10, backgroundColor:'#007bff', width: '40%', borderRadius: 30,marginLeft: 5,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleImagePick}>
+            <View style={{flexDirection:'row', marginTop: 20, alignItems: 'center', justifyContent:'space-between'}}>
+            <TouchableOpacity disabled={pictureChanging} style={{alignItems:'center', padding: 10, backgroundColor:'#ffac36', width: '40%', borderRadius: 30,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleImagePick}>
                   <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 14}}>Change Picture</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{justifyContent:'center',flexDirection:'row',padding: 10, backgroundColor:'#e61c36', width: '40%', borderRadius: 30,marginLeft: 5,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleSignOut}>
-              <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 14}}>Sign Out</Text>
             </TouchableOpacity>
             </View>
           </View>
@@ -306,7 +318,7 @@ export default function Settings() {
                 style={{ width: 300, height: 40, alignSelf:'center', marginTop: 10, }}
                 minimumValue={1}
                 maximumValue={100}
-                minimumTrackTintColor="#2b93cf"
+                minimumTrackTintColor="#ffac36"
                 maximumTrackTintColor="#c7c5c5"
                 step={1}
                 value={searchRadius}
@@ -319,6 +331,12 @@ export default function Settings() {
             <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center'}} onPress={() => setFavStationsModalVisible(true)}>
               <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Favourite Stations</Heading>
               <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.signOutOptionContainer}>
+            <TouchableOpacity style={{padding: 10, flexDirection:'row', justifyContent:'flex-end'}} onPress={handleSignOut}>
+              <Heading level={4} style={{color:'#FFF', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Sign Out</Heading>
+              <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#FFF" />
             </TouchableOpacity>
           </View>
         </View>

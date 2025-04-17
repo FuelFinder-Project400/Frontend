@@ -1,19 +1,21 @@
 // theme.js
 export const lightTheme = {
     background: '#F5F5F5',
-    primaryButton: '#007BFF',
-    secondaryButton: '#FFFFFF',
+    primaryButton: '#ffac36',
+    secondaryButton: '#ffac36',
     primaryText: '#000000',
-    secondaryText: '#007BFF',
-    border: '#007BFF',
+    secondaryText: '#ffac36',
+    border: '#ffac36',
   };
   
   export const darkTheme = {
-    background: '#353535',
-    primaryButton: '#1F6FEB',
+    background: '#0d0d0d',
+    primaryButton: '#ffac36',
     secondaryButton: '#1C1C1C',
     primaryText: '#FFFFFF',
-    secondaryText: '#1F6FEB',
-    border: '#1F6FEB',
+    secondaryText: '#ffac36',
+    border: '#ffac36',
   };
   
+
+  //ffac36

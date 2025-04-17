@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   button: {
     width: 60,
     height: 60,
-    backgroundColor: 'green',
+    backgroundColor: '#ffac36',
     borderRadius: 15,  // To create curved corners
     justifyContent: 'center',
     alignItems: 'center',

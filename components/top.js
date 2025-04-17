@@ -51,9 +51,9 @@ export default function Top() {
         margin: 10,
       },
       profilePic: {
-        width: 60,
-        height: 60,
-        borderRadius: 40,
+        width: 50,
+        height: 50,
+        borderRadius: 30,
       },
       options: {
         marginTop: 15,
@@ -108,13 +108,13 @@ export default function Top() {
         position: "relative",
         justifyContent: "center",
         alignItems: "center",
-        marginRight: 20,
+        marginRight: -5,
       },
       badge: {
         position: "absolute",
         top: 7,
         right: -1,
-        backgroundColor: "red",
+        backgroundColor: "#ffac36",
         width: 20,
         height: 20,
         borderRadius: 10,
@@ -143,20 +143,6 @@ export default function Top() {
               </Text>
             </View>
           )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => router.replace({
-            pathname: '/settings',
-          })}
-        >
-          <Image
-            source={
-              profilePic && profilePic.startsWith('https') 
-                ? { uri: profilePic }
-                : require('../assets/images/defaultProfilePic.jpg')
-            }
-            style={styles.profilePic}
-          />
         </TouchableOpacity>
         </View>
         <Modal

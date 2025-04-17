@@ -265,9 +265,19 @@ const StationCard = ({ id }) => {
       }
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
-            <TouchableOpacity onPress={() => router.replace('./findfuel')}>
-                <MaterialCommunityIcons name="arrow-left-circle" size={40} color={"#000"} style={{marginVertical: 10, marginTop: -5, marginLeft: -8}} />
-            </TouchableOpacity>
+            <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                <TouchableOpacity onPress={() => router.replace('./findfuel')}>
+                    <MaterialCommunityIcons name="arrow-left-circle" size={40} color={"#000"} style={{marginVertical: 10, marginTop: -5, marginLeft: -8}} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={toggleFavorite} style={{ marginTop: '-7.5%', marginRight: '-2.6%'}}>
+                        <MaterialCommunityIcons 
+                            name={isFavorited ? "bookmark" : "bookmark-outline"}
+                            size={48}
+                            color={isFavorited ? "#ffac36" : "#00000"}
+                        />
+                </TouchableOpacity>
+            </View>
+            
             <View style={styles.container2}>
                 <View>
                     <View style={styles.stationDetails}>
@@ -280,7 +290,7 @@ const StationCard = ({ id }) => {
 
                     <View style={styles.starsContainer}>
                         {Array.from({ length: station.stars }).map((_, index) => (
-                            <MaterialCommunityIcons key={index} name="star" size={20} color="#FFD700" style={styles.starIcon} />
+                            <MaterialCommunityIcons key={index} name="star" size={20} color="#ffac36" style={styles.starIcon} />
                         ))}
                     </View>
 
@@ -322,14 +332,6 @@ const StationCard = ({ id }) => {
 
                     <TouchableOpacity style={styles.iconButton} onPress={() => setModalVisible(true)}>
                         <MaterialCommunityIcons name="flag-outline" size={40} color="red" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.iconButton} onPress={toggleFavorite}>
-                        <MaterialCommunityIcons 
-                            name={isFavorited ? "star" : "star-outline"} 
-                            size={40} 
-                            color="yellow" 
-                        />
                     </TouchableOpacity>
                 </View>
                 {(station.petrol !== "" && station.diesel !== "" && hasVerified == false) && (
@@ -424,8 +426,8 @@ const styles = StyleSheet.create({
         padding: 15,
         marginVertical: 10,
         marginHorizontal: 10,
-        borderWidth: 2,
-        borderColor: 'transparent', // Default border color
+        borderWidth: 4,
+        borderColor: '#000000', // Default border color
         // Shadow for iOS
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
@@ -433,7 +435,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     favoritedContainer: {
-        borderColor: 'yellow', // Border color when favorited
+        borderColor: '#ffac36', // Border color when favorited
     },
     container2: {
         flexDirection: 'row',

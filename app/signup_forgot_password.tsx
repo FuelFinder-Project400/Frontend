@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     logo: {
       width: 250,
       marginBottom: -100,
-      marginTop: -100,
+      marginTop: -149,
     },
     buttonContainer: {
       marginTop: 20,
@@ -39,6 +39,7 @@ const ForgotPassword = () => {
         marginTop: -30,
         marginRight: 30,
         marginBottom: 20,
+        height: '10%'
     },
     textInput: {
       margin: 10,

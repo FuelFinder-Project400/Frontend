@@ -36,18 +36,18 @@ const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUp
 
                 <View style={styles.starsContainer}>
                     {Array.from({ length: stars }).map((_, index) => (
-                        <MaterialCommunityIcons key={index} name="star" size={20} color="#FFD700" style={styles.starIcon} />
+                        <MaterialCommunityIcons key={index} name="star" size={20} color="#ffac36" style={styles.starIcon} />
                     ))}
                 </View>
 
                 <View style={{flexDirection: 'row', marginVertical: 10,}}>
                     <View style={styles.priceContainer}>
                         <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
-                        <Heading level={3} style={styles.priceText}>€{petrol || " N/A"}</Heading>
+                        <Heading level={3} style={styles.priceText}>{petrol || " N/A"} c/L</Heading>
                     </View>
                     <View style={styles.priceContainer}>
                         <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
-                        <Heading level={3} style={styles.priceText}>€{diesel || " N/A"}</Heading>
+                        <Heading level={3} style={styles.priceText}>{diesel || " N/A"} c/L</Heading>
                     </View>
                 </View>
 
@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 15,
         marginVertical: 10,
-        marginHorizontal: 20,
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 5,
@@ -140,13 +139,13 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     isNotVisitedContainer: {
-        borderColor: '#7a1ce6',
+        borderColor: '#ff5454',
     },
     isNotVisitedLabel: {
         position: 'absolute',
         top: -10,
         left: 15,
-        backgroundColor: '#7a1ce6',
+        backgroundColor: '#ff5454',
         color: '#fff',
         paddingHorizontal: 10,
         paddingVertical: 3,

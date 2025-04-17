@@ -56,14 +56,17 @@ const Checkbox = ({ label = "Label", isTermsAndConditions = false, checked = fal
     <View style={styles.container}>
       <BouncyCheckbox
         size={30}
-        fillColor="green"
-        unFillColor="#FFFFFF"
-        innerIconStyle={{ borderWidth: 2 }}
+        fillColor={theme.primaryButton}
+        unFillColor='#FFF'
+        innerIconStyle={{ 
+          borderWidth: isChecked ? 4 : 2, 
+          borderRadius: 5 
+        }}
+        iconStyle={{borderRadius: 5}}
         onPress={() => {
           setIsChecked(!isChecked);
           onChange && onChange(!isChecked);
         }}
-        style={styles.checkbox}
       />
       {!isTermsAndConditions && (
         <Text style={styles.label}>{label}</Text>

@@ -104,9 +104,9 @@ export default function FuelMapView({ stations }) {
     
       return currLowest < prevLowest ? curr : prev;
     });
-    if (station.id === closestStation.id) return "blue"; 
-    if (station.id === cheapestStation.id) return "green"; 
-    return "red"; 
+    if (station.id === closestStation.id) return {color:"#6dcf69", isCheapest: false}; 
+    if (station.id === cheapestStation.id) return {color: "#ffac36", isCheapest: true}; 
+    return {color:"grey"}; 
   };
 
   if (errorMsg) {
@@ -151,13 +151,13 @@ export default function FuelMapView({ stations }) {
                 latitude: station.location.lat,
                 longitude: station.location.lng,
               }}
-              pinColor={isSelected ? "orange" : markerColor}
+              pinColor={isSelected ? "#2085e3" : markerColor.color}
               onPress={() => handleMarkerPress(station)}
             >
               <MaterialCommunityIcons
-                name="fuel"
+                name={markerColor.isCheapest ? "star" : 'fuel'}
                 size={30}
-                color={isSelected ? "orange" : markerColor}
+                color={isSelected ? "#2085e3" : markerColor.color}
                 style={{ backgroundColor: '#FFF', padding: 5, borderRadius: 30 }}
               />
             </Marker>
@@ -167,13 +167,13 @@ export default function FuelMapView({ stations }) {
 
       <View style={styles.legend}>
         <Text style={styles.legendText}>
-          <Text style={{ color: "green" }}>●</Text> Cheapest
+          <Text style={{ color: "#ffac36" }}>●</Text> Cheapest
         </Text>
         <Text style={styles.legendText}>
-          <Text style={{ color: "blue" }}>●</Text> Closest
+          <Text style={{ color: "#6dcf69" }}>●</Text> Closest
         </Text>
         <Text style={styles.legendText}>
-          <Text style={{ color: "red" }}>●</Text> Other Stations
+          <Text style={{ color: "grey" }}>●</Text> Other Stations
         </Text>
       </View>
 
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   },
   viewStationButton: {
     marginTop: 10,
-    backgroundColor: "#007bff",
+    backgroundColor: "#ffac36",
     padding: 10,
     borderRadius: 5,
   },

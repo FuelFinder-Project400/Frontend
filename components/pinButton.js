@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 30,
-    backgroundColor: "#2692eb", // Modern blue color
+    backgroundColor: "#ffac36", // Modern blue color
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,

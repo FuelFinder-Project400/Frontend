@@ -5,10 +5,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const NotificationCard = ({ type, title, description, onClose }) => {
 
   const iconDetails = {
-    info: { name: 'information-outline', color: '#2196F3' },
+    info: { name: 'information-outline', color: '#2196F3' },//#6dcf69
     success: { name: 'check-circle-outline', color: '#4CAF50' },
     error: { name: 'alert-circle-outline', color: '#F44336' },
-    default: { name: 'fuel', color: '#18b51d' }, 
+    default: { name: 'fuel', color: '#ffac36' }, 
   };
 
   const { name, color } = iconDetails[type] || iconDetails.default;
@@ -23,7 +23,7 @@ const NotificationCard = ({ type, title, description, onClose }) => {
         <Text style={styles.description}>{description}</Text>
       </View>
       <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-        <MaterialCommunityIcons name="trash-can" size={24} color={'#fc0317'}/>
+        <MaterialCommunityIcons name="trash-can" size={24} color={'#ff5454'}/>
       </TouchableOpacity>
     </View>
   );

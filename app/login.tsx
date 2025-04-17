@@ -44,11 +44,11 @@ const LoginScreen = () => {
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <KeyboardAvoidingView
         style={[styles.container, { backgroundColor: theme.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <SafeAreaView style={styles.safeAreaContainer}>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <Image
               source={require('../assets/images/FuelFinerIconTransparent.png')}
@@ -62,14 +62,14 @@ const LoginScreen = () => {
               <Text style={{color: theme.primaryText, padding: 20, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Forgot Password?</Text>
             </TouchableOpacity> 
             <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleSignUpInstead}>
-              <Text style={{color: theme.primaryText, padding: 48, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Or Sign Up</Text>
+              <Text style={{color: theme.primaryText, padding: 30, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Or Sign Up</Text>
             </TouchableOpacity>
           </ScrollView>  
+        </KeyboardAvoidingView>
           <View style={styles.continueBtn}>
-              <ContinueButton onPress={handleLogin} disabled={isDisabled}/>
-            </View>   
+            <ContinueButton onPress={handleLogin} disabled={isDisabled}/>
+          </View>   
         </SafeAreaView>
-      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };
@@ -90,13 +90,14 @@ const styles = StyleSheet.create({
   logo: {
     width: 250,
     marginBottom: -100,
-    marginTop: -150,
+    marginTop: -173,
   },
   continueBtn: {
     alignItems: 'flex-end',
     marginTop: -30,
     marginRight: 30,
     marginBottom: 20,
+    height:'10%'
   },
 });
 

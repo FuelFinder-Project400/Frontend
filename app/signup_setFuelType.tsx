@@ -23,7 +23,7 @@ const SignUpScreenSetFuelType = () => {
     logo: {
       width: 250,
       marginBottom: -100,
-      marginTop: -100,
+      marginTop: -129,
     },
     buttonContainer: {
       marginTop: 20,
@@ -31,9 +31,17 @@ const SignUpScreenSetFuelType = () => {
       alignItems: 'center',
     },
     infoText: {
-      margin:20,
+      marginVertical: 141,
+      marginHorizontal:20,
       textAlign: 'center',
       color: theme.primaryText + '66',
+    },
+    continueBtn: {
+      alignItems: 'flex-end',
+      marginTop: -30,
+      marginRight: 30,
+      marginBottom: 20,
+      height:'10%'
     },
   });
 
@@ -62,6 +70,9 @@ const SignUpScreenSetFuelType = () => {
         </Button>
       </View>
       <Heading level={5} style={styles.infoText}>Please Note That All Preferences Can Be Changed Later.</Heading>
+      <View style={styles.continueBtn}>
+
+      </View>
     </SafeAreaView>
   );
 };

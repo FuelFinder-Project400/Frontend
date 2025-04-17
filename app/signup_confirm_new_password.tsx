@@ -28,7 +28,7 @@ const ConfirmNewPassword = () => {
     logo: {
       width: 250,
       marginBottom: -100,
-      marginTop: -100,
+      marginTop: -149,
     },
     buttonContainer: {
       marginTop: 20,
@@ -40,6 +40,7 @@ const ConfirmNewPassword = () => {
         marginTop: -30,
         marginRight: 30,
         marginBottom: 20,
+        height:'10%'
     },
     textInput: {
       height: 50,
@@ -58,6 +59,11 @@ const ConfirmNewPassword = () => {
     },
     inputText:{
       margin: 5,
+    },
+    scrollContainer: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
   const [email, setEmail] = useState('');
@@ -95,45 +101,45 @@ const ConfirmNewPassword = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+ <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <KeyboardAvoidingView
-              style={[styles.container, { backgroundColor: theme.background }]}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            >
-      <SafeAreaView style={styles.container}>
-        <View style={[styles.container, { alignItems: 'center' }]}>
-        <Image
-            source={require('../assets/images/FuelFinerIconTransparent.png')}
-            style={styles.logo}
-            resizeMode="contain"
-        />
-        <Heading level={1} style={{ marginTop: 10 }}>
-            Forgot Password
-        </Heading>
-        <Text style={styles.text}>Step (2/2)</Text>
-        <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} externalError={emailError}/>
-        <View>
-          <Text style={[styles.inputText, { color: theme.primaryText }]}>Confirmation Code</Text>
-          <RNTextInput
-                  placeholder="Enter confirmation code"
-                  value={confirmationCode}
-                  onChangeText={setConfirmationCode}
-                  keyboardType="numeric"
-                  style={styles.textInput}
-                  maxLength={6}
-                  textContentType='oneTimeCode'
-                />
-        </View>
-        
-        <TextInput inputTitle="Password" inputType="password" value={password} onChangeText={setPassword} externalError={passwordError}/>
-        </View>
+        style={[styles.container, { backgroundColor: theme.background }]}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <Image
+              source={require('../assets/images/FuelFinerIconTransparent.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+              <Heading level={1} style={{ marginTop: 10 }}>
+                  Forgot Password
+              </Heading>
+              <Text style={styles.text}>Step (2/2)</Text>
+              <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} externalError={emailError}/>
+              <View>
+                <Text style={[styles.inputText, { color: theme.primaryText }]}>Confirmation Code</Text>
+                <RNTextInput
+                        placeholder="Enter confirmation code"
+                        value={confirmationCode}
+                        onChangeText={setConfirmationCode}
+                        keyboardType="numeric"
+                        style={styles.textInput}
+                        maxLength={6}
+                        textContentType='oneTimeCode'
+                      />
+              </View>
+              
+              <TextInput inputTitle="Password" inputType="password" value={password} onChangeText={setPassword} externalError={passwordError}/>
+              </ScrollView>
+          </KeyboardAvoidingView>
         <View style={styles.continueBtn}>
-        <ContinueButton onPress={handleConfirmNewPassword} disabled={isDisabled}/>
+            <ContinueButton onPress={handleConfirmNewPassword} disabled={isDisabled}/>
         </View>
-    </SafeAreaView>
-    </KeyboardAvoidingView>
+        </SafeAreaView>
     </TouchableWithoutFeedback>
-  );
+  )
 };
 
 export default ConfirmNewPassword;

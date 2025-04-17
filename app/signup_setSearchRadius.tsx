@@ -11,7 +11,7 @@ const SignUpScreenSetFuelType = () => {
   const theme = useTheme();
 
   const [searchRadius, setSearchRadius] = useState(5);
-
+  const [isDisabled, setIsDisabled] = useState(false);
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -27,7 +27,7 @@ const SignUpScreenSetFuelType = () => {
     logo: {
       width: 250,
       marginBottom: -100,
-      marginTop: -100,
+      marginTop: -149,
     },
     buttonContainer: {
       marginTop: 20,
@@ -39,9 +39,11 @@ const SignUpScreenSetFuelType = () => {
         marginTop: -30,
         marginRight: 30,
         marginBottom: 20,
+        height:'10%'
       },
     infoText: {
-      margin:20,
+      margin: 20,
+      marginBottom:40,
       textAlign: 'center',
       color: theme.primaryText + '66',
     },
@@ -69,7 +71,7 @@ const SignUpScreenSetFuelType = () => {
             style={{ width: 300, height: 40 }}
             minimumValue={1}
             maximumValue={100}
-            minimumTrackTintColor="#2b93cf"
+            minimumTrackTintColor="#ffac36"
             maximumTrackTintColor="#c7c5c5"
             step={1}
             value={searchRadius}
@@ -77,10 +79,10 @@ const SignUpScreenSetFuelType = () => {
         />
         <Text style={styles.text}>Search Radius: {searchRadius} km</Text>
         </View>
-        <View style={styles.continueBtn}>
-        <ContinueButton onPress={handleSetSearchRadius} />
-        </View>
         <Heading level={5} style={styles.infoText}>Please Note That All Preferences Can Be Changed Later.</Heading>
+        <View style={styles.continueBtn}>
+        <ContinueButton onPress={handleSetSearchRadius} disabled={isDisabled}/>
+        </View>
     </SafeAreaView>
   );
 };

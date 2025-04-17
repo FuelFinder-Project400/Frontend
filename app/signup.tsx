@@ -70,12 +70,12 @@ const SignUpScreen = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <KeyboardAvoidingView
         style={[styles.container, { backgroundColor: theme.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <SafeAreaView style={styles.safeAreaContainer}>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <Image
               source={require('../assets/images/FuelFinerIconTransparent.png')}
@@ -93,13 +93,13 @@ const SignUpScreen = () => {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               externalError={confirmPasswordError}
-            />
+              />
 
             <Checkbox
               isTermsAndConditions={true}
               checked={isChecked}
               onChange={handleCheckboxChange}
-            />
+              />
 
             <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handleLoginInstead}>
               <Text style={{
@@ -111,14 +111,13 @@ const SignUpScreen = () => {
               }}>Or Login</Text>
             </TouchableOpacity>
           </ScrollView>
-
+          </KeyboardAvoidingView>
+        <View style={styles.continueBtn}>
           {isChecked && (
-            <View style={styles.continueBtn}>
-              <ContinueButton onPress={handleContinueSignUp} disabled={isDisabled}/>
-            </View>
+            <ContinueButton onPress={handleContinueSignUp} disabled={isDisabled}/>
           )}
+        </View>
         </SafeAreaView>
-      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };
@@ -142,14 +141,15 @@ const styles = StyleSheet.create({
   logo: {
     width: 250,
     marginBottom: -100,
-    marginTop: -150,
+    marginTop: -130,
   },
   continueBtn: {
     alignItems: 'flex-end',
     marginTop: -30,
     marginRight: 30,
     marginBottom: 20,
-  },
+    height: '10%'
+  }
 });
 
 export default SignUpScreen;

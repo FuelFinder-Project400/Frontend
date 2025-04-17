@@ -1,13 +1,20 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React,{useState, useEffect} from "react";
+import { View, Text, TouchableOpacity, StyleSheet,Image } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useTheme } from "../theme/ThemeContent";
 import { useRouter } from "expo-router";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function BottomNav({ activeTab, setActiveTab }) {
   const theme = useTheme();
   const router = useRouter();
-
+  const [profilePic, setProfilePic] = useState('../assets/images/defaultProfilePic.jpg');
+  useEffect(() => {
+      const getProfilePic = async () => {
+        const profilePic = await AsyncStorage.getItem('profilePic');
+        setProfilePic(profilePic);
+      }
+      getProfilePic();
+    }, []);
   const styles = StyleSheet.create({
     container: {
       flexDirection: "row",
@@ -23,7 +30,7 @@ export default function BottomNav({ activeTab, setActiveTab }) {
       alignItems: "center",
     },
     active: {
-      color: "#007BFF", // Active color
+      color: "#ffac36", // Active color
     },
     inactive: {
       color: theme.primaryText, // Inactive color
@@ -31,6 +38,11 @@ export default function BottomNav({ activeTab, setActiveTab }) {
     label: {
       fontSize: 12,
       marginTop: 5,
+    },
+    profilePic: {
+      width: 48,
+      height: 48,
+      borderRadius: 30,
     },
   });
 
@@ -41,25 +53,6 @@ export default function BottomNav({ activeTab, setActiveTab }) {
 
   return (
     <View style={styles.container}>
-      {/* Home Button */}
-      {/* <TouchableOpacity
-        style={styles.button}
-        onPress={() => handleNavigation("Home", "/homescreen")}
-      >
-        <MaterialIcons
-          name="home"
-          size={24}
-          style={activeTab === "Home" ? styles.active : styles.inactive}
-        />
-        <Text
-          style={[
-            styles.label,
-            activeTab === "Home" ? styles.active : styles.inactive,
-          ]}
-        >
-          Home
-        </Text>
-      </TouchableOpacity> */}
 
       {/* Find Fuel Button */}
       <TouchableOpacity
@@ -68,7 +61,7 @@ export default function BottomNav({ activeTab, setActiveTab }) {
       >
         <FontAwesome5
           name="gas-pump"
-          size={20}
+          size={25}
           style={activeTab === "FindFuel" ? styles.active : styles.inactive}
         />
         <Text
@@ -81,24 +74,39 @@ export default function BottomNav({ activeTab, setActiveTab }) {
         </Text>
       </TouchableOpacity>
 
+      {/* Find Fuel Button */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => handleNavigation("Trends", "/trends")}
+      >
+        <FontAwesome5
+          name="poll"
+          size={25}
+          style={activeTab === "Trends" ? styles.active : styles.inactive}
+        />
+        <Text
+          style={[
+            styles.label,
+            activeTab === "Trends" ? styles.active : styles.inactive,
+          ]}
+        >
+          Analytics
+        </Text>
+      </TouchableOpacity>
+
       {/* Settings Button */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => handleNavigation("Settings", "/settings")}
       >
-        <MaterialIcons
-          name="settings"
-          size={24}
-          style={activeTab === "Settings" ? styles.active : styles.inactive}
+        <Image
+          source={
+            profilePic && profilePic.startsWith('https') 
+              ? { uri: profilePic }
+              : require('../assets/images/defaultProfilePic.jpg')
+          }
+          style={styles.profilePic}
         />
-        <Text
-          style={[
-            styles.label,
-            activeTab === "Settings" ? styles.active : styles.inactive,
-          ]}
-        >
-          Settings
-        </Text>
       </TouchableOpacity>
     </View>
   );
