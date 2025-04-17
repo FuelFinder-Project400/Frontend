@@ -38,10 +38,10 @@ export default function FindFuel() {
     },
     filterContainer: {
       flexDirection: "row",
-      justifyContent: "flex-start",
+      justifyContent: "space-evenly",
       alignItems: "center",
       marginVertical: 16,
-      margin: 5,
+      width: '96%',
     },
     scrollContainer: {
       flex: 1,
