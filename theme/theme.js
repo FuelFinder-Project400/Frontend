@@ -2,7 +2,7 @@
 export const lightTheme = {
     background: '#F5F5F5',
     primaryButton: '#ffac36',
-    secondaryButton: '#ffac36',
+    secondaryButton: '#FFF',
     primaryText: '#000000',
     secondaryText: '#ffac36',
     border: '#ffac36',

@@ -86,12 +86,8 @@ const SignUpScreenVerifyAccount = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <View style={[styles.container, { alignItems: 'center' }]}>
-        <Image
-            source={require('../assets/images/FuelFinerIconTransparent.png')}
-            style={styles.logo}
-            resizeMode="contain"
-        />
-        <Heading level={1} style={{ marginTop: 10 }}>
+         
+        <Heading level={1} style={{ marginTop: 97 }}>
             Verify Account
         </Heading>
         <Text style={styles.text}>Please Check Your Email For A Verification Code.</Text>

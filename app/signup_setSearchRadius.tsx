@@ -58,12 +58,8 @@ const SignUpScreenSetFuelType = () => {
   return (
     <SafeAreaView style={styles.container}>
         <View style={[styles.container, { alignItems: 'center' }]}>
-        <Image
-            source={require('../assets/images/FuelFinerIconTransparent.png')}
-            style={styles.logo}
-            resizeMode="contain"
-        />
-        <Heading level={1} style={{ marginTop: 20 }}>
+         
+        <Heading level={1} style={{ marginTop: 97 }}>
             Set your search radius
         </Heading>
         <Text style={styles.text}>Choose the maximum distance the app will search for nearby fuel stations.</Text>

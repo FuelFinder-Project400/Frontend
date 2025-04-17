@@ -108,12 +108,8 @@ const ConfirmNewPassword = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Image
-              source={require('../assets/images/FuelFinerIconTransparent.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-              <Heading level={1} style={{ marginTop: 10 }}>
+             
+              <Heading level={1} style={{ marginTop: -113 }}>
                   Forgot Password
               </Heading>
               <Text style={styles.text}>Step (2/2)</Text>
@@ -128,6 +124,7 @@ const ConfirmNewPassword = () => {
                         style={styles.textInput}
                         maxLength={6}
                         textContentType='oneTimeCode'
+                        placeholderTextColor={'#FFF'}
                       />
               </View>
               

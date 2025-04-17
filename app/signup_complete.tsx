@@ -59,12 +59,8 @@ const SignUpScreenSetFuelType = () => {
   return (
     <SafeAreaView style={styles.container}>
         <View style={[styles.container, { alignItems: 'center' }]}>
-        <Image
-            source={require('../assets/images/FuelFinerIconTransparent.png')}
-            style={styles.logo}
-            resizeMode="contain"
-        />
-        <Heading level={1} style={{ marginTop: 40 }}>
+         
+        <Heading level={1} style={{ marginTop: 97 }}>
             Sign Up Complete
         </Heading>
         <Text style={{color: theme.primaryText, fontSize: 18, marginVertical: 40}}>We hope you enjoy using our app!</Text>

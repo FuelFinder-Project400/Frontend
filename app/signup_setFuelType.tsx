@@ -31,7 +31,7 @@ const SignUpScreenSetFuelType = () => {
       alignItems: 'center',
     },
     infoText: {
-      marginVertical: 141,
+      marginVertical: 233,
       marginHorizontal:20,
       textAlign: 'center',
       color: theme.primaryText + '66',
@@ -53,12 +53,7 @@ const SignUpScreenSetFuelType = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Image
-        source={require('../assets/images/FuelFinerIconTransparent.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      <Heading level={1} style={{ marginTop: 20, marginBottom: 20 }}>
+      <Heading level={1} style={{ marginTop: 117, marginBottom: 20 }}>
         What is your preferred fuel type?
       </Heading>
       <View style={styles.buttonContainer}>

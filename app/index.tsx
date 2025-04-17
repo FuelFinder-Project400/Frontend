@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../theme/ThemeContent';
 import Cognito from '../aws/cognito';
+import Heading from '@/components/headings';
 
 const InitialScreen = () => {
   const router = useRouter();
@@ -40,7 +41,7 @@ const InitialScreen = () => {
     return (
       <View style={[styles.container, { backgroundColor: theme.background }]}>
         <Image
-          source={require('../assets/images/FuelFinerIconTransparent.png')}
+          source={require('../assets/images/FuelFinderIconTransparent.png')}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -53,12 +54,14 @@ const InitialScreen = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Logo */}
-      <Image
-        source={require('../assets/images/FuelFinerIconTransparent.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      
+      <View style={{flexDirection: 'row', justifyContent: 'center', alignItems:'center', marginBottom: 100}}>
+        <Image
+          source={require('../assets/images/FuelFinderIconTransparent.png')}
+          style={styles.logo}
+          resizeMode="contain"
+          />
+        <Heading level={1}>FuelFinder</Heading>
+      </View>
       {/* Buttons */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -101,8 +104,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 300,
-    height: 300,
+    width: 50,
+    height: 50,
+    marginRight: 10
   },
   buttonContainer: {
     width: '80%',

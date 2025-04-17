@@ -77,12 +77,7 @@ const SignUpScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Image
-              source={require('../assets/images/FuelFinerIconTransparent.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Heading level={1}>Sign Up</Heading>
+            <Heading level={1} style={{marginTop: 45}}>Sign Up</Heading>
             <Text style={[styles.text, { color: theme.primaryText }]}>Using Email</Text>
 
             <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} externalError={emailError}/>

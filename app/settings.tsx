@@ -85,12 +85,24 @@ export default function Settings() {
     },
     signOutOptionContainer : {
       backgroundColor: '#ff5454',
-      margin: 10,
       marginRight: '5%',
       width: '45%',
       borderRadius: 10,
       alignSelf:'flex-end',
       elevation: 4,
+      // Shadow for iOS
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+    },
+    changePhotoOptionContainer : {
+      backgroundColor: '#ffac36',
+      width: '52%',
+      borderRadius: 10,
+      alignSelf:'flex-start',
+      elevation: 4,
+      marginRight: 10,
       // Shadow for iOS
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
@@ -264,7 +276,7 @@ export default function Settings() {
         <Heading level={2} style={{margin:10}}>Settings</Heading>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.main}>
-          <View style={styles.settingOptionContainer}>
+          <View style={[styles.settingOptionContainer, {}]}>
             <Heading level={5} style={styles.settingOptionHeading}>Account Details</Heading>
             <View style={{flexDirection: 'row', margin: 5}}>
               <View style={{flexDirection:'row'}}>
@@ -278,10 +290,19 @@ export default function Settings() {
                 </View>
               </View>
             </View>
-            <View style={{flexDirection:'row', marginTop: 20, alignItems: 'center', justifyContent:'space-between'}}>
-            <TouchableOpacity disabled={pictureChanging} style={{alignItems:'center', padding: 10, backgroundColor:'#ffac36', width: '40%', borderRadius: 30,elevation: 4,shadowColor: '#000',shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.3,shadowRadius: 4,}} onPress={handleImagePick}>
-                  <Text style={{color:'#FFF', fontWeight:'bold', fontSize: 14}}>Change Picture</Text>
-            </TouchableOpacity>
+              <View style={{flexDirection:'row', justifyContent:'space-between', width: '100%', marginTop: 20}}>
+                <View style={styles.changePhotoOptionContainer}>
+                  <TouchableOpacity style={{padding: 5, flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}} onPress={handleImagePick}>
+                    <Heading level={4} style={{color:'#FFF', fontWeight: 'bold', marginVertical: 7, marginRight: 5, fontSize: 16}}>Change Picture</Heading>
+                    <MaterialCommunityIcons name="panorama" size={40} color="#FFF" />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.signOutOptionContainer}>
+                  <TouchableOpacity style={{padding: 5, flexDirection:'row', justifyContent:'flex-end'}} onPress={handleSignOut}>
+                    <Heading level={4} style={{color:'#FFF', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Sign Out</Heading>
+                    <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#FFF" />
+                  </TouchableOpacity>
+                </View>
             </View>
           </View>
           <View style={styles.settingOptionContainer}>
@@ -328,15 +349,9 @@ export default function Settings() {
             <Text style={styles.text}>{searchRadius} km</Text>
           </View>
           <View style={styles.settingOptionContainer}>
-            <TouchableOpacity style={{padding: 20, flexDirection:'row', alignContent: 'center'}} onPress={() => setFavStationsModalVisible(true)}>
-              <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Favourite Stations</Heading>
+            <TouchableOpacity style={{padding: 20, flexDirection:'row', justifyContent: 'flex-end'}} onPress={() => setFavStationsModalVisible(true)}>
+              <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Bookmarks</Heading>
               <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.signOutOptionContainer}>
-            <TouchableOpacity style={{padding: 10, flexDirection:'row', justifyContent:'flex-end'}} onPress={handleSignOut}>
-              <Heading level={4} style={{color:'#FFF', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Sign Out</Heading>
-              <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#FFF" />
             </TouchableOpacity>
           </View>
         </View>
@@ -345,7 +360,7 @@ export default function Settings() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                  <Text style={styles.modalTitle}>Favourite Stations</Text>
+                  <Text style={styles.modalTitle}>Bookmarked Stations</Text>
                     <View>
                     {favouriteStations.length === 0 ? (
                       <View>
@@ -353,7 +368,7 @@ export default function Settings() {
                           You do not have any favourite stations yet.
                         </Text>
                         <Text style={{ fontSize: 16, textAlign: 'center', margin: 10 }}>
-                          Favourite a station by clicking a ⭐ on a station page.
+                          Bookmark a station by tapping the bookmark on a station page.
                         </Text>
                         </View>
                       ) : (

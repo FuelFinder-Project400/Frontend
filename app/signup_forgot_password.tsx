@@ -79,12 +79,8 @@ const ForgotPassword = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <View style={[styles.container, { alignItems: 'center' }]}>
-        <Image
-            source={require('../assets/images/FuelFinerIconTransparent.png')}
-            style={styles.logo}
-            resizeMode="contain"
-        />
-        <Heading level={1} style={{ marginTop: 10 }}>
+         
+        <Heading level={1} style={{ marginTop: 98 }}>
             Forgot Password
         </Heading>
         <Text style={styles.text}>Step (1/2)</Text>

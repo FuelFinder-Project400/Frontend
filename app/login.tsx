@@ -40,7 +40,7 @@ const LoginScreen = () => {
     router.replace('./signup')
   }
   const handleForgotPassword = () => {
-    router.replace('./signup_forgot_password');
+    router.push('./signup_forgot_password');
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -50,11 +50,6 @@ const LoginScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Image
-              source={require('../assets/images/FuelFinerIconTransparent.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
             <Heading level={1}>Login</Heading>
             <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} />
             <TextInput inputTitle="Password" inputType="login-password" value={password} onChangeText={setPassword} />
