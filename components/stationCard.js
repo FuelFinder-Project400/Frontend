@@ -226,8 +226,9 @@ const StationCard = ({ id }) => {
             console.warn("No user ID found in storage.");
             return;
           }
-      
+            console.log(id);
             const verify = await VerifyPrice(id);
+            console.log(verify);
             setHasVerified(true);
             const stored = await AsyncStorage.getItem('stations');
             let stationList = stored ? JSON.parse(stored) : [];

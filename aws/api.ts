@@ -79,7 +79,7 @@ export const postUserFromStorage = async () => {
       await AsyncStorage.setItem('fuelType', response.data.fuelType);
       await AsyncStorage.setItem('searchRadius', response.data.searchRadius);
       await AsyncStorage.setItem('profilePic', response.data.profilePic);
-      await AsyncStorage.setItem('favourite_stations', response.data.favourite_stations);
+      await AsyncStorage.setItem('favourite_stations', JSON.stringify(response.data.favourite_stations));
       await AsyncStorage.setItem('push_token', response.data.push_token || "");
     } catch (error) {
       console.error('Error fetching user info:', error);
@@ -374,7 +374,7 @@ export const updateFavouriteStationsToDB = async () => {
     Cognito.tryAutoRefresh();
   }
 };
-// Delete User Data and Store it Locally
+// Delete User Notifications
 export const DeleteUserNotifications = async (notification_id:string) => {
   try {
     const userId = await AsyncStorage.getItem('userID');
@@ -406,7 +406,7 @@ export const DeleteUserNotifications = async (notification_id:string) => {
     Cognito.tryAutoRefresh();
   }
 };
-// Delete User Data and Store it Locally
+// Verify Price
 export const VerifyPrice = async (station_id:string) => {
   try {
     const userId = await AsyncStorage.getItem('userID');
@@ -425,7 +425,7 @@ export const VerifyPrice = async (station_id:string) => {
     };
 
     // Make the PUT request to the API
-    const response = await axios.put(`${API_URL}/price/${station_id}/${userId}`, {
+    const response = await axios.put(`${API_URL}/price/${station_id}/${userId}`, {}, {
       headers,
     });
 
@@ -435,11 +435,12 @@ export const VerifyPrice = async (station_id:string) => {
     }
 
   } catch (error) {
+    console.log(error);
     Cognito.tryAutoRefresh();
     return false;
   }
 };
- // Get User Notifications
+ // Get Trends
  export const GetTrends = async () => {
   try {
 
@@ -456,6 +457,41 @@ export const VerifyPrice = async (station_id:string) => {
 
     // Make the GET request to the API
     const response = await axios.get(`${API_URL}/trends`, {
+      headers,
+    });
+
+    if(response.status === 200){
+        return response.data;
+    }
+
+  } catch (error) {
+    Cognito.tryAutoRefresh();
+  }
+};
+// Delete User Account
+export const DeleteAccount = async () => {
+  try {
+    const userId = await AsyncStorage.getItem('userID');
+    if(!userId){
+      console.error('No User ID found in AsyncStorage');
+    }
+    const email = await AsyncStorage.getItem('email');
+    if(!userId){
+      console.error('No Email found in AsyncStorage');
+    }
+    // Get the idToken from AsyncStorage for Authorization header
+    const idToken = await AsyncStorage.getItem('idToken');
+    if (!idToken) {
+      console.error('No idToken found in AsyncStorage');
+    }
+
+    // Set the Authorization header
+    const headers = {
+      'Authorization': `Bearer ${idToken}`,
+    };
+
+    // Make the GET request to the API
+    const response = await axios.delete(`${API_URL}/user/${userId}/${email}`, {
       headers,
     });
 

@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Cognito from '../aws/cognito';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from "expo-router";
-import {updateFavouriteStationsToDB, UpdateUserFromStorage, UploadProfilePic} from '@/aws/api';
+import {DeleteAccount, updateFavouriteStationsToDB, UpdateUserFromStorage, UploadProfilePic} from '@/aws/api';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function Settings() {
@@ -87,6 +87,19 @@ export default function Settings() {
       backgroundColor: '#ff5454',
       marginRight: '5%',
       width: '45%',
+      borderRadius: 10,
+      alignSelf:'flex-end',
+      elevation: 4,
+      // Shadow for iOS
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+    },
+    deleteAccountOptionContainer : {
+      backgroundColor: '#ff5454',
+      marginRight: '5%',
+      width: '90%',
       borderRadius: 10,
       alignSelf:'flex-end',
       elevation: 4,
@@ -270,6 +283,28 @@ export default function Settings() {
             console.error('Error updating favourites:', error);
         }
   }
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Confirm Account Deletion',
+      'Are you sure you want to delete your account? This action is irreversible.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await DeleteAccount();
+            await AsyncStorage.clear();
+            router.replace('./login');
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
         <Top></Top>
@@ -352,6 +387,12 @@ export default function Settings() {
             <TouchableOpacity style={{padding: 20, flexDirection:'row', justifyContent: 'flex-end'}} onPress={() => setFavStationsModalVisible(true)}>
               <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Bookmarks</Heading>
               <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.deleteAccountOptionContainer}>
+            <TouchableOpacity style={{paddingVertical: 10, flexDirection:'row', justifyContent:'center'}} onPress={handleDeleteAccount}>
+              <Heading level={4} style={{color:'#FFF', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Delete Account</Heading>
+              <MaterialCommunityIcons name="account-circle" size={40} color="#FFF" />
             </TouchableOpacity>
           </View>
         </View>
