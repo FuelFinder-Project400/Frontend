@@ -270,12 +270,21 @@ const StationCard = ({ id }) => {
                 <TouchableOpacity onPress={() => router.replace('./findfuel')}>
                     <MaterialCommunityIcons name="arrow-left-circle" size={40} color={"#000"} style={{marginVertical: 10, marginTop: -5, marginLeft: -8}} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={toggleFavorite} style={{ marginTop: '-7.5%', marginRight: '-2.6%'}}>
-                        <MaterialCommunityIcons 
-                            name={isFavorited ? "bookmark" : "bookmark-outline"}
-                            size={48}
-                            color={isFavorited ? "#ffac36" : "#00000"}
-                        />
+                <TouchableOpacity
+                    onPress={toggleFavorite}
+                    style={{
+                        marginTop: isFavorited ? '-4.5%' : '-7.5%',
+                        marginRight: '-2.6%',
+                    }}
+                    >
+                    <MaterialCommunityIcons
+                        name={isFavorited ? 'bookmark' : 'bookmark-plus-outline'}
+                        size={48}
+                        color={isFavorited ? '#ffac36' : '#000000'}
+                        style={{
+                        ...(isFavorited && { transform: [{ scaleY: 1.5 }] }),
+                        }}
+                    />
                 </TouchableOpacity>
             </View>
             

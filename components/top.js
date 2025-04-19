@@ -5,26 +5,18 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NotificationCard from '../components/notification';
 import Heading from '@/components/headings';
 import { useRouter } from 'expo-router';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {GetUserNotifications, DeleteUserNotifications} from '@/aws/api';
 export default function Top() {
   const theme = useTheme();
-  const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [profilePic, setProfilePic] = useState('../assets/images/defaultProfilePic.jpg');
   useEffect(() => {
-      const getProfilePic = async () => {
-        const profilePic = await AsyncStorage.getItem('profilePic');
-        setProfilePic(profilePic);
-      }
       const getNotifications = async () => {
         const notifications = await GetUserNotifications();
         if (notifications != null){
           setNotifications(notifications);
         }
       }
-      getProfilePic();
       getNotifications();
     }, []);
   const handleRemoveNotification = async (id) => {

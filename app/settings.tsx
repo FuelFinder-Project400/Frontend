@@ -24,6 +24,14 @@ export default function Settings() {
   const [xp, setXP] = useState<number>(0);
   const [email, setEmail] = useState('');
   const [favouriteStations, setFavouriteStations] = useState([]);
+  const [profilePic, setProfilePic] = useState('../assets/images/defaultProfilePic.jpg');
+  useEffect(() => {
+      const getProfilePic = async () => {
+        const profilePic: any = await AsyncStorage.getItem('profilePic');
+        setProfilePic(profilePic);
+      }
+      getProfilePic();
+    }, []);
   useEffect(() => {
     const getSearchRadius = async () => {
       const searchRadius = await AsyncStorage.getItem('searchRadius');
@@ -84,8 +92,9 @@ export default function Settings() {
       shadowRadius: 4,
     },
     signOutOptionContainer : {
-      backgroundColor: '#ff5454',
-      marginRight: '5%',
+      borderColor: '#ff5454',
+      backgroundColor: '#f3f3f3',
+      borderWidth: 3,
       width: '45%',
       borderRadius: 10,
       alignSelf:'flex-end',
@@ -99,6 +108,7 @@ export default function Settings() {
     deleteAccountOptionContainer : {
       backgroundColor: '#ff5454',
       marginRight: '5%',
+      margin: 10,
       width: '90%',
       borderRadius: 10,
       alignSelf:'flex-end',
@@ -110,12 +120,13 @@ export default function Settings() {
       shadowRadius: 4,
     },
     changePhotoOptionContainer : {
-      backgroundColor: '#ffac36',
-      width: '52%',
+      backgroundColor: '#f3f3f3',
+      borderColor: '#ffac36',
+      borderWidth: 3,
+      width: '45%',
       borderRadius: 10,
       alignSelf:'flex-start',
       elevation: 4,
-      marginRight: 10,
       // Shadow for iOS
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
@@ -214,15 +225,32 @@ export default function Settings() {
       paddingBottom: 100,
     },
     profilePic: {
-      width: 60,
-      height: 60,
+      width: 80,
+      height: 80,
       borderRadius: 40,
     },
   });
   const handleSignOut = () => {
-    AsyncStorage.clear();
-    Cognito.signOut();
-    router.replace('./login');
+    Alert.alert(
+      'Confirm Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            AsyncStorage.clear();
+            Cognito.signOut();
+            router.replace('./login');
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
   const handleFuelTypeChange = (fuelType:string) => {
     setSelectedFuel(fuelType);
@@ -314,6 +342,14 @@ export default function Settings() {
           <View style={[styles.settingOptionContainer, {}]}>
             <Heading level={5} style={styles.settingOptionHeading}>Account Details</Heading>
             <View style={{flexDirection: 'row', margin: 5}}>
+            <Image
+                source={
+                  profilePic && profilePic.startsWith('https') 
+                    ? { uri: profilePic }
+                    : require('../assets/images/defaultProfilePic.jpg')
+                }
+                style={styles.profilePic}
+              />
               <View style={{flexDirection:'row'}}>
                 <View style={{flexDirection: 'column',alignItems:'flex-end'}}>
                   <Text style={{fontWeight: 'bold', margin: 5}}>Email:</Text>
@@ -327,15 +363,15 @@ export default function Settings() {
             </View>
               <View style={{flexDirection:'row', justifyContent:'space-between', width: '100%', marginTop: 20}}>
                 <View style={styles.changePhotoOptionContainer}>
-                  <TouchableOpacity style={{padding: 5, flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}} onPress={handleImagePick}>
-                    <Heading level={4} style={{color:'#FFF', fontWeight: 'bold', marginVertical: 7, marginRight: 5, fontSize: 16}}>Change Picture</Heading>
-                    <MaterialCommunityIcons name="panorama" size={40} color="#FFF" />
+                  <TouchableOpacity style={{padding: 5, flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}} onPress={handleImagePick} disabled={pictureChanging}>
+                    <Heading level={4} style={{color:'#ffac36', fontWeight: 'bold', marginVertical: 7, marginRight: 5, fontSize: 16}}>Edit Picture</Heading>
+                    <MaterialCommunityIcons name="panorama" size={40} color="#ffac36" />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.signOutOptionContainer}>
-                  <TouchableOpacity style={{padding: 5, flexDirection:'row', justifyContent:'flex-end'}} onPress={handleSignOut}>
-                    <Heading level={4} style={{color:'#FFF', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Sign Out</Heading>
-                    <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#FFF" />
+                  <TouchableOpacity style={{padding: 5, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}} onPress={handleSignOut}>
+                    <Heading level={4} style={{color:'#ff5454', fontWeight: 'bold', marginVertical: 7, marginRight: 5, fontSize: 16}}>Sign Out</Heading>
+                    <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#ff5454" />
                   </TouchableOpacity>
                 </View>
             </View>
@@ -384,9 +420,9 @@ export default function Settings() {
             <Text style={styles.text}>{searchRadius} km</Text>
           </View>
           <View style={styles.settingOptionContainer}>
-            <TouchableOpacity style={{padding: 20, flexDirection:'row', justifyContent: 'flex-end'}} onPress={() => setFavStationsModalVisible(true)}>
+            <TouchableOpacity style={{padding: 20, flexDirection:'row', justifyContent: 'center'}} onPress={() => setFavStationsModalVisible(true)}>
               <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Bookmarks</Heading>
-              <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
+              <MaterialCommunityIcons name="bookmark-multiple" size={40} color="#524e4e" />
             </TouchableOpacity>
           </View>
           <View style={styles.deleteAccountOptionContainer}>

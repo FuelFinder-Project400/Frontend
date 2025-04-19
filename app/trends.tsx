@@ -17,8 +17,20 @@ export default function Trends() {
     useEffect(() => {
         const getTrends = async () => {
             try {
-                const trends = await GetTrends();
-                setTrends(trends?.data?.trend_data || []);
+                const storedTrends = await AsyncStorage.getItem('trends');
+                if (storedTrends) {
+                    const parsedTrends = JSON.parse(storedTrends);
+                    if (Array.isArray(parsedTrends)) {
+                        setTrends(parsedTrends);
+                        return;
+                    }
+                }
+                setRefreshing(true);
+                const response = await GetTrends();
+                const freshTrends = response?.data?.trend_data || [];
+                setTrends(freshTrends);
+                await AsyncStorage.setItem('trends', JSON.stringify(freshTrends));
+                setRefreshing(false);
             } catch (err) {
                 console.error("Error fetching trends:", err);
                 setTrends([]);
