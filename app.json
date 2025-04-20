@@ -12,8 +12,12 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "We need access to your photo library to upload your profile picture.",
-        "NSCameraUsageDescription": "We need access to your camera to take profile pictures."
-      }
+        "NSCameraUsageDescription": "We need access to your camera to take profile pictures.",
+        "NSLocationWhenInUseUsageDescription": "This app needs your location to show nearby fuel prices.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription":"This app uses your location to give fuel price alerts.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.matthew0blain.FuelFinder"
     },
     "android": {
       "adaptiveIcon": {

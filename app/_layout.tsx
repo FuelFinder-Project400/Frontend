@@ -2,7 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { ThemeProvider } from '../theme/ThemeContent';
 import { Stack } from 'expo-router';
 import * as Notifications from 'expo-notifications';
-
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { enableScreens } from 'react-native-screens';
+enableScreens();
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -31,8 +33,10 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <Stack screenOptions={{ headerShown: false, animation: 'fade', animationDuration: 0 }} />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <Stack screenOptions={{ headerShown: false, animation: 'fade', animationDuration: 0 }} />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

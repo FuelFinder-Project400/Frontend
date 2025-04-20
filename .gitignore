@@ -39,3 +39,7 @@ app-example
 
 # .env
 .env
+
+/android
+
+/ios

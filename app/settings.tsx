@@ -53,12 +53,25 @@ export default function Settings() {
     const getFavouriteStations = async () => {
       try {
           const storedFavourites = await AsyncStorage.getItem('favourite_stations');
-          const parsedFavourites = storedFavourites ? JSON.parse(storedFavourites) : [];
+          console.log('Raw stored favourites:', storedFavourites);
+
+          let parsedFavourites: any = [];
+
+          if (storedFavourites) {
+              const parsed = JSON.parse(storedFavourites);
+
+              if (Array.isArray(parsed)) {
+                  parsedFavourites = parsed;
+              } else {
+                  console.warn('Stored favourites parsed as non-array:', parsed);
+              }
+          }
+
           setFavouriteStations(parsedFavourites);
       } catch (error) {
           console.error('Error loading favourites:', error);
       }
-    };
+  };
     getSearchRadius();
     getFuelType();
     getXP();

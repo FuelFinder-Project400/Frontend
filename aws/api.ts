@@ -1,8 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Cognito from '../aws/cognito';
-// Define the base URL for your API (adjust it accordingly)
-const API_URL = process.env.EXPO_PUBLIC_API_URL; // Replace with your actual URL
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 // Post a new user
 export const postUserFromStorage = async () => {
