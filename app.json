@@ -8,10 +8,6 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "permissions": [
-      "ACCESS_FINE_LOCATION",
-      "ACCESS_COARSE_LOCATION"
-    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -27,7 +23,8 @@
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE"
-      ]
+      ],
+      "package": "com.matthew0blain.FuelFinder"
     },
     "web": {
       "bundler": "metro",
@@ -48,6 +45,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "29fe4ffd-2ce5-4545-9d29-dc36161cfe25"
+      }
     }
   }
 }
