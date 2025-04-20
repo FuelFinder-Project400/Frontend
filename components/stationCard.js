@@ -49,20 +49,42 @@ const StationCard = ({ id }) => {
         }
     };
 
-    useEffect(() => {
-        fetchStationFromStorage();  // Fetch the station details
+    useEffect(() => { 
+        fetchStationFromStorage();
+    
         const getFavouriteStations = async () => {
             try {
                 const storedFavourites = await AsyncStorage.getItem('favourite_stations');
-                const parsedFavourites = storedFavourites ? JSON.parse(storedFavourites) : [];
+                console.log('Raw stored favourites:', storedFavourites);
+    
+                let parsedFavourites = [];
+    
+                if (storedFavourites) {
+                    const parsed = JSON.parse(storedFavourites);
+    
+                    if (Array.isArray(parsed)) {
+                        parsedFavourites = parsed;
+                    } else {
+                        console.warn('Stored favourites parsed as non-array:', parsed);
+                    }
+                }
+    
                 setFavouriteStations(parsedFavourites);
-                setIsFavorited(parsedFavourites.some(station => station.station_id === id));
+    
+                // Guard against empty list
+                if (parsedFavourites.length > 0) {
+                    setIsFavorited(parsedFavourites.some(station => station.station_id === id));
+                } else {
+                    setIsFavorited(false);
+                }
             } catch (error) {
                 console.error('Error loading favourites:', error);
             }
         };
-        getFavouriteStations();  // Fetch favourite stations
+    
+        getFavouriteStations();
     }, [id]);
+    
 
     if (!station) {
         return;

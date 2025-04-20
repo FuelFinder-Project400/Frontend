@@ -94,7 +94,8 @@ export const UpdateUserFromStorage = async () => {
     const user_id = await AsyncStorage.getItem('userID');
     const fuelType = await AsyncStorage.getItem('fuelType');
     const searchRadius = await AsyncStorage.getItem('searchRadius');
-    const xp = await AsyncStorage.getItem('xp') || "0";
+    const xpString = await AsyncStorage.getItem('xp') || "0";
+    const xp = parseInt(xpString, 10);
     const push_token = await AsyncStorage.getItem('push_token') || "";
     console.log(user_id, fuelType,searchRadius, xp);
     // Check if all values are available
