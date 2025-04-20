@@ -75,7 +75,7 @@ export const postUserFromStorage = async () => {
       console.log('\n\n\nUser info:', response.data);
   
       // Store the fetched user data in AsyncStorage
-      await AsyncStorage.setItem('xp', response.data.xp);
+      await AsyncStorage.setItem('xp', response.data.xp || "0");
       await AsyncStorage.setItem('fuelType', response.data.fuelType);
       await AsyncStorage.setItem('searchRadius', response.data.searchRadius);
       await AsyncStorage.setItem('profilePic', response.data.profilePic);
@@ -94,7 +94,7 @@ export const UpdateUserFromStorage = async () => {
     const user_id = await AsyncStorage.getItem('userID');
     const fuelType = await AsyncStorage.getItem('fuelType');
     const searchRadius = await AsyncStorage.getItem('searchRadius');
-    const xp = await AsyncStorage.getItem('xp');
+    const xp = await AsyncStorage.getItem('xp') || "0";
     const push_token = await AsyncStorage.getItem('push_token') || "";
     console.log(user_id, fuelType,searchRadius, xp);
     // Check if all values are available

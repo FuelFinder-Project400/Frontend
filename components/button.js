@@ -4,7 +4,6 @@ import { useTheme } from '../theme/ThemeContent';
 
 const Button = ({ level = 1, color = 'blue', style = {}, children, onPress }) => {
   const theme = useTheme();
-  const textColor = color === 'black' ? '#fff' : theme.primaryText || '#000';
   // Define styles
   const styles = StyleSheet.create({
     buttonContainer: {
@@ -12,7 +11,9 @@ const Button = ({ level = 1, color = 'blue', style = {}, children, onPress }) =>
       borderRadius: 30,
       alignItems: 'center',
       marginVertical: 10,
-      backgroundColor: color,
+      borderColor: color,
+      borderWidth: 3,
+      backgroundColor: color + '90',
       width: '80%',
       margin: 15,
   
@@ -27,7 +28,7 @@ const Button = ({ level = 1, color = 'blue', style = {}, children, onPress }) =>
   },
     buttonText: {
         fontWeight: 'bold',
-        color: textColor,
+        color: '#fff',
         textAlign: 'center',
       },
     buttonText1: {

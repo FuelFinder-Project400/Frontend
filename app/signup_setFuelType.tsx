@@ -57,10 +57,10 @@ const SignUpScreenSetFuelType = () => {
         What is your preferred fuel type?
       </Heading>
       <View style={styles.buttonContainer}>
-        <Button level={1} onPress={() => handleSetFuelType('Petrol')} color="green">
+        <Button level={1} onPress={() => handleSetFuelType('Petrol')} color="#026836">
           Petrol
         </Button>
-        <Button level={1} onPress={() => handleSetFuelType('Diesel')} color="black">
+        <Button level={1} onPress={() => handleSetFuelType('Diesel')} color="#22272A">
           Diesel
         </Button>
       </View>

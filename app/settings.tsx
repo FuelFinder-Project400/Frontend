@@ -43,6 +43,7 @@ export default function Settings() {
     }
     const getXP = async () => {
       const xp: any = await AsyncStorage.getItem('xp');
+      console.log(xp);
       setXP(xp ? +xp : 0);
     }
     const getEmail = async () => {
@@ -423,6 +424,12 @@ export default function Settings() {
             <TouchableOpacity style={{padding: 20, flexDirection:'row', justifyContent: 'center'}} onPress={() => setFavStationsModalVisible(true)}>
               <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Manage Bookmarks</Heading>
               <MaterialCommunityIcons name="bookmark-multiple" size={40} color="#524e4e" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.settingOptionContainer}>
+            <TouchableOpacity style={{padding: 20, flexDirection:'row', justifyContent: 'center'}} onPress={() => router.replace('./onboarding')}>
+              <Heading level={4} style={{color:'#000', fontWeight: 'bold', marginVertical: 7, marginRight: 20}}>Onboarding</Heading>
+              <MaterialCommunityIcons name="school" size={40} color="#524e4e" />
             </TouchableOpacity>
           </View>
           <View style={styles.deleteAccountOptionContainer}>

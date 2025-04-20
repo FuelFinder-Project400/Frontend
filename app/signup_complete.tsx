@@ -52,7 +52,7 @@ const SignUpScreenSetFuelType = () => {
     setDisabled(true);
     const requst = await postUserFromStorage();
     if(requst){
-      router.replace('./findfuel'); //To be changed to onboarding screens.
+      router.replace('./onboarding'); //To be changed to onboarding screens.
     }
     setDisabled(false);
   };

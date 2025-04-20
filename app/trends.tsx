@@ -124,6 +124,7 @@ export default function Trends() {
         <SafeAreaView style={styles.container}>
             <Top />
             <Heading level={2} style={{margin:10}}>Weekly Trends</Heading>
+            <Text style={{color: theme.primaryText, marginHorizontal: 10, marginBottom: 10, fontSize: 16, fontWeight:'bold'}}>Here are last weeks average prices per day</Text>
             <View style={styles.scrollContainer}>
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
