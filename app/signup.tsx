@@ -81,7 +81,7 @@ const SignUpScreen = () => {
             <Text style={[styles.text, { color: theme.primaryText }]}>Using Email</Text>
 
             <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} externalError={emailError}/>
-            <TextInput inputTitle="Password" inputType="password" value={password} onChangeText={setPassword} externalError={passwordError}/>
+            <TextInput inputTitle="Password" inputType="password" value={password} onChangeText={setPassword}/>
             <TextInput
               inputTitle="Confirm Password"
               inputType="confirmPassword"
