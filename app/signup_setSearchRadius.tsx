@@ -66,7 +66,7 @@ const SignUpScreenSetFuelType = () => {
         <Slider
             style={{ width: 300, height: 40 }}
             minimumValue={1}
-            maximumValue={100}
+            maximumValue={30}
             minimumTrackTintColor="#ffac36"
             maximumTrackTintColor="#c7c5c5"
             step={1}

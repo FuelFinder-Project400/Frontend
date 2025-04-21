@@ -1,4 +1,6 @@
-{
+import 'dotenv/config';
+
+export default {
   "expo": {
     "name": "FuelFinder",
     "slug": "FuelFinder",
@@ -20,19 +22,20 @@
       "bundleIdentifier": "com.matthew0blain.FuelFinder"
     },
     "android": {
+      hermesEnabled: true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyD3wnBLw21-EvX1aPdA7rOMyqb0nlFxd-Q"
-        }
+        "backgroundColor": "#00000044"
       },
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE"
       ],
+      config: {
+        googleMaps: {
+          apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+        }
+      },
       "package": "com.matthew0blain.FuelFinder"
     },
     "web": {
@@ -50,10 +53,7 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ],
-      ["./app.plugin.js", {
-        "apiKey": "AIzaSyD3wnBLw21-EvX1aPdA7rOMyqb0nlFxd-Q"
-      }]
+      ]
     ],
     "experiments": {
       "typedRoutes": true

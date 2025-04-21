@@ -73,13 +73,14 @@ export const postUserFromStorage = async () => {
       });
   
       console.log('\n\n\nUser info:', response.data);
-  
+      const parsed = JSON.parse(response.data.favourite_stations);
+      console.log(parsed);
       // Store the fetched user data in AsyncStorage
-      await AsyncStorage.setItem('xp', response.data.xp || "0");
+      await AsyncStorage.setItem('xp', `${response.data.xp}` || "0");
       await AsyncStorage.setItem('fuelType', response.data.fuelType);
       await AsyncStorage.setItem('searchRadius', response.data.searchRadius);
       await AsyncStorage.setItem('profilePic', response.data.profilePic);
-      await AsyncStorage.setItem('favourite_stations', JSON.stringify(response.data.favourite_stations));
+      await AsyncStorage.setItem('favourite_stations', JSON.stringify(parsed));
       await AsyncStorage.setItem('push_token', response.data.push_token || "");
     } catch (error) {
       console.error('Error fetching user info:', error);

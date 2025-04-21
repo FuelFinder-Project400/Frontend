@@ -19,7 +19,7 @@ const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUp
         return `${Math.floor(diffInSeconds / 29030400)} years ago`;
     }
 
-    const isVerified = verifications >= 5;
+    const isVerified = verifications >= 2;
     const isNotVisited = petrol == "";
     return (
         <View style={[styles.container, isVerified && styles.verifiedContainer, isNotVisited && styles.isNotVisitedContainer]}>

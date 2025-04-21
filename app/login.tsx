@@ -32,7 +32,6 @@ const LoginScreen = () => {
       router.replace('./findfuel');
     } catch (error: any) {
       console.error('Login failed:', error);
-      Alert.alert('Login Failed', error.message || 'Something went wrong. Please try again.');
       setDisabled(false);
     }
   };

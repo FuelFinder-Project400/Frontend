@@ -60,7 +60,6 @@ const SignUpScreen = () => {
     } catch (err) {
       console.log('SignUp error:', err);
       setDisabled(false);
-      Alert.alert('Error', `${err}`);
     }
   };
 

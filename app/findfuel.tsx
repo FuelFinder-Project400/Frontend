@@ -98,8 +98,8 @@ const stationsWithoutPrices = searchedStations.filter(station => station.petrol 
     const aPrice = selectedFuel === "Petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
     const bPrice = selectedFuel === "Petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
 
-    const aIsVerified = a.verifications >= 5;
-    const bIsVerified = b.verifications >= 5;
+    const aIsVerified = a.verifications >= 2;
+    const bIsVerified = b.verifications >= 2;
 
     if (aIsVerified && !bIsVerified) {
       return -1; // a is verified, b is not (a comes first)
@@ -112,30 +112,11 @@ const stationsWithoutPrices = searchedStations.filter(station => station.petrol 
   return 0;
 });
 // Function to sort stations based on the active filter
-const sortedStationsWithoutPrices = (Array.isArray(stationsWithoutPrices) ? stationsWithoutPrices : []).sort((a, b) => {
-  if (activeButton === "Closest") {
-    return parseFloat(a.distance) - parseFloat(b.distance);
-  } else if (activeButton === "Cheapest") {
-    const aPrice = selectedFuel === "Petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
-    const bPrice = selectedFuel === "Petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
-    return aPrice - bPrice;
-  } else if (activeButton === "Verified") {
-    const aPrice = selectedFuel === "Petrol" ? parseFloat(a.petrol) : parseFloat(a.diesel);
-    const bPrice = selectedFuel === "Petrol" ? parseFloat(b.petrol) : parseFloat(b.diesel);
-
-    const aIsVerified = a.verifications >= 5;
-    const bIsVerified = b.verifications >= 5;
-
-    if (aIsVerified && !bIsVerified) {
-      return -1; // a is verified, b is not (a comes first)
-    } else if (!aIsVerified && bIsVerified) {
-      return 1; // b is verified, a is not (b comes first)
-    } else {
-      return aPrice - bPrice;  // Sort by cheapest price
-    }
-  }
-  return 0;
-});
+const sortedStationsWithoutPrices = activeButton === "Closest"
+  ? (Array.isArray(stationsWithoutPrices) ? stationsWithoutPrices : []).sort((a, b) => {
+      return parseFloat(a.distance) - parseFloat(b.distance);
+    })
+  : [];
 const onRefresh = async () => {
   setIsRefreshing(true);
   refreshStations();

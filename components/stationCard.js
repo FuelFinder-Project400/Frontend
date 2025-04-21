@@ -36,7 +36,7 @@ const StationCard = ({ id }) => {
                 if (match) {
                     setPetrolPrice(match.petrol);
                     setDieselPrice(match.diesel);
-                    setIsVerified(match.verifications >= 5);
+                    setIsVerified(match.verifications >= 3);
     
                     const hasUserVerified = match.users_who_verified?.includes(userID);
                     setHasVerified(Boolean(hasUserVerified));
@@ -61,12 +61,8 @@ const StationCard = ({ id }) => {
     
                 if (storedFavourites) {
                     const parsed = JSON.parse(storedFavourites);
-    
-                    if (Array.isArray(parsed)) {
-                        parsedFavourites = parsed;
-                    } else {
-                        console.warn('Stored favourites parsed as non-array:', parsed);
-                    }
+                    parsedFavourites = parsed;
+
                 }
     
                 setFavouriteStations(parsedFavourites);
@@ -139,7 +135,7 @@ const StationCard = ({ id }) => {
 
     const openMaps = () => {
         const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.station_name},${station.address}`;
-        const appleMapsUrl = `maps://?daddr=${station.station_name}`;
+        const appleMapsUrl = `maps://?daddr=${station.station_name},${station.address}`;
         const url = Platform.OS === "ios" ? appleMapsUrl : googleMapsUrl;
     
         Linking.canOpenURL(url)
@@ -329,11 +325,11 @@ const StationCard = ({ id }) => {
                     <View style={{flexDirection: 'row', marginVertical: 10,}}>
                         <View style={styles.priceContainer}>
                             <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
-                            <Heading level={3} style={styles.priceText}>€{petrolPrice || " N/A"}</Heading>
+                            <Heading level={3} style={styles.priceText}>{petrolPrice || " N/A"} c/L</Heading>
                         </View>
                         <View style={styles.priceContainer}>
                             <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
-                            <Heading level={3} style={styles.priceText}>€{dieselPrice || " N/A"}</Heading>
+                            <Heading level={3} style={styles.priceText}>{dieselPrice || " N/A"} c/L</Heading>
                         </View>
                     </View>
 
@@ -401,7 +397,6 @@ const StationCard = ({ id }) => {
                             <Text style={styles.label}>Enter Petrol Price (€):</Text>
                             <TextInput
                                 style={styles.input}
-                                placeholder="e.g. 160.20"
                                 keyboardType="numeric"
                                 inputMode="decimal"
                                 maxLength={5}
@@ -415,7 +410,6 @@ const StationCard = ({ id }) => {
                             <Text style={styles.label}>Enter Diesel Price (€):</Text>
                             <TextInput
                                 style={styles.input}
-                                placeholder="e.g. 160.20"
                                 keyboardType="numeric"
                                 inputMode="decimal"
                                 maxLength={5}

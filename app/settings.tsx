@@ -59,12 +59,8 @@ export default function Settings() {
 
           if (storedFavourites) {
               const parsed = JSON.parse(storedFavourites);
-
-              if (Array.isArray(parsed)) {
                   parsedFavourites = parsed;
-              } else {
                   console.warn('Stored favourites parsed as non-array:', parsed);
-              }
           }
 
           setFavouriteStations(parsedFavourites);
@@ -423,7 +419,7 @@ export default function Settings() {
             <Slider
                 style={{ width: 300, height: 40, alignSelf:'center', marginTop: 10, }}
                 minimumValue={1}
-                maximumValue={100}
+                maximumValue={30}
                 minimumTrackTintColor="#ffac36"
                 maximumTrackTintColor="#c7c5c5"
                 step={1}
@@ -470,20 +466,23 @@ export default function Settings() {
                         </View>
                       ) : (
                         favouriteStations.map((station: any) => (
-                          <View
-                            key={station.station_id}
-                            style={{
-                              flexDirection: 'row',
-                              margin: 5,
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              width: '100%',
-                            }}
-                          >
-                            <Text style={{ fontSize: 16 }}>{station.station_name}</Text>
-                            <TouchableOpacity onPress={() => handleDeleteFavourite(station.station_id)}>
-                              <MaterialCommunityIcons name="trash-can" size={40} color="#e61c36" />
-                            </TouchableOpacity>
+                          <View style={{flexDirection:'column'}}>
+                            <View
+                              key={station.station_id}
+                              style={{
+                                flexDirection: 'row',
+                                margin: 5,
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                              }}
+                              >
+                              <Text style={{ fontSize: 16 }}>{station.station_name}</Text>
+                              <TouchableOpacity onPress={() => handleDeleteFavourite(station.station_id)}>
+                                <MaterialCommunityIcons name="trash-can" size={40} color="#e61c36" />
+                              </TouchableOpacity>
+                            </View>
+                            <Text style={{width: '100%', borderTopWidth: 2, borderTopColor: '#000'}}></Text>
                           </View>
                         ))
                       )}
