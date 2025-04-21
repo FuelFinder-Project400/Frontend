@@ -1,4 +1,5 @@
-{
+import 'dotenv/config';
+export default {
   "expo": {
     "name": "FuelFinder",
     "slug": "FuelFinder",
@@ -28,6 +29,11 @@
         "CAMERA",
         "READ_EXTERNAL_STORAGE"
       ],
+      "config": {
+        "googleMaps": {
+          "apiKey": process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+        }
+      },
       "package": "com.matthew0blain.FuelFinder"
     },
     "web": {
