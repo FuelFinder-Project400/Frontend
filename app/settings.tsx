@@ -197,7 +197,8 @@ export default function Settings() {
         padding: 20, 
         borderRadius: 10, 
         width: '80%', 
-        alignItems: 'center' 
+        alignItems: 'center',
+        maxHeight: '40%', 
     },
     modalTitle: { 
         fontSize: 18, 
@@ -216,7 +217,7 @@ export default function Settings() {
         fontSize: 16 
     },
     modalCancel: { 
-        margin: 10,
+        margin: 20,
         paddingHorizontal: 40,
         paddingVertical: 20,
         backgroundColor: "#000",
@@ -455,37 +456,41 @@ export default function Settings() {
                 <View style={styles.modalContent}>
                   <Text style={styles.modalTitle}>Bookmarked Stations</Text>
                     <View>
-                    {favouriteStations.length === 0 ? (
-                      <View>
-                        <Text style={{ fontSize: 16, textAlign: 'center', margin: 10 }}>
-                          You do not have any favourite stations yet.
-                        </Text>
-                        <Text style={{ fontSize: 16, textAlign: 'center', margin: 10 }}>
-                          Bookmark a station by tapping the bookmark on a station page.
-                        </Text>
-                        </View>
-                      ) : (
-                        favouriteStations.map((station: any) => (
-                          <View style={{flexDirection:'column'}}>
-                            <View
-                              key={station.station_id}
-                              style={{
-                                flexDirection: 'row',
-                                margin: 5,
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                width: '100%',
-                              }}
-                              >
-                              <Text style={{ fontSize: 16 }}>{station.station_name}</Text>
-                              <TouchableOpacity onPress={() => handleDeleteFavourite(station.station_id)}>
-                                <MaterialCommunityIcons name="trash-can" size={40} color="#e61c36" />
+                        <ScrollView contentContainerStyle={{}}>
+                          {favouriteStations.length === 0 ? (
+                            <View>
+                              <Text style={{ fontSize: 16, textAlign: 'center', margin: 10 }}>
+                                You do not have any favourite stations yet.
+                              </Text>
+                              <Text style={{ fontSize: 16, textAlign: 'center', margin: 10 }}>
+                                Bookmark a station by tapping the bookmark on a station page.
+                              </Text>
+                              </View>
+                            ) : (
+                              favouriteStations.map((station: any) => (
+                              <TouchableOpacity style={{maxHeight: '70%'}} activeOpacity={1}> 
+                                <View style={{flexDirection:'column'}}>
+                                  <View
+                                    key={station.station_id}
+                                    style={{
+                                      flexDirection: 'row',
+                                      margin: 5,
+                                      alignItems: 'center',
+                                      justifyContent: 'space-between',
+                                      width: '100%',
+                                    }}
+                                    >
+                                    <Text style={{ fontSize: 16 }}>{station.station_name}</Text>
+                                    <TouchableOpacity onPress={() => handleDeleteFavourite(station.station_id)}>
+                                      <MaterialCommunityIcons name="trash-can" size={40} color="#e61c36" />
+                                    </TouchableOpacity>
+                                  </View>
+                                  <Text style={{width: '100%', borderTopWidth: 2, borderTopColor: '#000'}}></Text>
+                                </View>
                               </TouchableOpacity>
-                            </View>
-                            <Text style={{width: '100%', borderTopWidth: 2, borderTopColor: '#000'}}></Text>
-                          </View>
-                        ))
-                      )}
+                              ))
+                            )}
+                        </ScrollView>
                       <TouchableOpacity style={styles.modalCancel} onPress={() => setFavStationsModalVisible(false)}>
                           <Text style={styles.modalCancelText}>Close</Text>
                       </TouchableOpacity>
