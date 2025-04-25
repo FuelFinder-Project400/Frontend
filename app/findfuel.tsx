@@ -26,8 +26,12 @@ export default function FindFuel() {
       setSelectedFuel(fuelType);
     }
     getFuelType();
-    refreshStations();
-    console.log('Data Refreshed');
+    setIsRefreshing(true);
+      refreshStations();
+      setTimeout(() => {
+        setIsRefreshing(false);
+        console.log("Data refreshed");
+    }, 2000);
     registerToken();
   }, []);
   
@@ -76,7 +80,7 @@ export default function FindFuel() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   const handleStationPress = (station: any) => {
-    router.replace({
+    router.push({
       pathname: '/station',
       params: {
         id: station.id

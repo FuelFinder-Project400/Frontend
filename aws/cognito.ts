@@ -46,7 +46,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
               session,
             });
           },
-          onFailure: (err) => reject(err),
+          onFailure: (err) => {
+            console.error(err);
+            reject(err);
+          },
         });
       });
     }

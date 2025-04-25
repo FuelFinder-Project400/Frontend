@@ -188,14 +188,7 @@ export default function FuelMapView({ stations }) {
             onPress={() => router.push({
               pathname: '/station',
               params: {
-                name: selectedStation.station_name,
-                address: selectedStation.address,
-                petrol: selectedStation.petrol,
-                diesel: selectedStation.diesel,
-                distance: selectedStation.distance,
-                stars: selectedStation.stars,
-                lastUpdated: selectedStation.lastUpdated,
-                verifications: selectedStation.verifications,
+                id: selectedStation.id
               }
             })}
           >

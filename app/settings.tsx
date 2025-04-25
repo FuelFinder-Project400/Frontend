@@ -267,16 +267,12 @@ export default function Settings() {
     setSelectedFuel(fuelType);
     AsyncStorage.setItem('fuelType', fuelType);
     const update:any = UpdateUserFromStorage();
-    if(update){
-      Alert.alert('Fuel Preference Has Been Updated To ', fuelType);
-    }
+
   }
   const handleSearchRadiusChange = (searchRadius:number) =>{
     AsyncStorage.setItem('searchRadius', `${searchRadius}`);
     const update:any = UpdateUserFromStorage();
-    if(update){
-      Alert.alert('Search Radius Has Been Updated To ', `${searchRadius}km`);
-    }
+ 
   }
   const handleImagePick = async () => {
     // Request permission first

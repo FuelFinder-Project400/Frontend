@@ -244,33 +244,43 @@ const StationCard = ({ id }) => {
             console.warn("No user ID found in storage.");
             return;
           }
-            console.log(id);
-            const verify = await VerifyPrice(id);
-            console.log(verify);
-            setHasVerified(true);
-            const stored = await AsyncStorage.getItem('stations');
-            let stationList = stored ? JSON.parse(stored) : [];
       
-            const updatedStationList = stationList.map(station => {
-              if (station.id === id) {
-                const updatedUsers = Array.isArray(station.users_who_verified)
-                  ? [...new Set([...station.users_who_verified, userID])]
-                  : [userID];
+          console.log(id);
+          const verify = await VerifyPrice(id);
+          console.log(verify);
       
-                return {
-                  ...station,
-                  users_who_verified: updatedUsers,
-                };
-              }
-              return station;
-            });
+          setHasVerified(true);
       
-            await AsyncStorage.setItem('stations', JSON.stringify(updatedStationList));
-           
+          const stored = await AsyncStorage.getItem('stations');
+          let stationList = stored ? JSON.parse(stored) : [];
+      
+          const updatedStationList = stationList.map(station => {
+            if (station.id === id) {
+              const updatedUsers = Array.isArray(station.users_who_verified)
+                ? [...new Set([...station.users_who_verified, userID])]
+                : [userID];
+      
+              return {
+                ...station,
+                users_who_verified: updatedUsers,
+                verifications: (station.verifications || 0) + 1, // <- increment by 1
+              };
+            }
+            return station;
+          });
+      
+          await AsyncStorage.setItem('stations', JSON.stringify(updatedStationList));
+          router.replace({
+                pathname: '/station',
+                params: {
+                  id: station.id
+                },
+              });
         } catch (err) {
           console.error('Failed to verify station:', err);
         }
       };
+      
       const handlePriceModalClose = () => {
         if (petrolPrice == "" || dieselPrice == ""){
             router.replace({
@@ -285,13 +295,13 @@ const StationCard = ({ id }) => {
     return (
         <View style={[styles.container, isFavorited && styles.favoritedContainer]}>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                <TouchableOpacity onPress={() => router.replace('./findfuel')}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <MaterialCommunityIcons name="arrow-left-circle" size={40} color={"#000"} style={{marginVertical: 10, marginTop: -5, marginLeft: -8}} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={toggleFavorite}
                     style={{
-                        marginTop: isFavorited ? '-5.9%' : '-7.5%',
+                        marginTop: isFavorited ? -19 : -25,
                         marginRight: '-2.6%',
                     }}
                     >
@@ -324,11 +334,11 @@ const StationCard = ({ id }) => {
 
                     <View style={{flexDirection: 'row', marginVertical: 10,}}>
                         <View style={styles.priceContainer}>
-                            <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
+                            <Heading level={3} style={styles.priceHeading}>Petrol</Heading>
                             <Heading level={3} style={styles.priceText}>{petrolPrice || " N/A"} c/L</Heading>
                         </View>
                         <View style={styles.priceContainer}>
-                            <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
+                            <Heading level={3} style={styles.priceHeading}>Diesel</Heading>
                             <Heading level={3} style={styles.priceText}>{dieselPrice || " N/A"} c/L</Heading>
                         </View>
                     </View>
@@ -344,7 +354,7 @@ const StationCard = ({ id }) => {
                 </View>
 
                 <View style={styles.distanceContainer}>
-                    <Heading level={3} style={styles.distanceText}>{station.distance}km</Heading>
+                    <Heading level={4} style={styles.distanceText}>{station.distance}km</Heading>
                 </View>
             </View>
 

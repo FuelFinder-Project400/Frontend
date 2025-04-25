@@ -25,7 +25,8 @@ export default function FindFuel() {
 
   const handleMapPress = () => {
      //console.log("Navigate to fuel finder view");
-     router.push('./findfuel');
+     //router.push('./findfuel');
+     router.back();
   }
   const [activeTab, setActiveTab] = useState("FindFuel");
 

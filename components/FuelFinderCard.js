@@ -42,11 +42,11 @@ const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUp
 
                 <View style={{flexDirection: 'row', marginVertical: 10,}}>
                     <View style={styles.priceContainer}>
-                        <Heading level={2} style={styles.priceHeading}>Petrol</Heading>
+                        <Heading level={3} style={styles.priceHeading}>Petrol</Heading>
                         <Heading level={3} style={styles.priceText}>{petrol || " N/A"} c/L</Heading>
                     </View>
                     <View style={styles.priceContainer}>
-                        <Heading level={2} style={styles.priceHeading}>Diesel</Heading>
+                        <Heading level={3} style={styles.priceHeading}>Diesel</Heading>
                         <Heading level={3} style={styles.priceText}>{diesel || " N/A"} c/L</Heading>
                     </View>
                 </View>
@@ -62,7 +62,7 @@ const FuelFinderCard = ({ name, address, petrol, diesel, distance, stars, lastUp
             </View>
 
             <View style={styles.distanceContainer}>
-                <Heading level={3} style={styles.distanceText}>{distance}km</Heading>
+                <Heading level={4} style={styles.distanceText}>{distance}km</Heading>
                 <MaterialCommunityIcons name="arrow-right-circle" size={40} color="#524e4e" />
             </View>
         </View>

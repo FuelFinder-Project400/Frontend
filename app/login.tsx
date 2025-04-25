@@ -16,12 +16,17 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isDisabled, setDisabled] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const { stations: searchedStations, errorMsg, refreshStations  } = useFuelStations();
   const handleLogin = async () => {
     Keyboard.dismiss();
     try {
       setDisabled(true);
-      const login: any = await Cognito.signIn(email, password);
+      const login: any = await Cognito.signIn(email, password).catch(error => {
+
+        setLoginError(error.message);
+
+      });
       await AsyncStorage.setItem('email', email);
       await AsyncStorage.setItem('userID', login.session.accessToken.payload.username);
       await AsyncStorage.setItem('idToken', login.idToken);
@@ -31,7 +36,7 @@ const LoginScreen = () => {
       refreshStations();
       router.replace('./findfuel');
     } catch (error: any) {
-      console.error('Login failed:', error);
+      console.log('Login failed:', error);
       setDisabled(false);
     }
   };
@@ -50,8 +55,8 @@ const LoginScreen = () => {
       >
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <Heading level={1}>Login</Heading>
-            <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail} />
-            <TextInput inputTitle="Password" inputType="login-password" value={password} onChangeText={setPassword} />
+            <TextInput inputTitle="Email" inputType="email" value={email} onChangeText={setEmail}/>
+            <TextInput inputTitle="Password" inputType="login-password" value={password} onChangeText={setPassword} externalError={loginError}/>
             <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleForgotPassword}>
               <Text style={{color: theme.primaryText, padding: 20, fontWeight: 'bold', fontSize: 18, textDecorationLine:'underline'}}>Forgot Password?</Text>
             </TouchableOpacity> 
